@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Fundamentals Quiz - Exam Prep</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2d6a4f);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(to right, #2c3e50, #4a6572);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #f8f9fa;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .score-board {
+            background: #e9ecef;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-bottom: 2px solid #dee2e6;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .score-item {
+            color: #2d6a4f;
+        }
+
+        .quiz-container {
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-left: 5px solid #2d6a4f;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .section h3 {
+            color: #2d6a4f;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h3::before {
+            content: "📘";
+        }
+
+        .question {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+
+        .question:hover {
+            transform: translateY(-3px);
+        }
+
+        .question-number {
+            background: #2d6a4f;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            color: #2c3e50;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            background: #d8e2dc;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #c6e6d2;
+            border-color: #2d6a4f;
+            font-weight: bold;
+        }
+
+        .option.correct {
+            background: #b7e4c7;
+            border-color: #2d6a4f;
+            color: #1b4332;
+        }
+
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+        }
+
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #checkAnswers {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        #checkAnswers:hover {
+            background: #1b4332;
+            transform: scale(1.05);
+        }
+
+        #showAnswers {
+            background: #1a2a6c;
+            color: white;
+        }
+
+        #showAnswers:hover {
+            background: #0d1b4c;
+            transform: scale(1.05);
+        }
+
+        #resetQuiz {
+            background: #6c757d;
+            color: white;
+        }
+
+        #resetQuiz:hover {
+            background: #495057;
+            transform: scale(1.05);
+        }
+
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .result-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            animation: popIn 0.5s;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .result-content h2 {
+            color: #2d6a4f;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .result-score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #1a2a6c;
+            margin: 20px 0;
+        }
+
+        .result-details {
+            text-align: left;
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .close-modal {
+            background: #2d6a4f;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+
+        .close-modal:hover {
+            background: #1b4332;
+        }
+
+        .explanation {
+            background: #e8f4fc;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #1a2a6c;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        .answer-key {
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .answer-key.show {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #dee2e6;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: #2d6a4f;
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .timer {
+            background: #1a2a6c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 IT Fundamentals Quiz</h1>
+            <p>Test your knowledge on Hardware, Software, Networking, Security & Cryptography</p>
+        </header>
+
+        <div class="score-board">
+            <div class="score-item">Questions: <span id="totalQuestions">66</span></div>
+            <div class="score-item">Answered: <span id="answeredCount">0</span></div>
+            <div class="score-item">Score: <span id="score">0</span>/<span id="totalScore">66</span></div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
+        </div>
+
+        <div class="quiz-container" id="quizContainer">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+
+        <div class="controls">
+            <button id="checkAnswers">✅ Check Answers</button>
+            <button id="showAnswers">📄 Show Answer Key</button>
+            <button id="resetQuiz">🔄 Reset Quiz</button>
+        </div>
+    </div>
+
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <h2>Quiz Results</h2>
+            <div class="result-score" id="finalScore">0/66</div>
+            <div class="result-details">
+                <p><strong>Correct Answers:</strong> <span id="correctCount">0</span></p>
+                <p><strong>Incorrect Answers:</strong> <span id="incorrectCount">0</span></p>
+                <p><strong>Percentage:</strong> <span id="percentage">0%</span></p>
+                <p><strong>Status:</strong> <span id="statusMessage">Keep studying!</span></p>
+            </div>
+            <button class="close-modal" id="closeModal">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz data
+        const quizData = {
+            sections: [
+                {
+                    title: "📟 Personal Computer Hardware",
+                    questions: [
+                        {
+                            id: 1,
+                            text: "What does POST stand for?",
+                            options: [
+                                "Power-On Self-Test",
+                                "Pre-Operating System Test",
+                                "Peripheral Operational Signal Test",
+                                "Programmable Output System Timer"
+                            ],
+                            answer: 0,
+                            explanation: "POST (Power-On Self-Test) is a diagnostic testing sequence run by a computer's BIOS during boot."
+                        },
+                        {
+                            id: 2,
+                            text: "Which component is responsible for storing BIOS settings when the computer is off?",
+                            options: ["RAM", "CMOS", "CPU", "SSD"],
+                            answer: 1,
+                            explanation: "CMOS (Complementary Metal-Oxide Semiconductor) memory chip stores BIOS settings with battery backup."
+                        },
+                        {
+                            id: 3,
+                            text: "What is the purpose of UEFI compared to legacy BIOS?",
+                            options: [
+                                "Slower boot time",
+                                "No security features",
+                                "Support for larger boot drives and secure boot",
+                                "Only works with 32-bit systems"
+                            ],
+                            answer: 2,
+                            explanation: "UEFI supports drives larger than 2TB, secure boot, and faster boot times."
+                        },
+                        {
+                            id: 4,
+                            text: "Which power fluctuation type refers to a complete loss of AC power?",
+                            options: ["Brownout", "Spike", "Blackout", "Noise"],
+                            answer: 2,
+                            explanation: "Blackout = complete loss of power. Brownout = reduced voltage. Spike = sudden increase."
+                        },
+                        {
+                            id: 5,
+                            text: "What type of RAM is typically used as cache memory?",
+                            options: ["DRAM", "SRAM", "DDR4", "GDDR"],
+                            answer: 1,
+                            explanation: "SRAM (Static RAM) is faster and used for cache memory, while DRAM is used for main memory."
+                        },
+                        {
+                            id: 6,
+                            text: "Which RAID level provides striping with parity?",
+                            options: ["RAID 0", "RAID 1", "RAID 5", "RAID 10"],
+                            answer: 2,
+                            explanation: "RAID 5 uses striping with distributed parity for fault tolerance."
+                        },
+                        {
+                            id: 7,
+                            text: "Which port is commonly used for connecting a keyboard and mouse in older systems?",
+                            options: ["USB", "PS/2", "HDMI", "VGA"],
+                            answer: 1,
+                            explanation: "PS/2 ports (purple for keyboard, green for mouse) were standard before USB."
+                        },
+                        {
+                            id: 8,
+                            text: "What is the purpose of a heat sink?",
+                            options: [
+                                "Store data",
+                                "Draw heat away from the CPU",
+                                "Increase voltage",
+                                "Control fan speed"
+                            ],
+                            answer: 1,
+                            explanation: "Heat sinks dissipate heat from components using metal fins and thermal compound."
+                        }
+                    ]
+                },
+                {
+                    title: "💻 Software & Operating Systems",
+                    questions: [
+                        {
+                            id: 9,
+                            text: "Which of the following is an example of system software?",
+                            options: [
+                                "Microsoft Word",
+                                "Windows OS",
+                                "Adobe Photoshop",
+                                "Google Chrome"
+                            ],
+                            answer: 1,
+                            explanation: "System software manages hardware (OS, drivers, utilities). Application software is for tasks."
+                        },
+                        {
+                            id: 10,
+                            text: "What is the main difference between open source and closed source software?",
+                            options: [
+                                "Open source is always free",
+                                "Closed source allows code modification",
+                                "Open source provides public access to source code",
+                                "Closed source is only used by governments"
+                            ],
+                            answer: 2,
+                            explanation: "Open source = code publicly available. Closed source = proprietary code not publicly viewable."
+                        },
+                        {
+                            id: 11,
+                            text: "Which mobile OS uses a walled garden model for apps?",
+                            options: ["Android", "iOS", "Linux", "Windows Mobile"],
+                            answer: 1,
+                            explanation: "iOS uses a walled garden - apps must be approved by Apple before distribution."
+                        },
+                        {
+                            id: 12,
+                            text: "What is the default backup tool for macOS?",
+                            options: ["Déjà Dup", "Time Machine", "Bacula", "Amanda"],
+                            answer: 1,
+                            explanation: "Time Machine is Apple's built-in backup solution for macOS."
+                        },
+                        {
+                            id: 13,
+                            text: "Which command is used to change file permissions in Linux?",
+                            options: ["chmod", "sudo", "ps", "passwd"],
+                            answer: 0,
+                            explanation: "chmod (change mode) modifies file permissions in Unix/Linux systems."
+                        },
+                        {
+                            id: 14,
+                            text: "What does the 'ls -l' command show in Linux?",
+                            options: [
+                                "List files in long format with details",
+                                "List only directories",
+                                "List hidden files",
+                                "List file sizes only"
+                            ],
+                            answer: 0,
+                            explanation: "ls -l shows permissions, links, owner, group, size, date, and filename."
+                        },
+                        {
+                            id: 15,
+                            text: "Which of the following is a Linux distribution?",
+                            options: ["Ubuntu", "Windows Server", "macOS", "iOS"],
+                            answer: 0,
+                            explanation: "Ubuntu is a popular Linux distribution. Others are proprietary OSes."
+                        }
+                    ]
+                },
+                {
+                    title: "🌐 Networking Fundamentals",
+                    questions: [
+                        {
+                            id: 16,
+                            text: "What does LAN stand for?",
+                            options: [
+                                "Large Area Network",
+                                "Local Area Network",
+                                "Linked Access Network",
+                                "Logical Address Node"
+                            ],
+                            answer: 1,
+                            explanation: "LAN = Local Area Network, covers a small geographic area like a building."
+                        },
+                        {
+                            id: 17,
+                            text: "Which device connects multiple network segments and operates at Layer 2?",
+                            options: ["Hub", "Router", "Switch", "Modem"],
+                            answer: 2,
+                            explanation: "Switches operate at Layer 2 (Data Link) and forward frames based on MAC addresses."
+                        },
+                        {
+                            id: 18,
+                            text: "What is the purpose of DNS?",
+                            options: [
+                                "Encrypt data",
+                                "Convert domain names to IP addresses",
+                                "Block malicious traffic",
+                                "Assign IP addresses dynamically"
+                            ],
+                            answer: 1,
+                            explanation: "DNS (Domain Name System) translates human-readable domain names to IP addresses."
+                        },
+                        {
+                            id: 19,
+                            text: "Which protocol is used for secure web browsing?",
+                            options: ["HTTP", "FTP", "HTTPS", "SMTP"],
+                            answer: 2,
+                            explanation: "HTTPS = HTTP Secure, uses SSL/TLS encryption for secure web communication."
+                        },
+                        {
+                            id: 20,
+                            text: "What does DHCP do?",
+                            options: [
+                                "Translates domain names",
+                                "Automatically assigns IP addresses",
+                                "Encrypts email",
+                                "Routes packets between networks"
+                            ],
+                            answer: 1,
+                            explanation: "DHCP (Dynamic Host Configuration Protocol) automatically assigns IP configuration to devices."
+                        },
+                        {
+                            id: 21,
+                            text: "Which Wi-Fi security standard is considered the weakest?",
+                            options: ["WEP", "WPA", "WPA2", "WPA3"],
+                            answer: 0,
+                            explanation: "WEP (Wired Equivalent Privacy) has known vulnerabilities and is easily cracked."
+                        },
+                        {
+                            id: 22,
+                            text: "What is the main function of a firewall?",
+                            options: [
+                                "Speed up internet",
+                                "Filter network traffic",
+                                "Store backups",
+                                "Encrypt files"
+                            ],
+                            answer: 1,
+                            explanation: "Firewalls filter incoming/outgoing network traffic based on security rules."
+                        },
+                        {
+                            id: 23,
+                            text: "Which port is commonly used for SSH?",
+                            options: ["21", "22", "80", "443"],
+                            answer: 1,
+                            explanation: "Port 22 is the default for SSH (Secure Shell) remote administration."
+                        }
+                    ]
+                },
+                {
+                    title: "🔒 Information Security",
+                    questions: [
+                        {
+                            id: 24,
+                            text: "What does CIA stand for in information security?",
+                            options: [
+                                "Central Intelligence Agency",
+                                "Confidentiality, Integrity, Availability",
+                                "Cyber Investigation Authority",
+                                "Certified Information Auditor"
+                            ],
+                            answer: 1,
+                            explanation: "CIA triad: Confidentiality (privacy), Integrity (accuracy), Availability (accessibility)."
+                        },
+                        {
+                            id: 25,
+                            text: "Which security property ensures that data is not altered by unauthorized users?",
+                            options: [
+                                "Confidentiality",
+                                "Integrity",
+                                "Availability",
+                                "Authenticity"
+                            ],
+                            answer: 1,
+                            explanation: "Integrity ensures data hasn't been modified by unauthorized parties."
+                        },
+                        {
+                            id: 26,
+                            text: "What is a vulnerability?",
+                            options: [
+                                "An attack on a system",
+                                "A weakness in a system",
+                                "A security control",
+                                "A type of malware"
+                            ],
+                            answer: 1,
+                            explanation: "Vulnerability = weakness that can be exploited. Threat = potential danger. Risk = probability of exploitation."
+                        },
+                        {
+                            id: 27,
+                            text: "Which of the following is an example of a social engineering attack?",
+                            options: ["DDoS", "Phishing", "SQL injection", "Buffer overflow"],
+                            answer: 1,
+                            explanation: "Phishing tricks users into revealing sensitive information through deceptive emails/websites."
+                        },
+                        {
+                            id: 28,
+                            text: "What does IDS stand for?",
+                            options: [
+                                "Intrusion Detection System",
+                                "Internet Data Service",
+                                "Internal Defense System",
+                                "Identity Security"
+                            ],
+                            answer: 0,
+                            explanation: "IDS monitors networks/systems for malicious activity and policy violations."
+                        },
+                        {
+                            id: 29,
+                            text: "Which type of attack floods a network with traffic to disrupt service?",
+                            options: ["Phishing", "DDoS", "Spoofing", "Brute force"],
+                            answer: 1,
+                            explanation: "DDoS (Distributed Denial of Service) overwhelms target with traffic from multiple sources."
+                        },
+                        {
+                            id: 30,
+                            text: "What is the purpose of encryption?",
+                            options: [
+                                "To hide data from unauthorized access",
+                                "To speed up data transmission",
+                                "To compress files",
+                                "To log user activity"
+                            ],
+                            answer: 0,
+                            explanation: "Encryption converts plaintext to ciphertext to protect confidentiality."
+                        }
+                    ]
+                },
+                {
+                    title: "🔐 Cryptography",
+                    questions: [
+                        {
+                            id: 31,
+                            text: "What is plaintext?",
+                            options: [
+                                "Encrypted data",
+                                "Original readable data",
+                                "A type of cipher",
+                                "A hash value"
+                            ],
+                            answer: 1,
+                            explanation: "Plaintext = original unencrypted data. Ciphertext = encrypted data."
+                        },
+                        {
+                            id: 32,
+                            text: "Which cipher shifts letters by a fixed number?",
+                            options: ["Vigenère", "Caesar", "One-time pad", "RSA"],
+                            answer: 1,
+                            explanation: "Caesar cipher shifts each letter by a fixed number (e.g., A→D with shift 3)."
+                        },
+                        {
+                            id: 33,
+                            text: "What is a key characteristic of symmetric encryption?",
+                            options: [
+                                "Uses two different keys",
+                                "Slow processing",
+                                "Same key for encryption and decryption",
+                                "Used only for digital signatures"
+                            ],
+                            answer: 2,
+                            explanation: "Symmetric encryption uses one shared key for both encryption and decryption."
+                        },
+                        {
+                            id: 34,
+                            text: "Which algorithm is a symmetric block cipher?",
+                            options: ["RSA", "AES", "Diffie-Hellman", "SHA-256"],
+                            answer: 1,
+                            explanation: "AES (Advanced Encryption Standard) is a symmetric block cipher used worldwide."
+                        },
+                        {
+                            id: 35,
+                            text: "What does asymmetric encryption use?",
+                            options: [
+                                "One shared key",
+                                "Two keys: public and private",
+                                "No keys",
+                                "Only hash functions"
+                            ],
+                            answer: 1,
+                            explanation: "Asymmetric encryption uses public key (encrypt) and private key (decrypt)."
+                        },
+                        {
+                            id: 36,
+                            text: "Which cryptographic goal ensures the sender cannot deny sending a message?",
+                            options: [
+                                "Confidentiality",
+                                "Integrity",
+                                "Non-repudiation",
+                                "Authentication"
+                            ],
+                            answer: 2,
+                            explanation: "Non-repudiation provides proof of origin and prevents denial of sending/receiving."
+                        },
+                        {
+                            id: 37,
+                            text: "What is a hash function used for?",
+                            options: [
+                                "Encrypting data",
+                                "Verifying data integrity",
+                                "Generating keys",
+                                "Creating digital certificates"
+                            ],
+                            answer: 1,
+                            explanation: "Hash functions create fixed-size outputs (hashes) to verify data integrity."
+                        },
+                        {
+                            id: 38,
+                            text: "Which is an example of a stream cipher?",
+                            options: ["AES", "DES", "RC4", "RSA"],
+                            answer: 2,
+                            explanation: "RC4 is a stream cipher that encrypts data one bit/byte at a time."
+                        }
+                    ]
+                }
+            ],
+            trueFalse: [
+                {
+                    id: 39,
+                    text: "BIOS is stored in RAM.",
+                    answer: false,
+                    explanation: "BIOS is stored in ROM/Flash memory, not RAM (which is volatile)."
+                },
+                {
+                    id: 40,
+                    text: "Android is an open-source mobile OS.",
+                    answer: true,
+                    explanation: "Android is based on Linux kernel and is open source (though Google services are proprietary)."
+                },
+                {
+                    id: 41,
+                    text: "A hub operates at Layer 3 of the OSI model.",
+                    answer: false,
+                    explanation: "Hubs operate at Layer 1 (Physical). Switches = Layer 2, Routers = Layer 3."
+                },
+                {
+                    id: 42,
+                    text: "WPA2 is more secure than WEP.",
+                    answer: true,
+                    explanation: "WPA2 uses AES encryption and is much more secure than vulnerable WEP."
+                },
+                {
+                    id: 43,
+                    text: "A VPN encrypts traffic between a client and a network.",
+                    answer: true,
+                    explanation: "VPNs create encrypted tunnels over public networks for secure communication."
+                },
+                {
+                    id: 44,
+                    text: "RAID 0 provides redundancy.",
+                    answer: false,
+                    explanation: "RAID 0 provides striping only (performance) but NO redundancy. Single drive failure loses all data."
+                },
+                {
+                    id: 45,
+                    text: "AES uses a 128-bit block size.",
+                    answer: true,
+                    explanation: "AES always uses 128-bit blocks, with key sizes of 128, 192, or 256 bits."
+                },
+                {
+                    id: 46,
+                    text: "Social engineering relies on technical exploits only.",
+                    answer: false,
+                    explanation: "Social engineering manipulates PEOPLE, not systems. It exploits human psychology."
+                },
+                {
+                    id: 47,
+                    text: "Digital signatures provide confidentiality.",
+                    answer: false,
+                    explanation: "Digital signatures provide authentication and integrity, NOT confidentiality (that's encryption)."
+                },
+                {
+                    id: 48,
+                    text: "IPv6 addresses are 32 bits long.",
+                    answer: false,
+                    explanation: "IPv6 addresses are 128 bits (vs IPv4's 32 bits), allowing for vastly more addresses."
+                }
+            ],
+            shortAnswer: [
+                {
+                    id: 49,
+                    text: "The __________ is the main circuit board in a computer.",
+                    answer: "Motherboard",
+                    explanation: "The motherboard connects all components (CPU, RAM, storage, etc.)."
+                },
+                {
+                    id: 50,
+                    text: "__________ is a technique to make a CPU run faster than its rated speed (not recommended).",
+                    answer: "Overclocking",
+                    explanation: "Overclocking increases clock speed beyond manufacturer specs, risking stability and damage."
+                },
+                {
+                    id: 51,
+                    text: "__________ is the protocol used to send email.",
+                    answer: "SMTP",
+                    explanation: "SMTP (Simple Mail Transfer Protocol) is used for sending email between servers."
+                },
+                {
+                    id: 52,
+                    text: "The __________ OSI layer is responsible for routing packets.",
+                    answer: "Network",
+                    explanation: "Layer 3 (Network layer) handles logical addressing and routing (IP addresses)."
+                },
+                {
+                    id: 53,
+                    text: "__________ is the practice of hiding data within other data.",
+                    answer: "Steganography",
+                    explanation: "Steganography hides messages within images, audio, or other files (vs encryption which scrambles)."
+                },
+                {
+                    id: 54,
+                    text: "__________ is a type of malware that replicates itself.",
+                    answer: "Worm",
+                    explanation: "Worms self-replicate without user intervention, spreading across networks."
+                },
+                {
+                    id: 55,
+                    text: "A __________ attack tries all possible password combinations.",
+                    answer: "Brute force",
+                    explanation: "Brute force attacks systematically try every possible combination until correct."
+                },
+                {
+                    id: 56,
+                    text: "__________ is the process of converting ciphertext back to plaintext.",
+                    answer: "Decryption",
+                    explanation: "Decryption reverses encryption using a key to restore original data."
+                }
+            ]
+        };
+
+        // Quiz state
+        let userAnswers = {};
+        let score = 0;
+        let answeredCount = 0;
+        const totalQuestions = 66;
+
+        // Initialize quiz
+        function initQuiz() {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+
+            // Add MC questions from sections
+            quizData.sections.forEach((section, sectionIndex) => {
+                const sectionEl = document.createElement('div');
+                sectionEl.className = 'section';
+                
+                sectionEl.innerHTML = `
+                    <h3>${section.title}</h3>
+                    ${section.questions.map((q, qIndex) => `
+                        <div class="question" id="q${q.id}">
+                            <div>
+                                <span class="question-number">${q.id}</span>
+                                <span class="question-text">${q.text}</span>
+                            </div>
+                            <div class="options">
+                                ${q.options.map((opt, optIndex) => `
+                                    <div class="option" 
+                                         data-question="${q.id}" 
+                                         data-option="${optIndex}"
+                                         onclick="selectOption(${q.id}, ${optIndex})">
+                                        ${opt}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="explanation" id="exp${q.id}">${q.explanation}</div>
+                        </div>
+                    `).join('')}
+                `;
+                
+                container.appendChild(sectionEl);
+            });
+
+            // Add True/False section
+            const tfSection = document.createElement('div');
+            tfSection.className = 'section';
+            tfSection.innerHTML = `
+                <h3>✅ True/False Questions</h3>
+                ${quizData.trueFalse.map((q, index) => `
+                    <div class="question" id="q${q.id}">
+                        <div>
+                            <span class="question-number">${q.id}</span>
+                            <span class="question-text">${q.text}</span>
+                        </div>
+                        <div class="options">
+                            <div class="option" data-question="${q.id}" data-option="true" onclick="selectTF(${q.id}, true)">
+                                True
+                            </div>
+                            <div class="option" data-question="${q.id}" data-option="false" onclick="selectTF(${q.id}, false)">
+                                False
+                            </div>
+                        </div>
+                        <div class="explanation" id="exp${q.id}">${q.explanation}</div>
+                    </div>
+                `).join('')}
+            `;
+            container.appendChild(tfSection);
+
+            // Add Short Answer section
+            const saSection = document.createElement('div');
+            saSection.className = 'section';
+            saSection.innerHTML = `
+                <h3>✍️ Short Answer (Fill-in-the-Blank)</h3>
+                ${quizData.shortAnswer.map((q, index) => `
+                    <div class="question" id="q${q.id}">
+                        <div>
+                            <span class="question-number">${q.id}</span>
+                            <span class="question-text">${q.text}</span>
+                        </div>
+                        <div class="options" style="grid-template-columns: 1fr">
+                            <input type="text" 
+                                   class="option" 
+                                   style="text-align: center; padding: 15px;"
+                                   placeholder="Type your answer here..."
+                                   onchange="selectShortAnswer(${q.id}, this.value)"
+                                   onkeyup="selectShortAnswer(${q.id}, this.value)">
+                        </div>
+                        <div class="answer-key" id="ans${q.id}">Correct answer: <strong>${q.answer}</strong><br>${q.explanation}</div>
+                    </div>
+                `).join('')}
+            `;
+            container.appendChild(saSection);
+
+            updateProgress();
+        }
+
+        // Selection functions
+        function selectOption(questionId, optionIndex) {
+            const questionEl = document.getElementById(`q${questionId}`);
+            const options = questionEl.querySelectorAll('.option');
+            
+            // Remove previous selection
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Mark selected
+            options[optionIndex].classList.add('selected');
+            
+            // Store answer
+            userAnswers[questionId] = optionIndex;
+            answeredCount = Object.keys(userAnswers).length;
+            
+            updateProgress();
+        }
+
+        function selectTF(questionId, answer) {
+            const questionEl = document.getElementById(`q${questionId}`);
+            const options = questionEl.querySelectorAll('.option');
+            
+            // Remove previous selection
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Mark selected
+            const correctIndex = answer ? 0 : 1;
+            options[correctIndex].classList.add('selected');
+            
+            // Store answer
+            userAnswers[questionId] = answer;
+            answeredCount = Object.keys(userAnswers).length;
+            
+            updateProgress();
+        }
+
+        function selectShortAnswer(questionId, answer) {
+            userAnswers[questionId] = answer.trim().toLowerCase();
+            answeredCount = Object.keys(userAnswers).length;
+            updateProgress();
+        }
+
+        // Update progress bar and counters
+        function updateProgress() {
+            const progress = (answeredCount / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('score').textContent = score;
+        }
+
+        // Check answers
+        function checkAnswers() {
+            score = 0;
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            // Check MC questions
+            quizData.sections.forEach(section => {
+                section.questions.forEach(q => {
+                    const userAnswer = userAnswers[q.id];
+                    const questionEl = document.getElementById(`q${q.id}`);
+                    const options = questionEl.querySelectorAll('.option');
+                    const explanation = document.getElementById(`exp${q.id}`);
+                    
+                    if (userAnswer !== undefined) {
+                        if (userAnswer === q.answer) {
+                            score++;
+                            correctCount++;
+                            options[userAnswer].classList.add('correct');
+                        } else {
+                            incorrectCount++;
+                            options[userAnswer].classList.add('incorrect');
+                            options[q.answer].classList.add('correct');
+                        }
+                        explanation.classList.add('show');
+                    }
+                });
+            });
+
+            // Check True/False
+            quizData.trueFalse.forEach(q => {
+                const userAnswer = userAnswers[q.id];
+                const questionEl = document.getElementById(`q${q.id}`);
+                const options = questionEl.querySelectorAll('.option');
+                const explanation = document.getElementById(`exp${q.id}`);
+                
+                if (userAnswer !== undefined) {
+                    if (userAnswer === q.answer) {
+                        score++;
+                        correctCount++;
+                        options[userAnswer ? 0 : 1].classList.add('correct');
+                    } else {
+                        incorrectCount++;
+                        options[userAnswer ? 0 : 1].classList.add('incorrect');
+                        options[q.answer ? 0 : 1].classList.add('correct');
+                    }
+                    explanation.classList.add('show');
+                }
+            });
+
+            // Check Short Answer (case-insensitive partial match)
+            quizData.shortAnswer.forEach(q => {
+                const userAnswer = userAnswers[q.id];
+                const answerKey = document.getElementById(`ans${q.id}`);
+                
+                if (userAnswer) {
+                    const correctAnswer = q.answer.toLowerCase();
+                    if (userAnswer.includes(correctAnswer) || correctAnswer.includes(userAnswer)) {
+                        score++;
+                        correctCount++;
+                        answerKey.style.borderColor = "#2d6a4f";
+                        answerKey.style.background = "#c6e6d2";
+                    } else {
+                        incorrectCount++;
+                        answerKey.style.borderColor = "#dc3545";
+                        answerKey.style.background = "#f8d7da";
+                    }
+                    answerKey.classList.add('show');
+                }
+            });
+
+            // Update score display
+            document.getElementById('score').textContent = score;
+            
+            // Show results modal
+            showResults(correctCount, incorrectCount);
+        }
+
+        // Show answer key
+        function showAnswerKey() {
+            // Show all explanations
+            document.querySelectorAll('.explanation').forEach(el => {
+                el.classList.add('show');
+            });
+            
+            // Show all answer keys
+            document.querySelectorAll('.answer-key').forEach(el => {
+                el.classList.add('show');
+            });
+            
+            // Highlight correct answers
+            quizData.sections.forEach(section => {
+                section.questions.forEach(q => {
+                    const questionEl = document.getElementById(`q${q.id}`);
+                    const options = questionEl.querySelectorAll('.option');
+                    options[q.answer].classList.add('correct');
+                });
+            });
+            
+            quizData.trueFalse.forEach(q => {
+                const questionEl = document.getElementById(`q${q.id}`);
+                const options = questionEl.querySelectorAll('.option');
+                options[q.answer ? 0 : 1].classList.add('correct');
+            });
+        }
+
+        // Show results modal
+        function showResults(correct, incorrect) {
+            const percentage = Math.round((score / totalQuestions) * 100);
+            let status = "Keep studying!";
+            let statusColor = "#dc3545";
+            
+            if (percentage >= 90) {
+                status = "Excellent! 🎉";
+                statusColor = "#2d6a4f";
+            } else if (percentage >= 70) {
+                status = "Good job! 👍";
+                statusColor = "#198754";
+            } else if (percentage >= 50) {
+                status = "Not bad, keep practicing!";
+                statusColor = "#ffc107";
+            }
+            
+            document.getElementById('finalScore').textContent = `${score}/${totalQuestions}`;
+            document.getElementById('correctCount').textContent = correct;
+            document.getElementById('incorrectCount').textContent = incorrect;
+            document.getElementById('percentage').textContent = `${percentage}%`;
+            document.getElementById('statusMessage').textContent = status;
+            document.getElementById('statusMessage').style.color = statusColor;
+            
+            document.getElementById('resultModal').style.display = 'flex';
+        }
+
+        // Reset quiz
+        function resetQuiz() {
+            userAnswers = {};
+            score = 0;
+            answeredCount = 0;
+            
+            // Clear all selections
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Hide explanations
+            document.querySelectorAll('.explanation').forEach(el => {
+                el.classList.remove('show');
+            });
+            
+            // Hide answer keys
+            document.querySelectorAll('.answer-key').forEach(el => {
+                el.classList.remove('show');
+                el.style.borderColor = "";
+                el.style.background = "";
+            });
+            
+            // Clear input fields
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.value = "";
+            });
+            
+            updateProgress();
+        }
+
+        // Event listeners
+        document.getElementById('checkAnswers').addEventListener('click', checkAnswers);
+        document.getElementById('showAnswers').addEventListener('click', showAnswerKey);
+        document.getElementById('resetQuiz').addEventListener('click', resetQuiz);
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('resultModal').style.display = 'none';
+        });
+
+        // Close modal on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target.id === 'resultModal') {
+                document.getElementById('resultModal').style.display = 'none';
+            }
+        });
+
+        // Make functions global for inline onclick handlers
+        window.selectOption = selectOption;
+        window.selectTF = selectTF;
+        window.selectShortAnswer = selectShortAnswer;
+
+        // Initialize quiz when page loads
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
