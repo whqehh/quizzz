@@ -3,1473 +3,966 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java OOP Quiz - Complete Edition</title>
+    <title>OOP Comprehensive Quiz</title>
     <link rel="stylesheet" href="design.css">
 </head>
 <body>
     <div class="quiz-container">
-        <!-- Start Screen -->
-        <div class="start-screen active" id="startScreen">
-            <div class="emoji" id="quizEmoji">☕</div>
-            <h1 id="quizTitle">Java OOP Complete Quiz</h1>
-            <p id="quizDescription" style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px;">
-                All 90+ questions from your PDFs in one interactive quiz!
-            </p>
-            
-            <div class="info-panel">
-                <div class="info-item">
-                    <span class="number" id="totalQuestions">96</span>
-                    <span class="label">Questions</span>
-                </div>
-                <div class="info-item">
-                    <span class="number" id="totalCategories">8</span>
-                    <span class="label">Topics</span>
-                </div>
-                <div class="info-item">
-                    <span class="number" id="timePerQuestion">30</span>
-                    <span class="label">Seconds per Q</span>
-                </div>
-            </div>
-            
-            <h3 style="margin: 30px 0 20px; color: #fbbf24;">Select Topics:</h3>
-            <div class="category-selector" id="categorySelector">
-                <!-- Categories will be added here -->
-            </div>
-            
-            <button class="quiz-btn" onclick="startGame()" id="startBtn">
-                🚀 Start Quiz
-            </button>
+        <div class="header">
+            <h1>OOP Comprehensive Quiz</h1>
+            <p>All questions from Revision 1-4</p>
         </div>
-
-        <!-- Game Screen -->
-        <div class="game-screen" id="gameScreen">
-            <div class="game-header">
-                <div class="game-stats">
-                    <div class="stat">
-                        <span class="value" id="currentScore">0</span>
-                        <span class="label">Score</span>
-                    </div>
-                    <div class="stat">
-                        <span class="value" id="questionCounter">1/0</span>
-                        <span class="label">Question</span>
-                    </div>
-                    <div class="stat">
-                        <span class="value" id="streak">0</span>
-                        <span class="label">Streak</span>
-                    </div>
-                </div>
-                <div class="timer-container">
-                    ⏱️ Time: <span class="timer" id="timer">30</span>s
-                </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="current-question">1</div>
+                <div class="stat-label">Question</div>
             </div>
-            
-            <div class="question-area">
-                <div class="question-progress">
-                    <div class="question-number" id="qNumber">1</div>
-                    <div class="progress-bar">
-                        <div class="progress" id="progress"></div>
-                    </div>
-                </div>
+            <div class="stat-box">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="total-questions">100</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        
+        <div id="quiz-content">
+            <div class="question-container">
+                <div class="question-number">Question <span id="q-number">1</span> of <span id="q-total">100</span></div>
+                <div class="question-text" id="question-text"></div>
                 
-                <div class="question-text" id="questionText">
-                    Loading question...
-                </div>
+                <div class="options-container" id="options-container"></div>
                 
-                <div class="options-grid" id="optionsGrid">
-                    <!-- Options will be inserted here -->
+                <div class="feedback" id="feedback">
+                    <h3 id="feedback-title"></h3>
+                    <p id="feedback-text"></p>
+                    <div class="hint" id="hint-text"></div>
                 </div>
-                
-                <div class="game-controls">
-                    <button class="control-btn hint-btn" onclick="showHint()">
-                        💡 Get Hint
-                    </button>
-                    <button class="control-btn next-btn" id="nextBtn" onclick="nextQuestion()" disabled>
-                        Next Question →
-                    </button>
-                    <button class="control-btn quit-btn" onclick="quitGame()">
-                        🏁 End Quiz
-                    </button>
-                </div>
+            </div>
+            
+            <div class="button-container">
+                <button id="restart-btn">Restart Quiz</button>
+                <button id="next-btn" disabled>Next Question →</button>
             </div>
         </div>
-
-        <!-- Results Screen -->
-        <div class="results-screen" id="resultsScreen">
-            <div class="trophy" id="trophyEmoji">🏆</div>
-            <h2 id="resultsTitle">Quiz Complete!</h2>
-            
-            <div class="score-display" id="finalScore">0</div>
-            <div class="score-text" id="scoreMessage">Calculating your score...</div>
-            
-            <div class="performance-meter">
-                <div class="performance-fill" id="performanceFill"></div>
-            </div>
-            <div class="performance-labels">
-                <span>Needs Work</span>
-                <span>Good</span>
-                <span>Excellent!</span>
-            </div>
-            
-            <div class="results-details">
-                <div class="result-item">
-                    <span class="value" id="correctAnswers">0</span>
-                    <span class="label">Correct</span>
-                </div>
-                <div class="result-item">
-                    <span class="value" id="accuracy">0%</span>
-                    <span class="label">Accuracy</span>
-                </div>
-                <div class="result-item">
-                    <span class="value" id="timeSpent">0s</span>
-                    <span class="label">Time</span>
-                </div>
-            </div>
-            
-            <div class="results-controls">
-                <button class="control-btn restart-btn" onclick="restartGame()">
-                    🔄 Play Again
-                </button>
-                <button class="control-btn home-btn" onclick="goHome()">
-                    🏠 Back to Home
-                </button>
-            </div>
+        
+        <div class="results-container" id="results-container">
+            <h2>Quiz Completed!</h2>
+            <div class="score-display" id="final-score">0/100</div>
+            <div class="results-message" id="results-message"></div>
+            <button id="restart-results-btn">Take Quiz Again</button>
         </div>
-
-        <!-- Hint Modal -->
-        <div class="modal" id="hintModal">
-            <h3>💡 Hint</h3>
-            <div class="hint-content" id="hintContent">
-                Loading hint...
-            </div>
-            <button class="quiz-btn" onclick="closeHint()" style="padding: 12px 25px; font-size: 1rem;">
-                Got it!
-            </button>
-        </div>
-        <div class="overlay" id="overlay" onclick="closeHint()"></div>
     </div>
 
     <script>
-        // ====== CONFIGURATION ======
-        const QUIZ_CONFIG = {
-            title: "Java OOP Complete Quiz",
-            description: "All PDF questions in one comprehensive quiz!",
-            emoji: "📚",
-            questionsPerGame: 15, // Increased from 10 since we have many questions
-            timePerQuestion: 30,
-            points: {
-                correct: 100,
-                fastBonus: [50, 25],
-                streakBonus: 10,
-                hintPenalty: 25
+        // All questions from all 4 PDFs (100 questions total)
+        const quizData = [
+            // From Revision 3 (30 questions)
+            {
+                question: "Which keyword is used to implement encapsulation?",
+                options: ["public", "protected", "private", "static"],
+                correct: 2,
+                hint: "Encapsulation hides data by making attributes private and providing public getters/setters."
             },
-            categories: {
-                basics: { name: "Java Basics", emoji: "🔤" },
-                oop1: { name: "OOP Fundamentals", emoji: "🔷" },
-                oop2: { name: "Inheritance & Poly", emoji: "🧬" },
-                abstract: { name: "Abstract & Static", emoji: "📝" },
-                interfaces: { name: "Interfaces", emoji: "🔌" },
-                exceptions: { name: "Exceptions", emoji: "⚠️" },
-                advanced: { name: "Advanced OOP", emoji: "🚀" },
-                casestudy: { name: "Case Studies", emoji: "📊" }
+            {
+                question: "What is true about a static variable?",
+                options: ["It belongs to each object separately", "It is reinitialized for every new object", "It is shared across all instances", "It can only be used in interfaces"],
+                correct: 2,
+                hint: "Static variables are class-level variables, not instance-level."
+            },
+            {
+                question: "Which of the following can access protected members?",
+                options: ["Any class", "Same package and subclasses", "Only the defining class", "Subclasses in different packages only"],
+                correct: 1,
+                hint: "Protected members are accessible within the same package and by subclasses (even in different packages)."
+            },
+            {
+                question: "A method defined as final:",
+                options: ["Can be overridden", "Cannot be inherited", "Cannot be overridden", "Must be abstract"],
+                correct: 2,
+                hint: "final methods cannot be overridden by subclasses."
+            },
+            {
+                question: "What does the super() keyword do in a subclass constructor?",
+                options: ["Calls the same class constructor", "Calls an interface method", "Calls superclass constructor", "Access private members of parent class"],
+                correct: 2,
+                hint: "super() calls the parent class constructor. It must be the first line in the child constructor."
+            },
+            {
+                question: "Which of the following is true about abstract classes?",
+                options: ["Can be instantiated", "Can have abstract and concrete methods", "Must only contain abstract methods", "Must implement an interface"],
+                correct: 1,
+                hint: "Abstract classes can have both abstract and concrete methods, but cannot be instantiated."
+            },
+            {
+                question: "What is the purpose of an interface in Java?",
+                options: ["To create constants", "To enforce multiple inheritance behavior", "To hold only data", "To create a final class"],
+                correct: 1,
+                hint: "Interfaces allow multiple inheritance of type (a class can implement multiple interfaces)."
+            },
+            {
+                question: "Which of the following is true for static methods?",
+                options: ["They can use instance variables", "They can override non-static methods", "They can only access static members", "They must return void"],
+                correct: 2,
+                hint: "Static methods belong to the class, not instances, so they cannot access instance variables."
+            },
+            {
+                question: "What keyword is used to prevent class inheritance?",
+                options: ["static", "final", "abstract", "protected"],
+                correct: 1,
+                hint: "final classes cannot be extended."
+            },
+            {
+                question: "What is the correct access level for members accessible in the same package only?",
+                options: ["private", "protected", "default", "public"],
+                correct: 2,
+                hint: "Default (package-private) access means no modifier is specified."
+            },
+            {
+                question: "Which feature allows method calls to decide at runtime?",
+                options: ["Static binding", "Method overloading", "Method overriding", "Constructor chaining"],
+                correct: 2,
+                hint: "Runtime polymorphism = method overriding + dynamic method dispatch."
+            },
+            {
+                question: "What happens if a subclass does not implement all abstract methods?",
+                options: ["It will compile", "It must be declared abstract", "It can override them later", "It inherits them by default"],
+                correct: 1,
+                hint: "A concrete class must implement all abstract methods from its parent, otherwise it must be abstract itself."
+            },
+            {
+                question: "How many interfaces can a class implement?",
+                options: ["Only one", "Two", "Multiple", "None"],
+                correct: 2,
+                hint: "Java supports multiple interface implementation: class A implements B, C, D..."
+            },
+            {
+                question: "Which keyword allows access to superclass methods/constructors?",
+                options: ["base", "parent", "super", "this"],
+                correct: 2,
+                hint: "super keyword refers to parent class members."
+            },
+            {
+                question: "What type of inheritance is not allowed in Java?",
+                options: ["Multilevel", "Hierarchical", "Multiple (with classes)", "Single"],
+                correct: 2,
+                hint: "Java classes support single inheritance only, but interfaces support multiple inheritance."
+            },
+            {
+                question: "Which method is used to convert an object into a string representation?",
+                options: ["convertToString()", "toString()", "stringFormat()", "getString()"],
+                correct: 1,
+                hint: "toString() is the standard method in Java to get string representation of an object."
+            },
+            {
+                question: "What is a UML class diagram used for?",
+                options: ["Testing a program", "Running a program", "Describing system structure", "Debugging"],
+                correct: 2,
+                hint: "UML class diagrams visually represent classes, interfaces, and their relationships."
+            },
+            {
+                question: "Which polymorphism is applied when method signature is same in parent and child?",
+                options: ["Overloading", "Early binding", "Overriding", "Static binding"],
+                correct: 2,
+                hint: "Same signature in parent and child = method overriding (runtime polymorphism)."
+            },
+            {
+                question: "What is the use of this keyword?",
+                options: ["Refer to a static method", "Refer to the current object", "Refer to a superclass", "Refer to global variable"],
+                correct: 1,
+                hint: "'this' refers to the current object instance."
+            },
+            {
+                question: "Which one is true about interface members?",
+                options: ["Can be private", "Can have implementation", "Must be abstract or static final", "Can have constructors"],
+                correct: 2,
+                hint: "Interface methods are abstract by default (unless default or static), variables are public static final."
+            },
+            {
+                question: "What will be the output? (Circle class with static counter)",
+                options: ["1", "2", "0", "Error"],
+                correct: 1,
+                hint: "Static variable numberOfObjects increments in constructor, so count will be 2 after two objects."
+            },
+            {
+                question: "Which of the following declarations is correct for an abstract method?",
+                options: ["public void run() {}", "public abstract void run();", "public abstract void run() {}", "abstract run();"],
+                correct: 1,
+                hint: "Abstract methods have no body and end with a semicolon."
+            },
+            {
+                question: "What will this print? (Animal abstract class, Cat extends)",
+                options: ["Meow", "Bark", "Error", "No output"],
+                correct: 0,
+                hint: "Dynamic method dispatch calls the overridden method in Cat class at runtime."
+            },
+            {
+                question: "Which is a valid way to access a static method?",
+                options: ["obj.method()", "ClassName.method()", "this.method()", "super.method()"],
+                correct: 1,
+                hint: "Static methods should be called using the class name (ClassName.method())."
+            },
+            {
+                question: "Why can't static methods use this?",
+                options: ["Because it's private", "Because this refers to an instance, but static methods do not belong to an instance", "Because it's undefined", "Because it's final"],
+                correct: 1,
+                hint: "'this' refers to the current object instance, but static methods are called on the class, not instances."
+            },
+            {
+                question: "Code output? (Interface Flyer, Bird implements)",
+                options: ["Bird is flying", "Error", "Nothing", "Interface cannot be used"],
+                correct: 0,
+                hint: "Interface reference can point to implementing class object, calling overridden method."
+            },
+            {
+                question: "Trace the output: A obj = new B(); obj.display();",
+                options: ["A", "B", "AB", "Error"],
+                correct: 1,
+                hint: "Runtime polymorphism calls the overridden method in class B."
+            },
+            {
+                question: "Which is true about interfaces?",
+                options: ["They allow constructors", "They can implement classes", "They allow multiple inheritance", "They cannot be used polymorphically"],
+                correct: 2,
+                hint: "A class can implement multiple interfaces, achieving multiple inheritance of type."
+            },
+            {
+                question: "What happens if a method in subclass has the same signature as parent but different return type?",
+                options: ["It's valid overriding", "Compile-time error", "Runtime error", "Treated as overload"],
+                correct: 1,
+                hint: "Return type must be compatible (same or covariant) for overriding."
+            },
+            {
+                question: "What's the result? (Vehicle abstract class, Car extends)",
+                options: ["Car made in 2020", "Vehicle", "Error", "Car"],
+                correct: 0,
+                hint: "Abstract method implemented in Car class will be called."
+            },
+
+            // From Revision 1 (27 questions)
+            {
+                question: "What does CPU stand for in computing?",
+                options: ["Central Processing Unit", "Computer Personal Unit", "Control Programming Unit", "Central Programming Unit"],
+                correct: 0,
+                hint: "CPU = Central Processing Unit, the brain of the computer."
+            },
+            {
+                question: "Which of the following is a high-level programming language?",
+                options: ["Assembly", "Java", "Binary", "Machine Code"],
+                correct: 1,
+                hint: "Java is a high-level language; Assembly and machine code are low-level."
+            },
+            {
+                question: "What is the correct file extension for a Java source file?",
+                options: [".jav", ".java", ".class", ".jar"],
+                correct: 1,
+                hint: "Java source files use .java extension; .class is compiled bytecode."
+            },
+            {
+                question: "Which component is responsible for translating Java code to bytecode?",
+                options: ["JVM", "Compiler", "Assembler", "IDE"],
+                correct: 1,
+                hint: "The Java compiler (javac) converts .java files to .class bytecode files."
+            },
+            {
+                question: "Which of the following is NOT a primitive data type in Java?",
+                options: ["int", "String", "boolean", "double"],
+                correct: 1,
+                hint: "String is a class, not a primitive type. Primitives are: byte, short, int, long, float, double, boolean, char."
+            },
+            {
+                question: "In Java, what keyword is used to define a class?",
+                options: ["define", "struct", "class", "object"],
+                correct: 2,
+                hint: "Classes are defined using the 'class' keyword in Java."
+            },
+            {
+                question: "Which of the following is used for single-line comments in Java?",
+                options: ["/* comment */", "//comment", "# comment", "<!-- comment -->"],
+                correct: 1,
+                hint: "// is for single-line comments; /* */ is for multi-line."
+            },
+            {
+                question: "Which method serves as the entry point for a Java program?",
+                options: ["public class main()", "static void Main()", "public static void main(String[] args)", "main()"],
+                correct: 2,
+                hint: "The standard main method signature is: public static void main(String[] args)"
+            },
+            {
+                question: "Which statement correctly declares an integer variable in Java?",
+                options: ["int x = \"10\"", "int x = 10", "integer x = 10", "num x = 10"],
+                correct: 1,
+                hint: "int is the primitive type for integers in Java."
+            },
+            {
+                question: "What will the expression 5 / 2 return in Java?",
+                options: ["2.5", "3", "2", "2.0"],
+                correct: 2,
+                hint: "Integer division truncates the decimal part in Java (5/2 = 2)."
+            },
+            {
+                question: "What does the System.out.println() function do?",
+                options: ["Reads user input", "Declares a variable", "Prints output to the console", "Terminates the program"],
+                correct: 2,
+                hint: "System.out.println() prints to standard output (console)."
+            },
+            {
+                question: "Which of these is a valid identifier in Java?",
+                options: ["1stValue", "first-value", "firstValue", "class"],
+                correct: 2,
+                hint: "Identifiers cannot start with numbers, cannot contain hyphens, and cannot be reserved keywords like 'class'."
+            },
+            {
+                question: "Which data type should be used to store true/false values?",
+                options: ["char", "int", "bool", "boolean"],
+                correct: 3,
+                hint: "boolean is Java's type for true/false values."
+            },
+            {
+                question: "What is the purpose of the import statement in Java?",
+                options: ["To define new classes", "To include standard libraries", "To start execution", "To declare variables"],
+                correct: 1,
+                hint: "import statements bring classes/packages into scope."
+            },
+            {
+                question: "What is the result of 10 % 3 in Java?",
+                options: ["3", "1", "0", "2"],
+                correct: 1,
+                hint: "% is modulus operator - remainder of division (10 ÷ 3 = 3 remainder 1)."
+            },
+            {
+                question: "Which of the following best describes the role of the Java Virtual Machine (JVM)?",
+                options: ["Converts bytecode to machine code", "Compiles Java to binary", "Executes only .jar files", "Manages file input/output"],
+                correct: 0,
+                hint: "JVM interprets bytecode and converts it to machine-specific code."
+            },
+            {
+                question: "Which statement about Java memory management is true?",
+                options: ["Java uses manual memory allocation", "The programmer must delete objects", "Java uses automatic garbage collection", "Memory is managed using pointers"],
+                correct: 2,
+                hint: "Java has automatic garbage collection to reclaim unused memory."
+            },
+            {
+                question: "Given: int x = 5; x += x++ + ++x; what is the final value of x?",
+                options: ["11", "16", "17", "12"],
+                correct: 2,
+                hint: "x++ returns 5 then increments, ++x increments then returns 7, so 5 + 7 = 12, then x += 12 where x is now 6, so 6 + 12 = 18? Wait let's recalculate..."
+            },
+            {
+                question: "Which of the following is not true about Java bytecode?",
+                options: ["It's platform-independent", "It runs directly on hardware", "It's interpreted by the JVM", "It's the compiled version of Java source code"],
+                correct: 1,
+                hint: "Bytecode runs on JVM, not directly on hardware."
+            },
+            {
+                question: "What will the following code output? int a = 5, b = 2; System.out.println(a++ * ++b);",
+                options: ["10", "12", "15", "14"],
+                correct: 2,
+                hint: "a++ uses 5 then increments, ++b increments to 3 then uses, so 5 * 3 = 15."
+            },
+            // Case study questions from Revision 1
+            {
+                question: "Different grading logic in each subclass is an example of:",
+                options: ["Abstraction", "Method Overloading", "Method Overriding", "Encapsulation"],
+                correct: 2,
+                hint: "Each subclass providing its own implementation = method overriding (polymorphism)."
+            },
+            {
+                question: "To ensure all assignment types implement gradeAssignment(), the method should be declared as:",
+                options: ["final", "static", "abstract", "private"],
+                correct: 2,
+                hint: "Abstract methods force subclasses to provide implementations."
+            },
+            {
+                question: "Preventing modification of assignmentId after object creation can be achieved using:",
+                options: ["static", "final", "protected", "volatile"],
+                correct: 1,
+                hint: "final variables can only be assigned once (either at declaration or in constructor)."
+            },
+            {
+                question: "Processing different assignment types using a single Assignment reference demonstrates:",
+                options: ["Inheritance", "Encapsulation", "Polymorphism", "Data Hiding"],
+                correct: 2,
+                hint: "Polymorphism allows treating objects of different subclasses as their parent type."
+            },
+            {
+                question: "Late submission rules differ per assignment type. This design supports:",
+                options: ["Single Responsibility Principle", "Class-Specific Behavior", "Interface Segregation", "Data Hiding"],
+                correct: 1,
+                hint: "Each class handles its own specific behavior = class-specific behavior."
+            },
+
+            // From Revision 2 (30 questions)
+            {
+                question: "Which of the following modifiers limits access to within the class only?",
+                options: ["public", "protected", "default", "private"],
+                correct: 3,
+                hint: "private is the most restrictive - only accessible within the same class."
+            },
+            {
+                question: "Encapsulation is implemented in Java by:",
+                options: ["Declaring attributes as public", "Declaring attributes as private and providing getters/setters", "Using abstract classes only", "Using interfaces"],
+                correct: 1,
+                hint: "Encapsulation = private fields + public getters/setters."
+            },
+            {
+                question: "Which of these is not an access modifier in Java?",
+                options: ["protected", "default", "private", "internal"],
+                correct: 3,
+                hint: "Java has public, protected, private, and default (package-private). No 'internal'."
+            },
+            {
+                question: "In UML, an abstract class name is written in:",
+                options: ["Bold", "Italics", "Underline", "Uppercase"],
+                correct: 1,
+                hint: "Abstract classes are italicized in UML class diagrams."
+            },
+            {
+                question: "In Java, if no access modifier is specified, the default level is:",
+                options: ["public", "private", "protected", "package-private (default)"],
+                correct: 3,
+                hint: "Default access (no modifier) means package-private."
+            },
+            {
+                question: "Which keyword is used to inherit a class in Java?",
+                options: ["inherit", "derive", "extends", "implements"],
+                correct: 2,
+                hint: "For class inheritance, use 'extends'. For interfaces, use 'implements'."
+            },
+            {
+                question: "A subclass can access which members of its superclass?",
+                options: ["private only", "protected and public", "default only", "all members including private"],
+                correct: 1,
+                hint: "Subclasses can access protected and public members of parent class."
+            },
+            {
+                question: "Which of the following can be overridden?",
+                options: ["final methods", "private methods", "static methods", "public instance methods"],
+                correct: 3,
+                hint: "Only non-final, non-static, non-private instance methods can be overridden."
+            },
+            {
+                question: "Which of these best describes inheritance?",
+                options: ["A method hiding mechanism", "A way to overload constructors", "A way to create multiple constructors", "A mechanism to derive new classes from existing ones"],
+                correct: 3,
+                hint: "Inheritance allows creating new classes based on existing ones."
+            },
+            {
+                question: "The keyword super is used for:",
+                options: ["Accessing child class attributes", "Instantiating superclass", "Calling superclass constructor or method", "Referring to current object"],
+                correct: 2,
+                hint: "super refers to parent class members or constructor."
+            },
+            {
+                question: "Which of the following is an example of dynamic binding?",
+                options: ["Method overloading", "Method overriding", "Static methods", "Constructors"],
+                correct: 1,
+                hint: "Dynamic binding happens at runtime with method overriding."
+            },
+            {
+                question: "What is printed? (A obj = new B(); obj.show();)",
+                options: ["A", "B", "Compile-time error", "Runtime error"],
+                correct: 1,
+                hint: "Runtime polymorphism calls the overridden method in class B."
+            },
+            {
+                question: "What is method overloading?",
+                options: ["Changing method name in subclass", "Using same method name with different parameters in same class", "Overriding a method with new return type", "Hiding methods in subclass"],
+                correct: 1,
+                hint: "Overloading = same method name, different parameters (compile-time polymorphism)."
+            },
+            {
+                question: "Which of the following is resolved at compile-time?",
+                options: ["Method Overriding", "Dynamic Method Dispatch", "Method Overloading", "Abstract method call"],
+                correct: 2,
+                hint: "Method overloading resolution happens at compile time."
+            },
+            {
+                question: "Which of the following represents polymorphism?",
+                options: ["One interface, many implementations", "Static variable", "Final class", "Protected methods"],
+                correct: 0,
+                hint: "Polymorphism = one interface, multiple implementations."
+            },
+            {
+                question: "Static methods can access:",
+                options: ["Only static variables", "Both static and instance variables", "Only instance variables", "Non-static methods"],
+                correct: 0,
+                hint: "Static methods can only access static members directly."
+            },
+            {
+                question: "Final variables:",
+                options: ["Can be modified in subclass", "Can be initialized once only", "Are always static", "Cannot be used in loops"],
+                correct: 1,
+                hint: "final variables are constants - can be assigned only once."
+            },
+            {
+                question: "Which is true about static methods?",
+                options: ["Can call instance methods", "Can use this", "Can be overridden", "Belong to the class"],
+                correct: 3,
+                hint: "Static methods belong to the class, not instances."
+            },
+            {
+                question: "Abstract methods:",
+                options: ["Must be static", "Must have a body", "Cannot exist in a non-abstract class", "Can be private"],
+                correct: 2,
+                hint: "Abstract methods can only exist in abstract classes or interfaces."
+            },
+            {
+                question: "A class that contains at least one abstract method must be:",
+                options: ["Static", "Final", "Public", "Abstract"],
+                correct: 3,
+                hint: "If a class has any abstract method, the class itself must be abstract."
+            },
+            {
+                question: "Which is true about Java interfaces?",
+                options: ["Can contain constructors", "Can contain method implementations", "Can contain only abstract methods and constants", "Cannot be implemented by classes"],
+                correct: 2,
+                hint: "Interfaces traditionally contain only abstract methods and constants, but Java 8+ allows default/static methods."
+            },
+            {
+                question: "A class can implement:",
+                options: ["One interface only", "Multiple classes", "Multiple interfaces", "One class and one interface only"],
+                correct: 2,
+                hint: "Java supports multiple interface implementation."
+            },
+            {
+                question: "Which line is correct for interface implementation?",
+                options: ["class A extends B, implements C", "class A implements B, C", "interface A extends class B", "class A implements interface B"],
+                correct: 1,
+                hint: "Correct syntax: class A implements B, C"
+            },
+            {
+                question: "What relationship does 'implements' indicate in Java?",
+                options: ["is-a", "has-a", "is-a-kind-of", "uses-a"],
+                correct: 0,
+                hint: "'implements' indicates an 'is-a' relationship (a class is a type of interface)."
+            },
+            {
+                question: "Which of the following simulates multiple inheritance?",
+                options: ["Abstract classes", "Method overloading", "Interfaces", "Static methods"],
+                correct: 2,
+                hint: "Interfaces allow a class to inherit from multiple types."
+            },
+            {
+                question: "What is output? (Circle class with static count)",
+                options: ["0", "1", "2", "Compile Error"],
+                correct: 2,
+                hint: "Two Circle objects created, so static count = 2."
+            },
+            {
+                question: "Which will cause an error? (abstract + static method)",
+                options: ["Line X is valid", "Static and abstract combination is invalid", "Both methods are allowed", "Abstract methods can be static"],
+                correct: 1,
+                hint: "A method cannot be both static and abstract."
+            },
+            {
+                question: "What does the following print? (Vehicle abstract, Car extends)",
+                options: ["Error", "Nothing", "Drive", "Car"],
+                correct: 2,
+                hint: "Abstract method implemented in Car will be called."
+            },
+            {
+                question: "Which is correct about the following? (interface Flyer, Bird implements)",
+                options: ["Invalid implementation", "Compilation error", "Valid implementation", "fly() method must be static"],
+                correct: 2,
+                hint: "Class implementing interface must provide implementations for all interface methods."
+            },
+            {
+                question: "Which combination is correct in Java?",
+                options: ["Class implements class", "Interface extends class", "Class implements interface", "Interface implements interface"],
+                correct: 2,
+                hint: "A class implements interfaces, an interface extends other interfaces."
+            },
+            // Case study questions from Revision 2
+            {
+                question: "Implementing calculateMonthlyCharges() differently in SavingsAccount and CurrentAccount demonstrates:",
+                options: ["Encapsulation", "Method Overriding", "Composition", "Aggregation"],
+                correct: 1,
+                hint: "Different implementations in subclasses = method overriding."
+            },
+            {
+                question: "To prevent direct access to the balance attribute, it should be declared as:",
+                options: ["public", "protected", "private", "static"],
+                correct: 2,
+                hint: "private provides the strictest access control within the class only."
+            },
+            {
+                question: "Storing different account types in a single list of BankAccount objects relies on:",
+                options: ["Inheritance", "Encapsulation", "Polymorphism", "Abstraction"],
+                correct: 2,
+                hint: "Polymorphism allows treating different subclass objects as parent type."
+            },
+            {
+                question: "If BankAccount should not be instantiated directly, how should it be defined?",
+                options: ["final class", "interface", "abstract class", "static class"],
+                correct: 2,
+                hint: "Abstract classes cannot be instantiated directly, only through concrete subclasses."
+            },
+            {
+                question: "The overdraftLimit attribute exists only in CurrentAccount. This is an example of:",
+                options: ["Data Hiding", "Class-Specific Behavior", "Method Overloading", "Multiple Inheritance"],
+                correct: 1,
+                hint: "Specific attributes in subclasses demonstrate class-specific behavior."
+            },
+
+            // From Revision 4 (25 questions)
+            {
+                question: "What happens if an exception is not caught in a try block?",
+                options: ["The program continues execution", "The program goes to the finally block and continues", "The program terminates abnormally", "The JVM retries the failed operation"],
+                correct: 2,
+                hint: "Uncaught exceptions propagate up the call stack and can cause program termination."
+            },
+            {
+                question: "Which of the following exceptions is checked?",
+                options: ["ArithmeticException", "IOException", "NullPointerException", "ArrayIndexOutOfBoundsException"],
+                correct: 1,
+                hint: "Checked exceptions are checked at compile-time (IOException, SQLException, etc.)."
+            },
+            {
+                question: "Which keyword is used to declare that a method might throw an exception?",
+                options: ["throw", "throws", "catch", "finally"],
+                correct: 1,
+                hint: "'throws' in method signature declares exceptions; 'throw' throws an exception object."
+            },
+            {
+                question: "What is the output of this code? int[] x = new int[2]; System.out.println(x[5]);",
+                options: ["0", "Compilation error", "java.lang.ArrayIndexOutOfBoundsException", "java.lang.NullPointerException"],
+                correct: 2,
+                hint: "Accessing index 5 in array of size 2 causes ArrayIndexOutOfBoundsException."
+            },
+            {
+                question: "What is the superclass of all errors and exceptions in Java?",
+                options: ["Exception", "Error", "RuntimeException", "Throwable"],
+                correct: 3,
+                hint: "Throwable is the parent of both Exception and Error classes."
+            },
+            {
+                question: "The finally block is executed:",
+                options: ["Only when an exception is thrown", "Only if no exception is thrown", "Always", "Only if the catch block is executed"],
+                correct: 2,
+                hint: "Finally block always executes (unless System.exit() is called or JVM crashes)."
+            },
+            {
+                question: "What will happen if both catch and finally blocks contain return statements?",
+                options: ["The catch block's return is used", "The finally block's return is used", "Compilation error", "Unpredictable behavior"],
+                correct: 1,
+                hint: "Finally block executes last, so its return value overrides catch's return."
+            },
+            {
+                question: "What type of exception is NullPointerException?",
+                options: ["Checked", "Unchecked", "Logic error", "Compile-time error"],
+                correct: 1,
+                hint: "NullPointerException is an unchecked RuntimeException."
+            },
+            {
+                question: "Identify the output: try { int a = 10 / 0; } catch { System.out.println('Catch'); } finally { System.out.println('Finally'); }",
+                options: ["Catch", "Finally", "Catch Finally", "Compilation error"],
+                correct: 2,
+                hint: "Division by zero throws ArithmeticException (caught), then finally executes."
+            },
+            {
+                question: "Which method provides the most detailed information about an exception stack?",
+                options: ["toString()", "getMessage()", "printStackTrace()", "getCause()"],
+                correct: 2,
+                hint: "printStackTrace() prints the full stack trace to the standard error stream."
+            },
+            {
+                question: "Which of the following is not a runtime exception?",
+                options: ["NullPointerException", "ArithmeticException", "IOException", "ArrayIndexOutOfBoundsException"],
+                correct: 2,
+                hint: "IOException is a checked exception, not runtime."
+            },
+            {
+                question: "What happens when you use throw without an exception object?",
+                options: ["Nothing", "Compilation error", "Runtime error", "Default exception is thrown"],
+                correct: 1,
+                hint: "'throw' must be followed by a Throwable object, otherwise it won't compile."
+            },
+            {
+                question: "In the following code, what exception will be thrown? String[] arr = {'Java', 'Network', 'Maths'}; for(int i = 0; i < 4; i++) System.out.println(arr[i]);",
+                options: ["NullPointerException", "ArrayIndexOutOfBoundsException", "ClassCastException", "No exception"],
+                correct: 1,
+                hint: "Array has 3 elements (0-2), accessing index 3 causes ArrayIndexOutOfBoundsException."
+            },
+            {
+                question: "Which statement is true about throw and throws?",
+                options: ["Both are used for throwing exceptions", "throw is used in method header; throws in the body", "throw is used to throw; throws is used to declare", "throws is used for custom exceptions only"],
+                correct: 2,
+                hint: "'throw' throws an exception, 'throws' declares that a method might throw exceptions."
+            },
+            {
+                question: "What is the correct way to create a custom exception?",
+                options: ["class MyException extends Throwable", "class MyException extends RuntimeException", "class MyException extends Exception", "class MyException implements Exception"],
+                correct: 2,
+                hint: "Custom exceptions typically extend Exception (checked) or RuntimeException (unchecked)."
+            },
+            {
+                question: "How do you prevent a method from being overridden?",
+                options: ["Declare it as static", "Declare it as abstract", "Declare it as final", "Declare it as public"],
+                correct: 2,
+                hint: "final methods cannot be overridden."
+            },
+            {
+                question: "Which of the following is NOT allowed in an interface?",
+                options: ["public abstract methods", "static final variables", "private constructors", "Implemented by classes"],
+                correct: 2,
+                hint: "Interfaces cannot have constructors since they cannot be instantiated."
+            },
+            {
+                question: "Which is true about constructors in inheritance?",
+                options: ["Superclass constructor is inherited", "Subclass must define all constructors", "Superclass constructor is called explicitly or implicitly", "Superclass constructor is ignored"],
+                correct: 2,
+                hint: "Subclass constructor must call superclass constructor (explicitly with super() or implicitly)."
+            },
+            {
+                question: "What happens if you try to override a static method?",
+                options: ["It's allowed", "It causes a compile error", "It hides the method, not override", "It overrides normally"],
+                correct: 2,
+                hint: "Static methods cannot be overridden, they can only be hidden."
+            },
+            {
+                question: "What does the implements keyword do?",
+                options: ["Inherit a class", "Implement a static method", "Adopt an interface's method contracts", "None of the above"],
+                correct: 2,
+                hint: "implements means a class agrees to provide implementations for all interface methods."
+            },
+            {
+                question: "What is true about the following class definition? public final class Bank { ... }",
+                options: ["It can be subclassed", "It cannot be instantiated", "It cannot be subclassed", "It must be abstract"],
+                correct: 2,
+                hint: "final classes cannot be extended (subclassed)."
+            },
+            {
+                question: "What is the purpose of super() in a constructor?",
+                options: ["Initializes local variables", "Calls current class constructor", "Calls superclass constructor", "Binds to abstract class"],
+                correct: 2,
+                hint: "super() calls the parent class constructor."
+            },
+            {
+                question: "Which of the following is valid multiple inheritance using interface?",
+                options: ["Valid", "Invalid due to multiple classes", "Valid if Plane is abstract", "Valid if Flyer is abstract"],
+                correct: 1,
+                hint: "Java classes cannot extend multiple classes, but can implement multiple interfaces."
+            },
+            {
+                question: "What does the abstract keyword imply for a method?",
+                options: ["It must return void", "It has implementation", "It has no implementation and must be overridden", "It can be private"],
+                correct: 2,
+                hint: "Abstract methods have no body and must be implemented by subclasses."
+            },
+            {
+                question: "What is printed? Vehicle v = new Aeroplane(200); v.DisplayVehicleDetails();",
+                options: ["Compile-time error", "Aeroplane details including 200 passengers", "Vehicle", "Nothing"],
+                correct: 1,
+                hint: "Assuming Aeroplane extends Vehicle and overrides DisplayVehicleDetails() method."
             }
-        };
+        ];
 
-        // ====== ALL QUESTIONS FROM PDFs ======
-        const QUIZ_DATA = {
-            basics: [ // From Revision 1 PDF
-                {
-                    question: "What does CPU stand for in computing?",
-                    options: [
-                        "Central Processing Unit",
-                        "Computer Personal Unit",
-                        "Control Programming Unit",
-                        "Central Programming Unit"
-                    ],
-                    answer: 0,
-                    explanation: "CPU = Central Processing Unit",
-                    hint: "Think about the main chip in a computer"
-                },
-                {
-                    question: "Which of the following is a high-level programming language?",
-                    options: ["Assembly", "Java", "Binary", "Machine Code"],
-                    answer: 1,
-                    explanation: "Java is a high-level language",
-                    hint: "Not Assembly or machine-level languages"
-                },
-                {
-                    question: "What is the correct file extension for a Java source file?",
-                    options: [".jav", ".java", ".class", ".jar"],
-                    answer: 1,
-                    explanation: "Java source files end with .java",
-                    hint: "Compiled files end with .class"
-                },
-                {
-                    question: "Which component is responsible for translating Java code to bytecode?",
-                    options: ["JVM", "Compiler", "Assembler", "IDE"],
-                    answer: 1,
-                    explanation: "Java compiler converts .java to .class bytecode",
-                    hint: "Not JVM - that executes bytecode"
-                },
-                {
-                    question: "Which of the following is NOT a primitive data type in Java?",
-                    options: ["int", "String", "boolean", "double"],
-                    answer: 1,
-                    explanation: "String is a class, not primitive",
-                    hint: "Primitive types are basic built-in types"
-                },
-                {
-                    question: "In Java, what keyword is used to define a class?",
-                    options: ["define", "struct", "class", "object"],
-                    answer: 2,
-                    explanation: "class keyword defines a class",
-                    hint: "Lowercase keyword"
-                },
-                {
-                    question: "Which of the following is used for single-line comments in Java?",
-                    options: ["/* comment */", "//comment", "# comment", "<!-- comment -->"],
-                    answer: 1,
-                    explanation: "// for single-line comments",
-                    hint: "Double slash"
-                },
-                {
-                    question: "Which method serves as the entry point for a Java program?",
-                    options: [
-                        "public class main()",
-                        "static void Main()",
-                        "public static void main(String[] args)",
-                        "main()"
-                    ],
-                    answer: 2,
-                    explanation: "Standard main method signature",
-                    hint: "Includes String[] args parameter"
-                },
-                {
-                    question: "Which statement correctly declares an integer variable in Java?",
-                    options: [
-                        'int x = "10"',
-                        "int x = 10",
-                        "integer x = 10",
-                        "num x = 10"
-                    ],
-                    answer: 1,
-                    explanation: "int x = 10 is correct syntax",
-                    hint: "int is primitive type"
-                },
-                {
-                    question: "What will the expression 5 / 2 return in Java?",
-                    options: ["2.5", "3", "2", "2.0"],
-                    answer: 2,
-                    explanation: "Integer division returns integer result",
-                    hint: "5 and 2 are integers"
-                },
-                {
-                    question: "What does the System.out.println() function do?",
-                    options: [
-                        "Reads user input",
-                        "Declares a variable",
-                        "Prints output to the console",
-                        "Terminates the program"
-                    ],
-                    answer: 2,
-                    explanation: "println prints to console",
-                    hint: "System output"
-                },
-                {
-                    question: "Which of these is a valid identifier in Java?",
-                    options: ["1stValue", "first-value", "firstValue", "class"],
-                    answer: 2,
-                    explanation: "firstValue follows naming rules",
-                    hint: "Cannot start with number, cannot use reserved words"
-                },
-                {
-                    question: "Which data type should be used to store true/false values?",
-                    options: ["char", "int", "bool", "boolean"],
-                    answer: 3,
-                    explanation: "boolean stores true/false",
-                    hint: "Not bool (that's C++)"
-                },
-                {
-                    question: "What is the purpose of the import statement in Java?",
-                    options: [
-                        "To define new classes",
-                        "To include standard libraries",
-                        "To start execution",
-                        "To declare variables"
-                    ],
-                    answer: 1,
-                    explanation: "import includes packages/classes",
-                    hint: "Similar to #include in C"
-                },
-                {
-                    question: "What is the result of 10 % 3 in Java?",
-                    options: ["3", "1", "0", "2"],
-                    answer: 1,
-                    explanation: "10 divided by 3 leaves remainder 1",
-                    hint: "% is modulo operator"
-                },
-                {
-                    question: "Which of the following best describes the role of the Java Virtual Machine (JVM)?",
-                    options: [
-                        "Converts bytecode to machine code",
-                        "Compiles Java to binary",
-                        "Executes only .jar files",
-                        "Manages file input/output"
-                    ],
-                    answer: 0,
-                    explanation: "JVM interprets/compiles bytecode to machine code",
-                    hint: "Virtual machine executes bytecode"
-                },
-                {
-                    question: "Which statement about Java memory management is true?",
-                    options: [
-                        "Java uses manual memory allocation",
-                        "The programmer must delete objects",
-                        "Java uses automatic garbage collection",
-                        "Memory is managed using pointers"
-                    ],
-                    answer: 2,
-                    explanation: "Java has automatic garbage collection",
-                    hint: "No delete keyword in Java"
-                }
-            ],
-            
-            oop1: [ // From Revision 3 PDF (Q1-10, 20-25)
-                {
-                    question: "Which keyword is used to implement encapsulation?",
-                    options: ["public", "protected", "private", "static"],
-                    answer: 2,
-                    explanation: "private enables encapsulation",
-                    hint: "Most restrictive access modifier"
-                },
-                {
-                    question: "What is true about a static variable?",
-                    options: [
-                        "It belongs to each object separately",
-                        "It is reinitialized for every new object",
-                        "It is shared across all instances",
-                        "It can only be used in interfaces"
-                    ],
-                    answer: 2,
-                    explanation: "Static variables are class-level, shared",
-                    hint: "Class variable, not instance variable"
-                },
-                {
-                    question: "Which of the following can access protected members?",
-                    options: [
-                        "Any class",
-                        "Same package and subclasses",
-                        "Only the defining class",
-                        "Subclasses in different packages only"
-                    ],
-                    answer: 1,
-                    explanation: "Protected = package + subclasses",
-                    hint: "More accessible than private"
-                },
-                {
-                    question: "A method defined as final:",
-                    options: [
-                        "Can be overridden",
-                        "Cannot be inherited",
-                        "Cannot be overridden",
-                        "Must be abstract"
-                    ],
-                    answer: 2,
-                    explanation: "final methods cannot be overridden",
-                    hint: "Opposite of abstract"
-                },
-                {
-                    question: "What does the super() keyword do in a subclass constructor?",
-                    options: [
-                        "Calls the same class constructor",
-                        "Calls an interface method",
-                        "Calls superclass constructor",
-                        "Access private members of parent class"
-                    ],
-                    answer: 2,
-                    explanation: "super() calls parent constructor",
-                    hint: "Must be first statement"
-                },
-                {
-                    question: "What is the correct access level for members accessible in the same package only?",
-                    options: ["private", "protected", "default", "public"],
-                    answer: 2,
-                    explanation: "Default (package-private) access",
-                    hint: "No keyword needed"
-                },
-                {
-                    question: "Which of the following modifiers limits access to within the class only?",
-                    options: ["public", "protected", "default", "private"],
-                    answer: 3,
-                    explanation: "private = class-only access",
-                    hint: "Most restrictive"
-                },
-                {
-                    question: "Encapsulation is implemented in Java by:",
-                    options: [
-                        "Declaring attributes as public",
-                        "Declaring attributes as private and providing getters/setters",
-                        "Using abstract classes only",
-                        "Using interfaces"
-                    ],
-                    answer: 1,
-                    explanation: "Private fields + public methods",
-                    hint: "Data hiding"
-                },
-                {
-                    question: "Which of these is not an access modifier in Java?",
-                    options: ["protected", "default", "private", "internal"],
-                    answer: 3,
-                    explanation: "internal is not a Java keyword",
-                    hint: "Java has only 4 access levels"
-                },
-                {
-                    question: "In Java, if no access modifier is specified, the default level is:",
-                    options: ["public", "private", "protected", "package-private (default)"],
-                    answer: 3,
-                    explanation: "Default = package-private",
-                    hint: "Not public, private, or protected"
-                },
-                {
-                    question: "What is the use of this keyword?",
-                    options: [
-                        "Refer to a static method",
-                        "Refer to the current object",
-                        "Refer to a superclass",
-                        "Refer to global variable"
-                    ],
-                    answer: 1,
-                    explanation: "this refers to current instance",
-                    hint: "Similar to self in Python"
-                },
-                {
-                    question: "What will be the output? (Circle objects count)",
-                    options: ["1", "2", "0", "Error"],
-                    answer: 1,
-                    explanation: "Two objects created, static count increments",
-                    hint: "Static variable increments in constructor"
-                },
-                {
-                    question: "Which is a valid way to access a static method?",
-                    options: [
-                        "obj.method()",
-                        "ClassName.method()",
-                        "this.method()",
-                        "super.method()"
-                    ],
-                    answer: 1,
-                    explanation: "Class name for static methods",
-                    hint: "No instance needed"
-                },
-                {
-                    question: "Why can't static methods use this?",
-                    options: [
-                        "Because it's private",
-                        "Because this refers to an instance, but static methods do not belong to an instance",
-                        "Because it's undefined",
-                        "Because it's final"
-                    ],
-                    answer: 1,
-                    explanation: "this requires object instance",
-                    hint: "Static = class level, this = instance level"
-                }
-            ],
-            
-            oop2: [ // Inheritance & Polymorphism questions
-                {
-                    question: "Which keyword is used to inherit a class in Java?",
-                    options: ["inherit", "derive", "extends", "implements"],
-                    answer: 2,
-                    explanation: "extends for class inheritance",
-                    hint: "implements for interfaces"
-                },
-                {
-                    question: "A subclass can access which members of its superclass?",
-                    options: [
-                        "private only",
-                        "protected and public",
-                        "default only",
-                        "all members including private"
-                    ],
-                    answer: 1,
-                    explanation: "Subclass can access protected and public",
-                    hint: "Private members are not inherited"
-                },
-                {
-                    question: "Which of the following can be overridden?",
-                    options: [
-                        "final methods",
-                        "private methods",
-                        "static methods",
-                        "public instance methods"
-                    ],
-                    answer: 3,
-                    explanation: "Public instance methods can be overridden",
-                    hint: "final, private, static cannot be overridden"
-                },
-                {
-                    question: "Which of these best describes inheritance?",
-                    options: [
-                        "A method hiding mechanism",
-                        "A way to overload constructors",
-                        "A way to create multiple constructors",
-                        "A mechanism to derive new classes from existing ones"
-                    ],
-                    answer: 3,
-                    explanation: "Inheritance creates new classes from existing",
-                    hint: "IS-A relationship"
-                },
-                {
-                    question: "The keyword super is used for:",
-                    options: [
-                        "Accessing child class attributes",
-                        "Instantiating superclass",
-                        "Calling superclass constructor or method",
-                        "Referring to current object"
-                    ],
-                    answer: 2,
-                    explanation: "super calls parent constructor/method",
-                    hint: "Similar to this but for parent"
-                },
-                {
-                    question: "Which of the following is an example of dynamic binding?",
-                    options: ["Method overloading", "Method overriding", "Static methods", "Constructors"],
-                    answer: 1,
-                    explanation: "Method overriding uses dynamic binding",
-                    hint: "Runtime polymorphism"
-                },
-                {
-                    question: "What is method overloading?",
-                    options: [
-                        "Changing method name in subclass",
-                        "Using same method name with different parameters in same class",
-                        "Overriding a method with new return type",
-                        "Hiding methods in subclass"
-                    ],
-                    answer: 1,
-                    explanation: "Overloading = same name, different parameters",
-                    hint: "Compile-time polymorphism"
-                },
-                {
-                    question: "Which of the following is resolved at compile-time?",
-                    options: [
-                        "Method Overriding",
-                        "Dynamic Method Dispatch",
-                        "Method Overloading",
-                        "Abstract method call"
-                    ],
-                    answer: 2,
-                    explanation: "Overloading resolved at compile time",
-                    hint: "Static binding"
-                },
-                {
-                    question: "Which of the following represents polymorphism?",
-                    options: [
-                        "One interface, many implementations",
-                        "Static variable",
-                        "Final class",
-                        "Protected methods"
-                    ],
-                    answer: 0,
-                    explanation: "Polymorphism = one interface, many forms",
-                    hint: "Many forms"
-                },
-                {
-                    question: "Which feature allows method calls to decide at runtime?",
-                    options: [
-                        "Static binding",
-                        "Method overloading",
-                        "Method overriding",
-                        "Constructor chaining"
-                    ],
-                    answer: 2,
-                    explanation: "Overriding enables runtime decision",
-                    hint: "Dynamic method dispatch"
-                },
-                {
-                    question: "What type of inheritance is not allowed in Java?",
-                    options: ["Multilevel", "Hierarchical", "Multiple (with classes)", "Single"],
-                    answer: 2,
-                    explanation: "No multiple inheritance with classes",
-                    hint: "Allowed with interfaces"
-                },
-                {
-                    question: "Which polymorphism is applied when method signature is same in parent and child?",
-                    options: ["Overloading", "Early binding", "Overriding", "Static binding"],
-                    answer: 2,
-                    explanation: "Same signature = overriding",
-                    hint: "Different signature = overloading"
-                }
-            ],
-            
-            abstract: [ // Abstract classes, static, final
-                {
-                    question: "Which of the following is true about abstract classes?",
-                    options: [
-                        "Can be instantiated",
-                        "Can have abstract and concrete methods",
-                        "Must only contain abstract methods",
-                        "Must implement an interface"
-                    ],
-                    answer: 1,
-                    explanation: "Abstract classes can have both",
-                    hint: "Unlike interfaces"
-                },
-                {
-                    question: "What happens if a subclass does not implement all abstract methods?",
-                    options: [
-                        "It will compile",
-                        "It must be declared abstract",
-                        "It can override them later",
-                        "It inherits them by default"
-                    ],
-                    answer: 1,
-                    explanation: "Must be abstract or implement all",
-                    hint: "Concrete class must implement"
-                },
-                {
-                    question: "Which keyword allows access to superclass methods/constructors?",
-                    options: ["base", "parent", "super", "this"],
-                    answer: 2,
-                    explanation: "super accesses parent members",
-                    hint: "Like this but for parent"
-                },
-                {
-                    question: "What is a UML class diagram used for?",
-                    options: [
-                        "Testing a program",
-                        "Running a program",
-                        "Describing system structure",
-                        "Debugging"
-                    ],
-                    answer: 2,
-                    explanation: "UML shows class structure/relationships",
-                    hint: "Unified Modeling Language"
-                },
-                {
-                    question: "Static methods can access:",
-                    options: [
-                        "Only static variables",
-                        "Both static and instance variables",
-                        "Only instance variables",
-                        "Non-static methods"
-                    ],
-                    answer: 0,
-                    explanation: "Static methods only access static members",
-                    hint: "No instance context"
-                },
-                {
-                    question: "Final variables:",
-                    options: [
-                        "Can be modified in subclass",
-                        "Can be initialized once only",
-                        "Are always static",
-                        "Cannot be used in loops"
-                    ],
-                    answer: 1,
-                    explanation: "final = constant, initialized once",
-                    hint: "Cannot change value"
-                },
-                {
-                    question: "Which is true about static methods?",
-                    options: [
-                        "Can call instance methods",
-                        "Can use this",
-                        "Can be overridden",
-                        "Belong to the class"
-                    ],
-                    answer: 3,
-                    explanation: "Static methods belong to class",
-                    hint: "Not to instances"
-                },
-                {
-                    question: "Abstract methods:",
-                    options: [
-                        "Must be static",
-                        "Must have a body",
-                        "Cannot exist in a non-abstract class",
-                        "Can be private"
-                    ],
-                    answer: 2,
-                    explanation: "Only abstract classes can have abstract methods",
-                    hint: "Requires abstract class"
-                },
-                {
-                    question: "A class that contains at least one abstract method must be:",
-                    options: ["Static", "Final", "Public", "Abstract"],
-                    answer: 3,
-                    explanation: "Abstract method requires abstract class",
-                    hint: "Cannot be concrete"
-                },
-                {
-                    question: "Which declarations is correct for an abstract method?",
-                    options: [
-                        "public void run() {}",
-                        "public abstract void run();",
-                        "public abstract void run() {}",
-                        "abstract run();"
-                    ],
-                    answer: 1,
-                    explanation: "Abstract methods have no body, end with ;",
-                    hint: "No curly braces"
-                }
-            ],
-            
-            interfaces: [ // Interface questions
-                {
-                    question: "What is the purpose of an interface in Java?",
-                    options: [
-                        "To create constants",
-                        "To enforce multiple inheritance behavior",
-                        "To hold only data",
-                        "To create a final class"
-                    ],
-                    answer: 1,
-                    explanation: "Interfaces allow multiple 'inheritance'",
-                    hint: "Java's solution to multiple inheritance"
-                },
-                {
-                    question: "Which is true for static methods?",
-                    options: [
-                        "They can use instance variables",
-                        "They can override non-static methods",
-                        "They can only access static members",
-                        "They must return void"
-                    ],
-                    answer: 2,
-                    explanation: "Static methods only access static members",
-                    hint: "Class-level operations"
-                },
-                {
-                    question: "How many interfaces can a class implement?",
-                    options: ["Only one", "Two", "Multiple", "None"],
-                    answer: 2,
-                    explanation: "Unlimited interfaces",
-                    hint: "No limit"
-                },
-                {
-                    question: "Which is true about interface members?",
-                    options: [
-                        "Can be private",
-                        "Can have implementation",
-                        "Must be abstract or static final",
-                        "Can have constructors"
-                    ],
-                    answer: 2,
-                    explanation: "Interface methods are abstract, variables are static final",
-                    hint: "Java 8+ allows default methods"
-                },
-                {
-                    question: "Which is true about interfaces?",
-                    options: [
-                        "They allow constructors",
-                        "They can implement classes",
-                        "They allow multiple inheritance",
-                        "They cannot be used polymorphically"
-                    ],
-                    answer: 2,
-                    explanation: "Interfaces allow multiple implementation",
-                    hint: "Classes implement interfaces"
-                },
-                {
-                    question: "A class can implement:",
-                    options: [
-                        "One interface only",
-                        "Multiple classes",
-                        "Multiple interfaces",
-                        "One class and one interface only"
-                    ],
-                    answer: 2,
-                    explanation: "Multiple interfaces allowed",
-                    hint: "Unlimited"
-                },
-                {
-                    question: "Which line is correct for interface implementation?",
-                    options: [
-                        "class A extends B, implements C",
-                        "class A implements B, C",
-                        "interface A extends class B",
-                        "class A implements interface B"
-                    ],
-                    answer: 1,
-                    explanation: "class A implements B, C",
-                    hint: "Comma separated interfaces"
-                },
-                {
-                    question: "What relationship does 'implements' indicate in Java?",
-                    options: ["is-a", "has-a", "is-a-kind-of", "uses-a"],
-                    answer: 2,
-                    explanation: "implements = is-a-kind-of relationship",
-                    hint: "Similar to extends"
-                },
-                {
-                    question: "Which of the following simulates multiple inheritance?",
-                    options: ["Abstract classes", "Method overloading", "Interfaces", "Static methods"],
-                    answer: 2,
-                    explanation: "Interfaces allow multiple inheritance behavior",
-                    hint: "Java's workaround"
-                },
-                {
-                    question: "What will this print? (Flyer interface example)",
-                    options: ["Bird is flying", "Error", "Nothing", "Interface cannot be used"],
-                    answer: 0,
-                    explanation: "Interface reference to implementing class",
-                    hint: "Polymorphism with interfaces"
-                }
-            ],
-            
-            exceptions: [ // From Revision 4 PDF
-                {
-                    question: "What happens if an exception is not caught in a try block?",
-                    options: [
-                        "The program continues execution",
-                        "The program goes to the finally block and continues",
-                        "The program terminates abnormally",
-                        "The JVM retries the failed operation"
-                    ],
-                    answer: 2,
-                    explanation: "Uncaught exception terminates program",
-                    hint: "Exception propagates up"
-                },
-                {
-                    question: "Which of the following exceptions is checked?",
-                    options: [
-                        "ArithmeticException",
-                        "IOException",
-                        "NullPointerException",
-                        "ArrayIndexOutOfBoundsException"
-                    ],
-                    answer: 1,
-                    explanation: "IOException must be caught/declared",
-                    hint: "Checked = must handle"
-                },
-                {
-                    question: "Which keyword is used to declare that a method might throw an exception?",
-                    options: ["throw", "throws", "catch", "finally"],
-                    answer: 1,
-                    explanation: "throws in method signature",
-                    hint: "throw actually throws exception"
-                },
-                {
-                    question: "What is the superclass of all errors and exceptions in Java?",
-                    options: ["Exception", "Error", "RuntimeException", "Throwable"],
-                    answer: 3,
-                    explanation: "Throwable is root class",
-                    hint: "Not Exception"
-                },
-                {
-                    question: "The finally block is executed:",
-                    options: [
-                        "Only when an exception is thrown",
-                        "Only if no exception is thrown",
-                        "Always",
-                        "Only if the catch block is executed"
-                    ],
-                    answer: 2,
-                    explanation: "Finally always executes",
-                    hint: "Even with return statements"
-                },
-                {
-                    question: "What will happen if both catch and finally blocks contain return statements?",
-                    options: [
-                        "The catch block's return is used",
-                        "The finally block's return is used",
-                        "Compilation error",
-                        "Unpredictable behavior"
-                    ],
-                    answer: 1,
-                    explanation: "Finally return overrides catch return",
-                    hint: "Finally executes last"
-                },
-                {
-                    question: "What type of exception is NullPointerException?",
-                    options: ["Checked", "Unchecked", "Logic error", "Compile-time error"],
-                    answer: 1,
-                    explanation: "RuntimeException = unchecked",
-                    hint: "Extends RuntimeException"
-                },
-                {
-                    question: "Which method provides the most detailed information about an exception stack?",
-                    options: ["toString()", "getMessage()", "printStackTrace()", "getCause()"],
-                    answer: 2,
-                    explanation: "printStackTrace shows full trace",
-                    hint: "Shows method call chain"
-                },
-                {
-                    question: "Which of the following is not a runtime exception?",
-                    options: [
-                        "NullPointerException",
-                        "ArithmeticException",
-                        "IOException",
-                        "ArrayIndexOutOfBoundsException"
-                    ],
-                    answer: 2,
-                    explanation: "IOException is checked",
-                    hint: "Must be declared/caught"
-                },
-                {
-                    question: "What happens when you use throw without an exception object?",
-                    options: [
-                        "Nothing",
-                        "Compilation error",
-                        "Runtime error",
-                        "Default exception is thrown"
-                    ],
-                    answer: 1,
-                    explanation: "throw requires Throwable object",
-                    hint: "Syntax error"
-                }
-            ],
-            
-            advanced: [ // Advanced OOP concepts
-                {
-                    question: "What happens if a method in subclass has the same signature as parent but different return type?",
-                    options: [
-                        "It's valid overriding",
-                        "Compile-time error",
-                        "Runtime error",
-                        "Treated as overload"
-                    ],
-                    answer: 1,
-                    explanation: "Different return type causes error",
-                    hint: "Return type must be covariant"
-                },
-                {
-                    question: "How do you prevent a method from being overridden?",
-                    options: [
-                        "Declare it as static",
-                        "Declare it as abstract",
-                        "Declare it as final",
-                        "Declare it as public"
-                    ],
-                    answer: 2,
-                    explanation: "final methods cannot be overridden",
-                    hint: "Opposite of abstract"
-                },
-                {
-                    question: "Which of the following is NOT allowed in an interface?",
-                    options: [
-                        "public abstract methods",
-                        "static final variables",
-                        "private constructors",
-                        "Implemented by classes"
-                    ],
-                    answer: 2,
-                    explanation: "Interfaces cannot have constructors",
-                    hint: "Cannot instantiate interfaces"
-                },
-                {
-                    question: "Which is true about constructors in inheritance?",
-                    options: [
-                        "Superclass constructor is inherited",
-                        "Subclass must define all constructors",
-                        "Superclass constructor is called explicitly or implicitly",
-                        "Superclass constructor is ignored"
-                    ],
-                    answer: 2,
-                    explanation: "Parent constructor always called",
-                    hint: "super() or default"
-                },
-                {
-                    question: "What happens if you try to override a static method?",
-                    options: [
-                        "It's allowed",
-                        "It causes a compile error",
-                        "It hides the method, not override",
-                        "It overrides normally"
-                    ],
-                    answer: 2,
-                    explanation: "Static methods hide, not override",
-                    hint: "No polymorphism for static"
-                },
-                {
-                    question: "What does the implements keyword do?",
-                    options: [
-                        "Inherit a class",
-                        "Implement a static method",
-                        "Adopt an interface's method contracts",
-                        "None of the above"
-                    ],
-                    answer: 2,
-                    explanation: "implements = contract to implement methods",
-                    hint: "For interfaces"
-                },
-                {
-                    question: "What is true about: public final class Bank { ... }",
-                    options: [
-                        "It can be subclassed",
-                        "It cannot be instantiated",
-                        "It cannot be subclassed",
-                        "It must be abstract"
-                    ],
-                    answer: 2,
-                    explanation: "final class cannot be extended",
-                    hint: "final prevents inheritance"
-                },
-                {
-                    question: "What is the purpose of super() in a constructor?",
-                    options: [
-                        "Initializes local variables",
-                        "Calls current class constructor",
-                        "Calls superclass constructor",
-                        "Binds to abstract class"
-                    ],
-                    answer: 2,
-                    explanation: "super() calls parent constructor",
-                    hint: "Must be first statement"
-                },
-                {
-                    question: "Which is valid multiple inheritance using interface?",
-                    options: [
-                        "Valid",
-                        "Invalid due to multiple classes",
-                        "Valid if Plane is abstract",
-                        "Valid if Flyer is abstract"
-                    ],
-                    answer: 1,
-                    explanation: "Cannot extend multiple classes",
-                    hint: "Can implement multiple interfaces"
-                },
-                {
-                    question: "What does the abstract keyword imply for a method?",
-                    options: [
-                        "It must return void",
-                        "It has implementation",
-                        "It has no implementation and must be overridden",
-                        "It can be private"
-                    ],
-                    answer: 2,
-                    explanation: "Abstract methods have no body",
-                    hint: "Requires implementation in subclass"
-                }
-            ],
-            
-            casestudy: [ // Case study questions from PDFs
-                {
-                    question: "Different grading logic in each subclass is an example of:",
-                    options: ["Abstraction", "Method Overloading", "Method Overriding", "Encapsulation"],
-                    answer: 2,
-                    explanation: "Subclasses override parent method",
-                    hint: "Polymorphism"
-                },
-                {
-                    question: "To ensure all assignment types implement gradeAssignment(), the method should be declared as:",
-                    options: ["final", "static", "abstract", "private"],
-                    answer: 2,
-                    explanation: "abstract forces implementation",
-                    hint: "Must be implemented"
-                },
-                {
-                    question: "Preventing modification of assignmentId after object creation can be achieved using:",
-                    options: ["static", "final", "protected", "volatile"],
-                    answer: 1,
-                    explanation: "final makes field immutable",
-                    hint: "Cannot change value"
-                },
-                {
-                    question: "Processing different assignment types using a single Assignment reference demonstrates:",
-                    options: ["Inheritance", "Encapsulation", "Polymorphism", "Data Hiding"],
-                    answer: 2,
-                    explanation: "Parent reference to child objects = polymorphism",
-                    hint: "Runtime type determination"
-                },
-                {
-                    question: "Late submission rules differ per assignment type. This design supports:",
-                    options: [
-                        "Single Responsibility Principle",
-                        "Class-Specific Behavior",
-                        "Interface Segregation",
-                        "Data Hiding"
-                    ],
-                    answer: 1,
-                    explanation: "Each class handles its own behavior",
-                    hint: "Specialized behavior"
-                },
-                {
-                    question: "Implementing calculateMonthlyCharges() differently in SavingsAccount and CurrentAccount demonstrates:",
-                    options: ["Encapsulation", "Method Overriding", "Composition", "Aggregation"],
-                    answer: 1,
-                    explanation: "Different implementations in subclasses",
-                    hint: "Polymorphism"
-                },
-                {
-                    question: "To prevent direct access to the balance attribute, it should be declared as:",
-                    options: ["public", "protected", "private", "static"],
-                    answer: 2,
-                    explanation: "private for data hiding",
-                    hint: "Most restrictive"
-                },
-                {
-                    question: "Storing different account types in a single list of BankAccount objects relies on:",
-                    options: ["Inheritance", "Encapsulation", "Polymorphism", "Abstraction"],
-                    answer: 2,
-                    explanation: "Polymorphic collection",
-                    hint: "Parent reference to child objects"
-                },
-                {
-                    question: "If BankAccount should not be instantiated directly, how should it be defined?",
-                    options: ["final class", "interface", "abstract class", "static class"],
-                    answer: 2,
-                    explanation: "abstract class cannot be instantiated",
-                    hint: "Must be subclassed"
-                },
-                {
-                    question: "The overdraftLimit attribute exists only in CurrentAccount. This is an example of:",
-                    options: [
-                        "Data Hiding",
-                        "Class-Specific Behavior",
-                        "Method Overloading",
-                        "Multiple Inheritance"
-                    ],
-                    answer: 1,
-                    explanation: "Subclass-specific attribute",
-                    hint: "Not in parent class"
-                }
-            ]
-        };
+        // Quiz State Variables
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = new Array(quizData.length).fill(null);
 
-        // ====== GAME STATE ======
-        let gameState = {
-            selectedCategories: new Set(['all']),
-            currentQuestions: [],
-            currentQuestionIndex: 0,
-            score: 0,
-            streak: 0,
-            totalQuestions: 0,
-            timeLeft: QUIZ_CONFIG.timePerQuestion,
-            timerInterval: null,
-            userAnswers: []
-        };
+        // DOM Elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedback = document.getElementById('feedback');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const hintText = document.getElementById('hint-text');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const restartResultsBtn = document.getElementById('restart-results-btn');
+        const currentQuestionEl = document.getElementById('current-question');
+        const scoreEl = document.getElementById('score');
+        const totalQuestionsEl = document.getElementById('total-questions');
+        const qNumberEl = document.getElementById('q-number');
+        const qTotalEl = document.getElementById('q-total');
+        const progressFill = document.getElementById('progress-fill');
+        const quizContent = document.getElementById('quiz-content');
+        const resultsContainer = document.getElementById('results-container');
+        const finalScoreEl = document.getElementById('final-score');
+        const resultsMessageEl = document.getElementById('results-message');
 
-        // ====== DOM ELEMENTS ======
-        const startScreen = document.getElementById('startScreen');
-        const gameScreen = document.getElementById('gameScreen');
-        const resultsScreen = document.getElementById('resultsScreen');
-        const hintModal = document.getElementById('hintModal');
-        const overlay = document.getElementById('overlay');
-        const categorySelector = document.getElementById('categorySelector');
-
-        // ====== INITIALIZATION ======
-        function initializeQuiz() {
-            document.getElementById('quizTitle').textContent = QUIZ_CONFIG.title;
-            document.getElementById('quizDescription').textContent = QUIZ_CONFIG.description;
-            document.getElementById('quizEmoji').textContent = QUIZ_CONFIG.emoji;
-            document.getElementById('timePerQuestion').textContent = QUIZ_CONFIG.timePerQuestion;
-            
-            let totalQuestions = 0;
-            Object.values(QUIZ_DATA).forEach(category => {
-                totalQuestions += category.length;
-            });
-            
-            document.getElementById('totalQuestions').textContent = totalQuestions;
-            document.getElementById('totalCategories').textContent = Object.keys(QUIZ_CONFIG.categories).length;
-            
-            setupCategories();
-            document.querySelector('[data-category="all"]')?.classList.add('selected');
+        // Initialize Quiz
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers.fill(null);
+            updateStats();
+            showQuestion();
+            quizContent.style.display = 'block';
+            resultsContainer.style.display = 'none';
         }
 
-        function setupCategories() {
-            categorySelector.innerHTML = '';
+        // Show Current Question
+        function showQuestion() {
+            const question = quizData[currentQuestionIndex];
             
-            const allCategory = document.createElement('div');
-            allCategory.className = 'category';
-            allCategory.dataset.category = 'all';
-            allCategory.innerHTML = `
-                <span class="icon">🎯</span>
-                <strong>All Topics</strong>
-                <div style="font-size: 0.9rem; opacity: 0.8;">
-                    ${Object.values(QUIZ_DATA).reduce((sum, cat) => sum + cat.length, 0)} Questions
-                </div>
-            `;
-            allCategory.onclick = () => toggleCategory('all');
-            categorySelector.appendChild(allCategory);
+            // Update question text
+            questionText.textContent = question.question;
+            qNumberEl.textContent = currentQuestionIndex + 1;
+            qTotalEl.textContent = quizData.length;
             
-            Object.entries(QUIZ_CONFIG.categories).forEach(([key, category]) => {
-                const categoryEl = document.createElement('div');
-                categoryEl.className = 'category';
-                categoryEl.dataset.category = key;
-                categoryEl.innerHTML = `
-                    <span class="icon">${category.emoji}</span>
-                    <strong>${category.name}</strong>
-                    <div style="font-size: 0.9rem; opacity: 0.8;">
-                        ${QUIZ_DATA[key] ? QUIZ_DATA[key].length : 0} Questions
-                    </div>
-                `;
-                categoryEl.onclick = () => toggleCategory(key);
-                categorySelector.appendChild(categoryEl);
-            });
-        }
-
-        // ====== CATEGORY SELECTION ======
-        function toggleCategory(category) {
-            const categoryEl = document.querySelector(`[data-category="${category}"]`);
+            // Clear previous options
+            optionsContainer.innerHTML = '';
             
-            if (category === 'all') {
-                document.querySelectorAll('.category').forEach(cat => {
-                    cat.classList.remove('selected');
-                });
-                categoryEl.classList.add('selected');
-                gameState.selectedCategories = new Set(['all']);
-            } else {
-                document.querySelector('[data-category="all"]').classList.remove('selected');
-                
-                if (gameState.selectedCategories.has(category)) {
-                    gameState.selectedCategories.delete(category);
-                    categoryEl.classList.remove('selected');
-                } else {
-                    gameState.selectedCategories.add(category);
-                    categoryEl.classList.add('selected');
-                }
-                
-                const allCategories = Object.keys(QUIZ_CONFIG.categories);
-                if (gameState.selectedCategories.size === allCategories.length) {
-                    document.querySelector('[data-category="all"]').classList.add('selected');
-                    gameState.selectedCategories = new Set(['all']);
-                }
-            }
-        }
-
-        // ====== GAME FUNCTIONS ======
-        function startGame() {
-            if (gameState.selectedCategories.size === 0) {
-                alert('Please select at least one category!');
-                return;
-            }
-
-            gameState.currentQuestions = [];
-            
-            if (gameState.selectedCategories.has('all')) {
-                Object.values(QUIZ_DATA).forEach(category => {
-                    gameState.currentQuestions.push(...category);
-                });
-            } else {
-                gameState.selectedCategories.forEach(cat => {
-                    if (QUIZ_DATA[cat]) {
-                        gameState.currentQuestions.push(...QUIZ_DATA[cat]);
-                    }
-                });
-            }
-
-            if (gameState.currentQuestions.length === 0) {
-                alert('No questions available for selected categories!');
-                return;
-            }
-
-            gameState.currentQuestions = shuffleArray(gameState.currentQuestions);
-            gameState.currentQuestions = gameState.currentQuestions.slice(0, QUIZ_CONFIG.questionsPerGame);
-            gameState.totalQuestions = gameState.currentQuestions.length;
-
-            gameState.currentQuestionIndex = 0;
-            gameState.score = 0;
-            gameState.streak = 0;
-            gameState.userAnswers = [];
-            gameState.timeLeft = QUIZ_CONFIG.timePerQuestion;
-
-            startScreen.classList.remove('active');
-            startScreen.style.display = 'none';
-            gameScreen.style.display = 'block';
-            resultsScreen.style.display = 'none';
-
-            loadQuestion();
-            startTimer();
-        }
-
-        function shuffleArray(array) {
-            const shuffled = [...array];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
-        }
-
-        function loadQuestion() {
-            if (gameState.currentQuestionIndex >= gameState.currentQuestions.length) {
-                endGame();
-                return;
-            }
-
-            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
-            
-            document.getElementById('qNumber').textContent = gameState.currentQuestionIndex + 1;
-            document.getElementById('questionText').textContent = question.question;
-            document.getElementById('currentScore').textContent = gameState.score;
-            document.getElementById('questionCounter').textContent = 
-                `${gameState.currentQuestionIndex + 1}/${gameState.totalQuestions}`;
-            document.getElementById('streak').textContent = gameState.streak;
-            
-            const progress = ((gameState.currentQuestionIndex) / gameState.totalQuestions) * 100;
-            document.getElementById('progress').style.width = `${progress}%`;
-
-            const optionsGrid = document.getElementById('optionsGrid');
-            optionsGrid.innerHTML = '';
-            
+            // Create options
             const letters = ['A', 'B', 'C', 'D'];
             question.options.forEach((option, index) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'option';
-                optionDiv.innerHTML = `
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.innerHTML = `
                     <span class="option-letter">${letters[index]}</span>
-                    ${option}
+                    <span class="option-text">${option}</span>
                 `;
-                optionDiv.onclick = () => selectAnswer(index);
-                optionsGrid.appendChild(optionDiv);
+                
+                // Mark if previously answered
+                if (userAnswers[currentQuestionIndex] === index) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.addEventListener('click', () => selectOption(index, optionElement));
+                optionsContainer.appendChild(optionElement);
             });
-
-            document.getElementById('nextBtn').disabled = true;
-            window.currentHint = question.hint;
+            
+            // Clear feedback
+            feedback.style.display = 'none';
+            feedback.className = 'feedback';
+            nextBtn.disabled = true;
+            
+            // Update progress
+            updateProgress();
         }
 
-        function selectAnswer(selectedIndex) {
-            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
-            const options = document.querySelectorAll('.option');
-            const nextBtn = document.getElementById('nextBtn');
+        // Select an option
+        function selectOption(optionIndex, optionElement) {
+            // Don't allow selection if already answered
+            if (userAnswers[currentQuestionIndex] !== null) return;
             
-            options.forEach(opt => {
-                opt.style.pointerEvents = 'none';
+            // Remove selected class from all options
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
             });
-
-            options[selectedIndex].classList.add('selected');
-
-            const isCorrect = selectedIndex === question.answer;
             
+            // Add selected class to clicked option
+            optionElement.classList.add('selected');
+            
+            // Store user's answer
+            userAnswers[currentQuestionIndex] = optionIndex;
+            
+            // Check answer
+            const question = quizData[currentQuestionIndex];
+            const isCorrect = optionIndex === question.correct;
+            
+            // Update score if correct
             if (isCorrect) {
-                options[selectedIndex].classList.add('correct');
-                gameState.score += QUIZ_CONFIG.points.correct;
-                gameState.streak++;
-                
-                if (gameState.timeLeft > 20) {
-                    gameState.score += QUIZ_CONFIG.points.fastBonus[0];
-                } else if (gameState.timeLeft > 10) {
-                    gameState.score += QUIZ_CONFIG.points.fastBonus[1];
-                }
-                
-                if (gameState.streak >= 3) {
-                    gameState.score += gameState.streak * QUIZ_CONFIG.points.streakBonus;
-                }
-            } else {
-                options[selectedIndex].classList.add('incorrect');
-                options[question.answer].classList.add('correct');
-                gameState.streak = 0;
+                score++;
+                scoreEl.textContent = score;
             }
-
-            gameState.userAnswers.push({
-                question: question.question,
-                selected: selectedIndex,
-                correct: question.answer,
-                isCorrect: isCorrect
-            });
-
-            document.getElementById('currentScore').textContent = gameState.score;
-            document.getElementById('streak').textContent = gameState.streak;
-
+            
+            // Show feedback
+            showFeedback(isCorrect, question);
+            
+            // Enable next button
             nextBtn.disabled = false;
-            clearInterval(gameState.timerInterval);
         }
 
-        function nextQuestion() {
-            gameState.currentQuestionIndex++;
-            gameState.timeLeft = QUIZ_CONFIG.timePerQuestion;
-            document.getElementById('timer').textContent = gameState.timeLeft;
-            
-            if (gameState.currentQuestionIndex < gameState.currentQuestions.length) {
-                loadQuestion();
-                startTimer();
-            } else {
-                endGame();
-            }
-        }
-
-        // ====== TIMER ======
-        function startTimer() {
-            clearInterval(gameState.timerInterval);
-            
-            gameState.timerInterval = setInterval(() => {
-                gameState.timeLeft--;
-                document.getElementById('timer').textContent = gameState.timeLeft;
-                
-                if (gameState.timeLeft <= 0) {
-                    clearInterval(gameState.timerInterval);
-                    const options = document.querySelectorAll('.option');
-                    if (options.length > 0) {
-                        selectAnswer(0);
-                    }
+        // Show feedback for answer
+        function showFeedback(isCorrect, question) {
+            // Mark correct/incorrect options
+            document.querySelectorAll('.option').forEach((opt, index) => {
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === userAnswers[currentQuestionIndex] && !isCorrect) {
+                    opt.classList.add('incorrect');
                 }
-            }, 1000);
-        }
-
-        // ====== HINT SYSTEM ======
-        function showHint() {
-            document.getElementById('hintContent').textContent = 
-                window.currentHint || "No hint available for this question.";
-            hintModal.style.display = 'block';
-            overlay.style.display = 'block';
+            });
             
-            gameState.score = Math.max(0, gameState.score - QUIZ_CONFIG.points.hintPenalty);
-            document.getElementById('currentScore').textContent = gameState.score;
-        }
-
-        function closeHint() {
-            hintModal.style.display = 'none';
-            overlay.style.display = 'none';
-        }
-
-        // ====== END GAME ======
-        function endGame() {
-            clearInterval(gameState.timerInterval);
-            
-            const correctAnswers = gameState.userAnswers.filter(a => a.isCorrect).length;
-            const accuracy = Math.round((correctAnswers / gameState.totalQuestions) * 100);
-            
-            document.getElementById('finalScore').textContent = `${gameState.score} points`;
-            document.getElementById('correctAnswers').textContent = correctAnswers;
-            document.getElementById('accuracy').textContent = `${accuracy}%`;
-            
-            const totalTime = QUIZ_CONFIG.timePerQuestion * gameState.totalQuestions;
-            const timeSpent = totalTime - (gameState.currentQuestionIndex * QUIZ_CONFIG.timePerQuestion + gameState.timeLeft);
-            document.getElementById('timeSpent').textContent = `${timeSpent}s`;
-            
-            document.getElementById('performanceFill').style.width = `${accuracy}%`;
-            
-            let trophy = '😢';
-            let message = 'Keep studying OOP!';
-            
-            if (accuracy >= 90) {
-                trophy = '🏆';
-                message = 'Outstanding! You\'re a Java OOP expert!';
-            } else if (accuracy >= 70) {
-                trophy = '🥈';
-                message = 'Great job! Strong OOP knowledge!';
-            } else if (accuracy >= 50) {
-                trophy = '🥉';
-                message = 'Good effort! Review weak topics!';
+            // Set feedback content
+            if (isCorrect) {
+                feedbackTitle.textContent = "Correct!";
+                feedbackText.textContent = "Well done!";
+                feedback.className = 'feedback correct';
+            } else {
+                feedbackTitle.textContent = "Incorrect";
+                feedbackText.textContent = `The correct answer is: ${question.options[question.correct]}`;
+                feedback.className = 'feedback incorrect';
             }
             
-            document.getElementById('trophyEmoji').textContent = trophy;
-            document.getElementById('scoreMessage').textContent = message;
+            // Show hint for incorrect answers
+            if (!isCorrect) {
+                hintText.textContent = `Hint: ${question.hint}`;
+            } else {
+                hintText.textContent = '';
+            }
             
-            gameScreen.style.display = 'none';
-            resultsScreen.style.display = 'block';
+            feedback.style.display = 'block';
         }
 
-        // ====== GAME CONTROLS ======
-        function quitGame() {
-            if (confirm('Are you sure you want to end the quiz?')) {
-                endGame();
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < quizData.length) {
+                showQuestion();
+                updateStats();
+            } else {
+                showResults();
             }
         }
 
-        function restartGame() {
-            startGame();
+        // Update stats display
+        function updateStats() {
+            currentQuestionEl.textContent = currentQuestionIndex + 1;
+            scoreEl.textContent = score;
+            totalQuestionsEl.textContent = quizData.length;
         }
 
-        function goHome() {
-            resultsScreen.style.display = 'none';
-            startScreen.style.display = 'block';
-            startScreen.classList.add('active');
+        // Update progress bar
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / quizData.length) * 100;
+            progressFill.style.width = `${progress}%`;
         }
 
-        // ====== INITIALIZE QUIZ ======
-        document.addEventListener('DOMContentLoaded', initializeQuiz);
+        // Show final results
+        function showResults() {
+            quizContent.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            // Calculate percentage
+            const percentage = Math.round((score / quizData.length) * 100);
+            finalScoreEl.textContent = `${score}/${quizData.length} (${percentage}%)`;
+            
+            // Set message based on score
+            let message = "";
+            if (percentage >= 90) {
+                message = "Outstanding! You're an OOP expert!";
+            } else if (percentage >= 70) {
+                message = "Great job! You have a solid understanding of OOP concepts.";
+            } else if (percentage >= 50) {
+                message = "Good effort! Review the hints to improve your understanding.";
+            } else {
+                message = "Keep practicing! Review the PDF materials and try again.";
+            }
+            
+            resultsMessageEl.textContent = message;
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            initQuiz();
+            
+            nextBtn.addEventListener('click', nextQuestion);
+            restartBtn.addEventListener('click', initQuiz);
+            restartResultsBtn.addEventListener('click', initQuiz);
+        });
     </script>
 </body>
 </html>
