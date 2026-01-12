@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Fundamentals Quiz - Game Mode</title>
+    <link rel="stylesheet" href="aa.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Start Screen -->
+        <div class="start-screen" id="startScreen">
+            <div class="emoji">🧠</div>
+            <h1>IT Fundamentals Quiz</h1>
+            <p style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px;">Test your knowledge in this interactive game!</p>
+            
+            <div class="game-info">
+                <div class="info-item">
+                    <span class="number">66</span>
+                    <span class="label">Questions</span>
+                </div>
+                <div class="info-item">
+                    <span class="number">5</span>
+                    <span class="label">Categories</span>
+                </div>
+                <div class="info-item">
+                    <span class="number">∞</span>
+                    <span class="label">Lives</span>
+                </div>
+            </div>
+            
+            <h3 style="margin: 30px 0 20px; color: #fbbf24;">Select Categories:</h3>
+            <div class="category-selector">
+                <div class="category" data-category="hardware" onclick="toggleCategory('hardware')">
+                    <span class="icon">💻</span>
+                    <strong>Hardware</strong>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">8 Questions</div>
+                </div>
+                <div class="category" data-category="software" onclick="toggleCategory('software')">
+                    <span class="icon">🖥️</span>
+                    <strong>Software</strong>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">7 Questions</div>
+                </div>
+                <div class="category" data-category="networking" onclick="toggleCategory('networking')">
+                    <span class="icon">🌐</span>
+                    <strong>Networking</strong>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">8 Questions</div>
+                </div>
+                <div class="category" data-category="security" onclick="toggleCategory('security')">
+                    <span class="icon">🔒</span>
+                    <strong>Security</strong>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">7 Questions</div>
+                </div>
+                <div class="category" data-category="crypto" onclick="toggleCategory('crypto')">
+                    <span class="icon">🔐</span>
+                    <strong>Cryptography</strong>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">8 Questions</div>
+                </div>
+                <div class="category" data-category="all" onclick="toggleCategory('all')">
+                    <span class="icon">🎯</span>
+                    <strong>All Topics</strong>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">66 Questions</div>
+                </div>
+            </div>
+            
+            <button class="start-btn" onclick="startGame()">
+                🚀 Start Quiz
+            </button>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <div class="game-header">
+                <div class="game-stats">
+                    <div class="stat">
+                        <span class="value" id="currentScore">0</span>
+                        <span class="label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="value" id="questionCounter">1/10</span>
+                        <span class="label">Question</span>
+                    </div>
+                    <div class="stat">
+                        <span class="value" id="streak">0</span>
+                        <span class="label">Streak</span>
+                    </div>
+                </div>
+                <div class="timer-container">
+                    ⏱️ Time: <span class="timer" id="timer">30</span>s
+                </div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-progress">
+                    <div class="question-number" id="qNumber">1</div>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                </div>
+                
+                <div class="question-text" id="questionText">
+                    Loading question...
+                </div>
+                
+                <div class="options-grid" id="optionsGrid">
+                    <!-- Options will be inserted here -->
+                </div>
+                
+                <div class="game-controls">
+                    <button class="control-btn hint-btn" onclick="showHint()">
+                        💡 Get Hint
+                    </button>
+                    <button class="control-btn next-btn" id="nextBtn" onclick="nextQuestion()" disabled>
+                        Next Question →
+                    </button>
+                    <button class="control-btn quit-btn" onclick="quitGame()">
+                        🏁 End Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen" id="resultsScreen">
+            <div class="trophy" id="trophyEmoji">🏆</div>
+            <h2>Quiz Complete!</h2>
+            
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="score-text" id="scoreMessage">Calculating your score...</div>
+            
+            <div class="performance-meter">
+                <div class="performance-fill" id="performanceFill"></div>
+            </div>
+            <div class="performance-labels">
+                <span>Needs Work</span>
+                <span>Good</span>
+                <span>Excellent!</span>
+            </div>
+            
+            <div class="results-details">
+                <div class="result-item">
+                    <span class="value" id="correctAnswers">0</span>
+                    <span class="label">Correct</span>
+                </div>
+                <div class="result-item">
+                    <span class="value" id="accuracy">0%</span>
+                    <span class="label">Accuracy</span>
+                </div>
+                <div class="result-item">
+                    <span class="value" id="timeSpent">0s</span>
+                    <span class="label">Time</span>
+                </div>
+            </div>
+            
+            <div class="results-controls">
+                <button class="control-btn restart-btn" onclick="restartGame()">
+                    🔄 Play Again
+                </button>
+                <button class="control-btn review-btn" onclick="reviewAnswers()">
+                    📖 Review Answers
+                </button>
+                <button class="control-btn home-btn" onclick="goHome()">
+                    🏠 Back to Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Hint Modal -->
+        <div class="hint-modal" id="hintModal">
+            <h3>💡 Hint</h3>
+            <div class="hint-content" id="hintContent">
+                Loading hint...
+            </div>
+            <button class="close-hint" onclick="closeHint()">
+                Got it!
+            </button>
+        </div>
+        <div class="overlay" id="overlay" onclick="closeHint()"></div>
+    </div>
+
+    <script>
+        // Quiz Questions Database
+        const quizDatabase = {
+            hardware: [
+                {
+                    question: "What does POST stand for?",
+                    options: [
+                        "Power-On Self-Test",
+                        "Pre-Operating System Test",
+                        "Peripheral Operational Signal Test",
+                        "Programmable Output System Timer"
+                    ],
+                    answer: 0,
+                    explanation: "POST runs hardware checks during boot",
+                    hint: "Think about what happens when you first turn on your computer"
+                },
+                {
+                    question: "Which component stores BIOS settings?",
+                    options: ["RAM", "CMOS", "CPU", "SSD"],
+                    answer: 1,
+                    explanation: "CMOS uses battery backup",
+                    hint: "It's powered by a small battery on the motherboard"
+                },
+                {
+                    question: "What's the advantage of UEFI over legacy BIOS?",
+                    options: [
+                        "Slower boot",
+                        "No security",
+                        "Supports larger drives & secure boot",
+                        "Only 32-bit"
+                    ],
+                    answer: 2,
+                    explanation: "UEFI supports modern features",
+                    hint: "Think about booting from large hard drives"
+                },
+                {
+                    question: "Which power issue is a complete loss of AC power?",
+                    options: ["Brownout", "Spike", "Blackout", "Noise"],
+                    answer: 2,
+                    explanation: "Blackout = no power at all",
+                    hint: "Like when the lights go out completely"
+                },
+                {
+                    question: "Which RAM type is used for cache?",
+                    options: ["DRAM", "SRAM", "DDR4", "GDDR"],
+                    answer: 1,
+                    explanation: "SRAM is faster for cache",
+                    hint: "The 'S' stands for Static (faster but more expensive)"
+                },
+                {
+                    question: "Which RAID level uses striping with parity?",
+                    options: ["RAID 0", "RAID 1", "RAID 5", "RAID 10"],
+                    answer: 2,
+                    explanation: "RAID 5 combines performance and redundancy",
+                    hint: "It's a popular choice for balancing speed and safety"
+                },
+                {
+                    question: "Old keyboard/mouse port?",
+                    options: ["USB", "PS/2", "HDMI", "VGA"],
+                    answer: 1,
+                    explanation: "PS/2 was standard before USB",
+                    hint: "Purple for keyboard, green for mouse"
+                },
+                {
+                    question: "What does a heat sink do?",
+                    options: [
+                        "Store data",
+                        "Cool the CPU",
+                        "Increase voltage",
+                        "Control fans"
+                    ],
+                    answer: 1,
+                    explanation: "Dissipates heat from components",
+                    hint: "It's usually made of metal with fins"
+                }
+            ],
+            software: [
+                {
+                    question: "Example of system software?",
+                    options: ["Word", "Windows OS", "Photoshop", "Chrome"],
+                    answer: 1,
+                    explanation: "OS manages hardware resources",
+                    hint: "It's what runs before any apps load"
+                },
+                {
+                    question: "Open source vs closed source?",
+                    options: [
+                        "Always free",
+                        "Allows code mods",
+                        "Public source code",
+                        "Govt use only"
+                    ],
+                    answer: 2,
+                    explanation: "Open source = public code access",
+                    hint: "Think Linux vs Windows"
+                },
+                {
+                    question: "Which mobile OS has walled garden apps?",
+                    options: ["Android", "iOS", "Linux", "Windows"],
+                    answer: 1,
+                    explanation: "iOS apps need Apple approval",
+                    hint: "The one made by Apple"
+                },
+                {
+                    question: "macOS backup tool?",
+                    options: ["Déjà Dup", "Time Machine", "Bacula", "Amanda"],
+                    answer: 1,
+                    explanation: "Time Machine is Apple's solution",
+                    hint: "It 'travels back in time' for your files"
+                },
+                {
+                    question: "Linux command to change permissions?",
+                    options: ["chmod", "sudo", "ps", "passwd"],
+                    answer: 0,
+                    explanation: "chmod modifies file permissions",
+                    hint: "Stands for 'change mode'"
+                },
+                {
+                    question: "What does 'ls -l' show?",
+                    options: [
+                        "Detailed file list",
+                        "Only directories",
+                        "Hidden files",
+                        "File sizes only"
+                    ],
+                    answer: 0,
+                    explanation: "Shows permissions, size, date, etc.",
+                    hint: "The '-l' means 'long format'"
+                },
+                {
+                    question: "Which is a Linux distribution?",
+                    options: ["Ubuntu", "Windows Server", "macOS", "iOS"],
+                    answer: 0,
+                    explanation: "Ubuntu is a popular Linux distro",
+                    hint: "It's named after an African philosophy"
+                }
+            ],
+            networking: [
+                {
+                    question: "What does LAN stand for?",
+                    options: [
+                        "Large Area Network",
+                        "Local Area Network",
+                        "Linked Access Network",
+                        "Logical Address Node"
+                    ],
+                    answer: 1,
+                    explanation: "LAN covers small area like building",
+                    hint: "Opposite of WAN (Wide Area Network)"
+                },
+                {
+                    question: "Layer 2 network device?",
+                    options: ["Hub", "Router", "Switch", "Modem"],
+                    answer: 2,
+                    explanation: "Switches use MAC addresses",
+                    hint: "It's smarter than a hub"
+                },
+                {
+                    question: "Purpose of DNS?",
+                    options: [
+                        "Encrypt data",
+                        "Convert names to IPs",
+                        "Block traffic",
+                        "Assign IPs"
+                    ],
+                    answer: 1,
+                    explanation: "DNS translates domains to IPs",
+                    hint: "Think of it as the internet's phonebook"
+                },
+                {
+                    question: "Secure web protocol?",
+                    options: ["HTTP", "FTP", "HTTPS", "SMTP"],
+                    answer: 2,
+                    explanation: "HTTPS = HTTP with encryption",
+                    hint: "Look for the 'S' at the end"
+                },
+                {
+                    question: "What does DHCP do?",
+                    options: [
+                        "Translate names",
+                        "Assign IPs automatically",
+                        "Encrypt email",
+                        "Route packets"
+                    ],
+                    answer: 1,
+                    explanation: "DHCP auto-configures network settings",
+                    hint: "Stands for Dynamic Host Configuration Protocol"
+                },
+                {
+                    question: "Weakest Wi-Fi security?",
+                    options: ["WEP", "WPA", "WPA2", "WPA3"],
+                    answer: 0,
+                    explanation: "WEP has known vulnerabilities",
+                    hint: "The oldest one"
+                },
+                {
+                    question: "Main firewall function?",
+                    options: [
+                        "Speed up internet",
+                        "Filter traffic",
+                        "Store backups",
+                        "Encrypt files"
+                    ],
+                    answer: 1,
+                    explanation: "Firewalls control network access",
+                    hint: "Like a security guard for your network"
+                },
+                {
+                    question: "Default SSH port?",
+                    options: ["21", "22", "80", "443"],
+                    answer: 1,
+                    explanation: "Port 22 is standard for SSH",
+                    hint: "It's a low number in the 20s"
+                }
+            ],
+            security: [
+                {
+                    question: "CIA in security stands for?",
+                    options: [
+                        "Central Intelligence Agency",
+                        "Confidentiality, Integrity, Availability",
+                        "Cyber Investigation Authority",
+                        "Certified Information Auditor"
+                    ],
+                    answer: 1,
+                    explanation: "The security triad",
+                    hint: "Three letters, not the spy agency"
+                },
+                {
+                    question: "Which ensures data isn't altered?",
+                    options: [
+                        "Confidentiality",
+                        "Integrity",
+                        "Availability",
+                        "Authenticity"
+                    ],
+                    answer: 1,
+                    explanation: "Integrity = no unauthorized changes",
+                    hint: "Think about data being whole and unchanged"
+                },
+                {
+                    question: "What is a vulnerability?",
+                    options: [
+                        "An attack",
+                        "A weakness",
+                        "A control",
+                        "Malware"
+                    ],
+                    answer: 1,
+                    explanation: "Vulnerability = exploitable weakness",
+                    hint: "It's a flaw that can be taken advantage of"
+                },
+                {
+                    question: "Example of social engineering?",
+                    options: ["DDoS", "Phishing", "SQL injection", "Buffer overflow"],
+                    answer: 1,
+                    explanation: "Phishing tricks people",
+                    hint: "Uses fake emails to steal info"
+                },
+                {
+                    question: "What does IDS stand for?",
+                    options: [
+                        "Intrusion Detection System",
+                        "Internet Data Service",
+                        "Internal Defense System",
+                        "Identity Security"
+                    ],
+                    answer: 0,
+                    explanation: "IDS monitors for attacks",
+                    hint: "It detects when someone is trying to break in"
+                },
+                {
+                    question: "Which attack floods networks?",
+                    options: ["Phishing", "DDoS", "Spoofing", "Brute force"],
+                    answer: 1,
+                    explanation: "DDoS overwhelms with traffic",
+                    hint: "Stands for Distributed Denial of Service"
+                },
+                {
+                    question: "Encryption purpose?",
+                    options: [
+                        "Hide data",
+                        "Speed transmission",
+                        "Compress files",
+                        "Log activity"
+                    ],
+                    answer: 0,
+                    explanation: "Encryption protects confidentiality",
+                    hint: "Makes data unreadable without a key"
+                }
+            ],
+            crypto: [
+                {
+                    question: "What is plaintext?",
+                    options: [
+                        "Encrypted data",
+                        "Original readable data",
+                        "A cipher",
+                        "A hash"
+                    ],
+                    answer: 1,
+                    explanation: "Plaintext = unencrypted data",
+                    hint: "It's what you start with before encryption"
+                },
+                {
+                    question: "Which cipher shifts letters?",
+                    options: ["Vigenère", "Caesar", "One-time pad", "RSA"],
+                    answer: 1,
+                    explanation: "Caesar uses fixed shift",
+                    hint: "Named after a Roman emperor"
+                },
+                {
+                    question: "Symmetric encryption uses?",
+                    options: [
+                        "Two different keys",
+                        "Slow processing",
+                        "Same key both ways",
+                        "Only signatures"
+                    ],
+                    answer: 2,
+                    explanation: "One key for encryption/decryption",
+                    hint: "Like a physical key that locks and unlocks"
+                },
+                {
+                    question: "Example symmetric block cipher?",
+                    options: ["RSA", "AES", "Diffie-Hellman", "SHA-256"],
+                    answer: 1,
+                    explanation: "AES is symmetric block cipher",
+                    hint: "Used by governments worldwide"
+                },
+                {
+                    question: "Asymmetric encryption uses?",
+                    options: [
+                        "One shared key",
+                        "Public & private keys",
+                        "No keys",
+                        "Only hashes"
+                    ],
+                    answer: 1,
+                    explanation: "Uses key pair: public and private",
+                    hint: "Like a mailbox - anyone can drop mail, only you can open"
+                },
+                {
+                    question: "Which ensures sender can't deny?",
+                    options: [
+                        "Confidentiality",
+                        "Integrity",
+                        "Non-repudiation",
+                        "Authentication"
+                    ],
+                    answer: 2,
+                    explanation: "Non-repudiation = proof of origin",
+                    hint: "Means they can't say 'I didn't send that'"
+                },
+                {
+                    question: "Hash function purpose?",
+                    options: [
+                        "Encrypt data",
+                        "Verify integrity",
+                        "Generate keys",
+                        "Create certificates"
+                    ],
+                    answer: 1,
+                    explanation: "Hashes verify data hasn't changed",
+                    hint: "Creates a unique fingerprint of data"
+                },
+                {
+                    question: "Example stream cipher?",
+                    options: ["AES", "DES", "RC4", "RSA"],
+                    answer: 2,
+                    explanation: "RC4 encrypts data bit-by-bit",
+                    hint: "Often used in wireless protocols"
+                }
+            ]
+        };
+
+        // Game State
+        let gameState = {
+            selectedCategories: new Set(['all']),
+            currentQuestions: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            streak: 0,
+            answered: 0,
+            totalQuestions: 0,
+            startTime: null,
+            timeLeft: 30,
+            timerInterval: null,
+            userAnswers: []
+        };
+
+        // DOM Elements
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const hintModal = document.getElementById('hintModal');
+        const overlay = document.getElementById('overlay');
+
+        // Category Selection
+        function toggleCategory(category) {
+            const categoryEl = document.querySelector(`[data-category="${category}"]`);
+            
+            if (category === 'all') {
+                // If selecting 'all', deselect others
+                document.querySelectorAll('.category').forEach(cat => {
+                    cat.classList.remove('selected');
+                });
+                categoryEl.classList.add('selected');
+                gameState.selectedCategories = new Set(['all']);
+            } else {
+                // Deselect 'all' if selecting specific category
+                document.querySelector('[data-category="all"]').classList.remove('selected');
+                
+                if (gameState.selectedCategories.has(category)) {
+                    gameState.selectedCategories.delete(category);
+                    categoryEl.classList.remove('selected');
+                } else {
+                    gameState.selectedCategories.add(category);
+                    categoryEl.classList.add('selected');
+                }
+                
+                // If all categories selected, auto-select 'all'
+                if (gameState.selectedCategories.size === 5) {
+                    document.querySelector('[data-category="all"]').classList.add('selected');
+                    gameState.selectedCategories = new Set(['all']);
+                }
+            }
+        }
+
+        // Start Game
+        function startGame() {
+            if (gameState.selectedCategories.size === 0) {
+                alert('Please select at least one category!');
+                return;
+            }
+
+            // Prepare questions
+            gameState.currentQuestions = [];
+            
+            if (gameState.selectedCategories.has('all')) {
+                // Get questions from all categories
+                Object.values(quizDatabase).forEach(category => {
+                    gameState.currentQuestions.push(...category);
+                });
+            } else {
+                // Get questions from selected categories
+                gameState.selectedCategories.forEach(cat => {
+                    if (quizDatabase[cat]) {
+                        gameState.currentQuestions.push(...quizDatabase[cat]);
+                    }
+                });
+            }
+
+            // Shuffle questions
+            gameState.currentQuestions = shuffleArray(gameState.currentQuestions);
+            // Limit to 20 questions for game session
+            gameState.currentQuestions = gameState.currentQuestions.slice(0, 20);
+            gameState.totalQuestions = gameState.currentQuestions.length;
+
+            // Reset game state
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0;
+            gameState.streak = 0;
+            gameState.answered = 0;
+            gameState.userAnswers = [];
+            gameState.timeLeft = 30;
+
+            // Switch screens
+            startScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            resultsScreen.style.display = 'none';
+
+            // Start timer
+            startTimer();
+            
+            // Load first question
+            loadQuestion();
+        }
+
+        // Shuffle array (Fisher-Yates)
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        // Load Question
+        function loadQuestion() {
+            if (gameState.currentQuestionIndex >= gameState.currentQuestions.length) {
+                endGame();
+                return;
+            }
+
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            
+            // Update UI
+            document.getElementById('qNumber').textContent = gameState.currentQuestionIndex + 1;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('currentScore').textContent = gameState.score;
+            document.getElementById('questionCounter').textContent = `${gameState.currentQuestionIndex + 1}/${gameState.totalQuestions}`;
+            document.getElementById('streak').textContent = gameState.streak;
+            
+            // Update progress
+            const progress = ((gameState.currentQuestionIndex) / gameState.totalQuestions) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+
+            // Clear and load options
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+            
+            const letters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `
+                    <span class="option-letter">${letters[index]}</span>
+                    ${option}
+                `;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsGrid.appendChild(optionDiv);
+            });
+
+            // Reset next button
+            document.getElementById('nextBtn').disabled = true;
+            
+            // Store current hint
+            window.currentHint = question.hint;
+        }
+
+        // Select Answer
+        function selectAnswer(selectedIndex) {
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Disable all options
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+
+            // Mark selected
+            options[selectedIndex].classList.add('selected');
+
+            // Check if correct
+            const isCorrect = selectedIndex === question.answer;
+            
+            if (isCorrect) {
+                // Correct answer
+                options[selectedIndex].classList.add('correct');
+                gameState.score += 100;
+                gameState.streak++;
+                
+                // Bonus for fast answer
+                if (gameState.timeLeft > 20) {
+                    gameState.score += 50;
+                } else if (gameState.timeLeft > 10) {
+                    gameState.score += 25;
+                }
+                
+                // Streak bonus
+                if (gameState.streak >= 3) {
+                    gameState.score += gameState.streak * 10;
+                }
+                
+                createConfetti();
+            } else {
+                // Incorrect answer
+                options[selectedIndex].classList.add('incorrect');
+                options[question.answer].classList.add('correct');
+                gameState.streak = 0;
+            }
+
+            // Store answer
+            gameState.userAnswers.push({
+                question: question.question,
+                selected: selectedIndex,
+                correct: question.answer,
+                isCorrect: isCorrect
+            });
+
+            // Update score display
+            document.getElementById('currentScore').textContent = gameState.score;
+            document.getElementById('streak').textContent = gameState.streak;
+            gameState.answered++;
+
+            // Enable next button
+            nextBtn.disabled = false;
+            
+            // Stop timer for this question
+            clearInterval(gameState.timerInterval);
+        }
+
+        // Next Question
+        function nextQuestion() {
+            gameState.currentQuestionIndex++;
+            gameState.timeLeft = 30;
+            document.getElementById('timer').textContent = gameState.timeLeft;
+            
+            if (gameState.currentQuestionIndex < gameState.currentQuestions.length) {
+                loadQuestion();
+                startTimer();
+            } else {
+                endGame();
+            }
+        }
+
+        // Timer Functions
+        function startTimer() {
+            clearInterval(gameState.timerInterval);
+            
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timer').textContent = gameState.timeLeft;
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    // Auto-select wrong answer if time runs out
+                    const options = document.querySelectorAll('.option');
+                    if (options.length > 0) {
+                        selectAnswer(0); // Select first option (wrong)
+                    }
+                }
+            }, 1000);
+        }
+
+        // Hint System
+        function showHint() {
+            document.getElementById('hintContent').textContent = window.currentHint || "No hint available for this question.";
+            hintModal.style.display = 'block';
+            overlay.style.display = 'block';
+            
+            // Deduct points for using hint
+            gameState.score = Math.max(0, gameState.score - 25);
+            document.getElementById('currentScore').textContent = gameState.score;
+        }
+
+        function closeHint() {
+            hintModal.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // End Game
+        function endGame() {
+            clearInterval(gameState.timerInterval);
+            
+            const percentage = (gameState.userAnswers.filter(a => a.isCorrect).length / gameState.totalQuestions) * 100;
+            const accuracy = Math.round(percentage);
+            
+            // Update results screen
+            document.getElementById('finalScore').textContent = `${gameState.score} points`;
+            document.getElementById('correctAnswers').textContent = gameState.userAnswers.filter(a => a.isCorrect).length;
+            document.getElementById('accuracy').textContent = `${accuracy}%`;
+            document.getElementById('timeSpent').textContent = `${(gameState.totalQuestions * 30) - (gameState.currentQuestionIndex * 30 + gameState.timeLeft)}s`;
+            
+            // Performance meter
+            document.getElementById('performanceFill').style.width = `${percentage}%`;
+            
+            // Trophy based on score
+            let trophy = '😢';
+            let message = 'Keep studying!';
+            
+            if (accuracy >= 90) {
+                trophy = '🏆';
+                message = 'Outstanding! You\'re an IT expert!';
+            } else if (accuracy >= 70) {
+                trophy = '🥈';
+                message = 'Great job! You know your stuff!';
+            } else if (accuracy >= 50) {
+                trophy = '🥉';
+                message = 'Good effort! Keep practicing!';
+            }
+            
+            document.getElementById('trophyEmoji').textContent = trophy;
+            document.getElementById('scoreMessage').textContent = message;
+            
+            // Switch to results screen
+            gameScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+        }
+
+        // Game Controls
+        function quitGame() {
+            if (confirm('Are you sure you want to end the quiz? Your progress will be saved.')) {
+                endGame();
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function reviewAnswers() {
+            alert('Review mode would show all questions with explanations.\n\nCorrect: ' + 
+                  gameState.userAnswers.filter(a => a.isCorrect).length + 
+                  '\nIncorrect: ' + 
+                  gameState.userAnswers.filter(a => !a.isCorrect).length);
+        }
+
+        function goHome() {
+            resultsScreen.style.display = 'none';
+            startScreen.style.display = 'block';
+        }
+
+        // Confetti Effect
+        function createConfetti() {
+            const colors = ['#fbbf24', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.opacity = '1';
+                confetti.style.animation = `confetti ${Math.random() * 3 + 2}s linear forwards`;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // Initialize with 'all' selected
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('[data-category="all"]').classList.add('selected');
+        });
+    </script>
+</body>
+</html>

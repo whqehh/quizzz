@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP Fundamentals Quiz</title>
+    <link rel="stylesheet" href="design.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Start Screen -->
+        <div class="start-screen active" id="startScreen">
+            <div class="emoji" id="quizEmoji">🧩</div>
+            <h1 id="quizTitle">OOP Fundamentals Quiz</h1>
+            <p id="quizDescription" style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px;">
+                Test your Object-Oriented Programming knowledge with this interactive quiz!
+            </p>
+            
+            <div class="info-panel">
+                <div class="info-item">
+                    <span class="number" id="totalQuestions">50</span>
+                    <span class="label">Questions</span>
+                </div>
+                <div class="info-item">
+                    <span class="number" id="totalCategories">5</span>
+                    <span class="label">Categories</span>
+                </div>
+                <div class="info-item">
+                    <span class="number" id="timePerQuestion">30</span>
+                    <span class="label">Seconds per Q</span>
+                </div>
+            </div>
+            
+            <h3 style="margin: 30px 0 20px; color: #fbbf24;">Select Topics:</h3>
+            <div class="category-selector" id="categorySelector">
+                <!-- Categories will be added here -->
+            </div>
+            
+            <button class="quiz-btn" onclick="startGame()" id="startBtn">
+                🚀 Start Quiz
+            </button>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <div class="game-header">
+                <div class="game-stats">
+                    <div class="stat">
+                        <span class="value" id="currentScore">0</span>
+                        <span class="label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="value" id="questionCounter">1/0</span>
+                        <span class="label">Question</span>
+                    </div>
+                    <div class="stat">
+                        <span class="value" id="streak">0</span>
+                        <span class="label">Streak</span>
+                    </div>
+                </div>
+                <div class="timer-container">
+                    ⏱️ Time: <span class="timer" id="timer">30</span>s
+                </div>
+            </div>
+            
+            <div class="question-area">
+                <div class="question-progress">
+                    <div class="question-number" id="qNumber">1</div>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                </div>
+                
+                <div class="question-text" id="questionText">
+                    Loading question...
+                </div>
+                
+                <div class="options-grid" id="optionsGrid">
+                    <!-- Options will be inserted here -->
+                </div>
+                
+                <div class="game-controls">
+                    <button class="control-btn hint-btn" onclick="showHint()">
+                        💡 Get Hint
+                    </button>
+                    <button class="control-btn next-btn" id="nextBtn" onclick="nextQuestion()" disabled>
+                        Next Question →
+                    </button>
+                    <button class="control-btn quit-btn" onclick="quitGame()">
+                        🏁 End Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen" id="resultsScreen">
+            <div class="trophy" id="trophyEmoji">🏆</div>
+            <h2 id="resultsTitle">Quiz Complete!</h2>
+            
+            <div class="score-display" id="finalScore">0</div>
+            <div class="score-text" id="scoreMessage">Calculating your score...</div>
+            
+            <div class="performance-meter">
+                <div class="performance-fill" id="performanceFill"></div>
+            </div>
+            <div class="performance-labels">
+                <span>Needs Work</span>
+                <span>Good</span>
+                <span>Excellent!</span>
+            </div>
+            
+            <div class="results-details">
+                <div class="result-item">
+                    <span class="value" id="correctAnswers">0</span>
+                    <span class="label">Correct</span>
+                </div>
+                <div class="result-item">
+                    <span class="value" id="accuracy">0%</span>
+                    <span class="label">Accuracy</span>
+                </div>
+                <div class="result-item">
+                    <span class="value" id="timeSpent">0s</span>
+                    <span class="label">Time</span>
+                </div>
+            </div>
+            
+            <div class="results-controls">
+                <button class="control-btn restart-btn" onclick="restartGame()">
+                    🔄 Play Again
+                </button>
+                <button class="control-btn home-btn" onclick="goHome()">
+                    🏠 Back to Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Hint Modal -->
+        <div class="modal" id="hintModal">
+            <h3>💡 Hint</h3>
+            <div class="hint-content" id="hintContent">
+                Loading hint...
+            </div>
+            <button class="quiz-btn" onclick="closeHint()" style="padding: 12px 25px; font-size: 1rem;">
+                Got it!
+            </button>
+        </div>
+        <div class="overlay" id="overlay" onclick="closeHint()"></div>
+    </div>
+
+    <script>
+        // ====== QUIZ CONFIGURATION ======
+        const QUIZ_CONFIG = {
+            title: "OOP Fundamentals Quiz",
+            description: "Test your Object-Oriented Programming knowledge!",
+            emoji: "🧩",
+            questionsPerGame: 10,
+            timePerQuestion: 30,
+            points: {
+                correct: 100,
+                fastBonus: [50, 25],
+                streakBonus: 10,
+                hintPenalty: 25
+            },
+            categories: {
+                basics: { name: "OOP Basics", emoji: "🔤" },
+                inheritance: { name: "Inheritance", emoji: "🔄" },
+                polymorphism: { name: "Polymorphism", emoji: "🎭" },
+                abstraction: { name: "Abstraction", emoji: "📦" },
+                exceptions: { name: "Exception Handling", emoji: "⚠️" }
+            }
+        };
+
+        // ====== OOP QUIZ DATA ======
+        const QUIZ_DATA = {
+            basics: [
+                {
+                    question: "Which keyword is used to implement encapsulation?",
+                    options: ["public", "protected", "private", "static"],
+                    answer: 2,
+                    explanation: "Encapsulation is implemented by declaring attributes as private.",
+                    hint: "This access modifier restricts access to within the class only."
+                },
+                {
+                    question: "What is true about a static variable?",
+                    options: [
+                        "It belongs to each object separately",
+                        "It is reinitialized for every new object",
+                        "It is shared across all instances",
+                        "It can only be used in interfaces"
+                    ],
+                    answer: 2,
+                    explanation: "Static variables are class-level and shared by all instances.",
+                    hint: "Think about variables that belong to the class, not to individual objects."
+                },
+                {
+                    question: "Which of the following can access protected members?",
+                    options: [
+                        "Any class",
+                        "Same package and subclasses",
+                        "Only the defining class",
+                        "Subclasses in different packages only"
+                    ],
+                    answer: 1,
+                    explanation: "Protected members are accessible within the same package and subclasses.",
+                    hint: "Protected access is between public and private - consider inheritance."
+                },
+                {
+                    question: "What is the correct access level for members accessible in the same package only?",
+                    options: ["private", "protected", "default", "public"],
+                    answer: 2,
+                    explanation: "Default (package-private) access allows access within the same package only.",
+                    hint: "This is what happens when you don't specify any access modifier."
+                },
+                {
+                    question: "Which of the following is NOT a primitive data type in Java?",
+                    options: ["int", "String", "boolean", "double"],
+                    answer: 1,
+                    explanation: "String is a class, not a primitive data type.",
+                    hint: "Primitive types are the basic building blocks - String is more complex."
+                }
+            ],
+            inheritance: [
+                {
+                    question: "Which keyword is used to inherit a class in Java?",
+                    options: ["inherit", "derive", "extends", "implements"],
+                    answer: 2,
+                    explanation: "The 'extends' keyword is used for class inheritance.",
+                    hint: "Classes use this keyword, interfaces use 'implements'."
+                },
+                {
+                    question: "What does the super() keyword do in a subclass constructor?",
+                    options: [
+                        "Calls the same class constructor",
+                        "Calls an interface method",
+                        "Calls superclass constructor",
+                        "Access private members of parent class"
+                    ],
+                    answer: 2,
+                    explanation: "super() calls the superclass constructor.",
+                    hint: "Think about how to initialize parent class properties."
+                },
+                {
+                    question: "What happens if a subclass does not implement all abstract methods?",
+                    options: [
+                        "It will compile",
+                        "It must be declared abstract",
+                        "It can override them later",
+                        "It inherits them by default"
+                    ],
+                    answer: 1,
+                    explanation: "A class with unimplemented abstract methods must be abstract.",
+                    hint: "Abstract methods require implementation somewhere in the hierarchy."
+                },
+                {
+                    question: "What type of inheritance is not allowed in Java?",
+                    options: ["Multilevel", "Hierarchical", "Multiple (with classes)", "Single"],
+                    answer: 2,
+                    explanation: "Java doesn't support multiple inheritance with classes, only with interfaces.",
+                    hint: "Think about the diamond problem in inheritance."
+                },
+                {
+                    question: "Which keyword is used to prevent class inheritance?",
+                    options: ["static", "final", "abstract", "protected"],
+                    answer: 1,
+                    explanation: "A final class cannot be inherited.",
+                    hint: "This keyword also prevents method overriding."
+                }
+            ],
+            polymorphism: [
+                {
+                    question: "Which feature allows method calls to decide at runtime?",
+                    options: ["Static binding", "Method overloading", "Method overriding", "Constructor chaining"],
+                    answer: 2,
+                    explanation: "Method overriding enables runtime polymorphism.",
+                    hint: "This is also known as dynamic method dispatch."
+                },
+                {
+                    question: "Which polymorphism is applied when method signature is same in parent and child?",
+                    options: ["Overloading", "Early binding", "Overriding", "Static binding"],
+                    answer: 2,
+                    explanation: "Method overriding uses the same signature in parent and child.",
+                    hint: "Different parameters would be overloading, same signature is overriding."
+                },
+                {
+                    question: "What is method overloading?",
+                    options: [
+                        "Changing method name in subclass",
+                        "Using same method name with different parameters in same class",
+                        "Overriding a method with new return type",
+                        "Hiding methods in subclass"
+                    ],
+                    answer: 1,
+                    explanation: "Overloading uses same name but different parameters.",
+                    hint: "This is compile-time polymorphism."
+                },
+                {
+                    question: "What happens if a method in subclass has the same signature as parent but different return type?",
+                    options: [
+                        "It's valid overriding",
+                        "Compile-time error",
+                        "Runtime error",
+                        "Treated as overload"
+                    ],
+                    answer: 1,
+                    explanation: "Different return types with same signature cause compilation error.",
+                    hint: "Overriding requires same signature including return type."
+                },
+                {
+                    question: "Which of the following is an example of dynamic binding?",
+                    options: ["Method overloading", "Method overriding", "Static methods", "Constructors"],
+                    answer: 1,
+                    explanation: "Method overriding is resolved at runtime (dynamic binding).",
+                    hint: "Dynamic binding happens when the method to call is determined at runtime."
+                }
+            ],
+            abstraction: [
+                {
+                    question: "Which is true about abstract classes?",
+                    options: [
+                        "Can be instantiated",
+                        "Can have abstract and concrete methods",
+                        "Must only contain abstract methods",
+                        "Must implement an interface"
+                    ],
+                    answer: 1,
+                    explanation: "Abstract classes can have both abstract and concrete methods.",
+                    hint: "Abstract classes provide partial implementation."
+                },
+                {
+                    question: "What is the purpose of an interface in Java?",
+                    options: [
+                        "To create constants",
+                        "To enforce multiple inheritance behavior",
+                        "To hold only data",
+                        "To create a final class"
+                    ],
+                    answer: 1,
+                    explanation: "Interfaces enable multiple inheritance of type.",
+                    hint: "Think about how Java achieves multiple inheritance."
+                },
+                {
+                    question: "Which is true for static methods?",
+                    options: [
+                        "They can use instance variables",
+                        "They can override non-static methods",
+                        "They can only access static members",
+                        "They must return void"
+                    ],
+                    answer: 2,
+                    explanation: "Static methods can only access static members.",
+                    hint: "Static methods belong to the class, not instances."
+                },
+                {
+                    question: "Why can't static methods use 'this'?",
+                    options: [
+                        "Because it's private",
+                        "Because this refers to an instance, but static methods do not belong to an instance",
+                        "Because it's undefined",
+                        "Because it's final"
+                    ],
+                    answer: 1,
+                    explanation: "'this' refers to current object instance, which doesn't exist for static methods.",
+                    hint: "Static methods are called on the class, not on objects."
+                },
+                {
+                    question: "How many interfaces can a class implement?",
+                    options: ["Only one", "Two", "Multiple", "None"],
+                    answer: 2,
+                    explanation: "A class can implement multiple interfaces.",
+                    hint: "This is how Java supports multiple inheritance."
+                }
+            ],
+            exceptions: [
+                {
+                    question: "What happens if an exception is not caught in a try block?",
+                    options: [
+                        "The program continues execution",
+                        "The program goes to the finally block and continues",
+                        "The program terminates abnormally",
+                        "The JVM retries the failed operation"
+                    ],
+                    answer: 2,
+                    explanation: "Uncaught exceptions cause abnormal program termination.",
+                    hint: "Think about what happens when there's no catch block."
+                },
+                {
+                    question: "Which of the following exceptions is checked?",
+                    options: ["ArithmeticException", "IOException", "NullPointerException", "ArrayIndexOutOfBoundsException"],
+                    answer: 1,
+                    explanation: "IOException is a checked exception that must be handled.",
+                    hint: "Checked exceptions are checked at compile-time."
+                },
+                {
+                    question: "Which keyword is used to declare that a method might throw an exception?",
+                    options: ["throw", "throws", "catch", "finally"],
+                    answer: 1,
+                    explanation: "'throws' is used in method declaration.",
+                    hint: "This goes in the method signature."
+                },
+                {
+                    question: "What is the superclass of all errors and exceptions in Java?",
+                    options: ["Exception", "Error", "RuntimeException", "Throwable"],
+                    answer: 3,
+                    explanation: "Throwable is the superclass of all errors and exceptions.",
+                    hint: "Think about the hierarchy: Throwable > Exception/Error"
+                },
+                {
+                    question: "The finally block is executed:",
+                    options: [
+                        "Only when an exception is thrown",
+                        "Only if no exception is thrown",
+                        "Always",
+                        "Only if the catch block is executed"
+                    ],
+                    answer: 2,
+                    explanation: "finally block always executes, regardless of exceptions.",
+                    hint: "This is used for cleanup code."
+                }
+            ]
+        };
+
+        // ====== GAME STATE ======
+        let gameState = {
+            selectedCategories: new Set(['all']),
+            currentQuestions: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            streak: 0,
+            totalQuestions: 0,
+            timeLeft: QUIZ_CONFIG.timePerQuestion,
+            timerInterval: null,
+            userAnswers: []
+        };
+
+        // ====== DOM ELEMENTS ======
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const hintModal = document.getElementById('hintModal');
+        const overlay = document.getElementById('overlay');
+        const categorySelector = document.getElementById('categorySelector');
+
+        // ====== INITIALIZATION ======
+        function initializeQuiz() {
+            document.getElementById('quizTitle').textContent = QUIZ_CONFIG.title;
+            document.getElementById('quizDescription').textContent = QUIZ_CONFIG.description;
+            document.getElementById('quizEmoji').textContent = QUIZ_CONFIG.emoji;
+            document.getElementById('timePerQuestion').textContent = QUIZ_CONFIG.timePerQuestion;
+            
+            let totalQuestions = 0;
+            Object.values(QUIZ_DATA).forEach(category => {
+                totalQuestions += category.length;
+            });
+            
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            document.getElementById('totalCategories').textContent = Object.keys(QUIZ_CONFIG.categories).length;
+            
+            setupCategories();
+            document.querySelector('[data-category="all"]')?.classList.add('selected');
+        }
+
+        function setupCategories() {
+            categorySelector.innerHTML = '';
+            
+            // Add 'All Topics' option
+            const allCategory = document.createElement('div');
+            allCategory.className = 'category';
+            allCategory.dataset.category = 'all';
+            allCategory.innerHTML = `
+                <span class="icon">🎯</span>
+                <strong>All OOP Topics</strong>
+                <div style="font-size: 0.9rem; opacity: 0.8;">
+                    ${Object.values(QUIZ_DATA).reduce((sum, cat) => sum + cat.length, 0)} Questions
+                </div>
+            `;
+            allCategory.onclick = () => toggleCategory('all');
+            categorySelector.appendChild(allCategory);
+            
+            // Add individual categories
+            Object.entries(QUIZ_CONFIG.categories).forEach(([key, category]) => {
+                const categoryEl = document.createElement('div');
+                categoryEl.className = 'category';
+                categoryEl.dataset.category = key;
+                const questionCount = QUIZ_DATA[key] ? QUIZ_DATA[key].length : 0;
+                categoryEl.innerHTML = `
+                    <span class="icon">${category.emoji}</span>
+                    <strong>${category.name}</strong>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">
+                        ${questionCount} Questions
+                    </div>
+                `;
+                categoryEl.onclick = () => toggleCategory(key);
+                categorySelector.appendChild(categoryEl);
+            });
+        }
+
+        // ====== CATEGORY SELECTION ======
+        function toggleCategory(category) {
+            const categoryEl = document.querySelector(`[data-category="${category}"]`);
+            
+            if (category === 'all') {
+                document.querySelectorAll('.category').forEach(cat => {
+                    cat.classList.remove('selected');
+                });
+                categoryEl.classList.add('selected');
+                gameState.selectedCategories = new Set(['all']);
+            } else {
+                document.querySelector('[data-category="all"]').classList.remove('selected');
+                
+                if (gameState.selectedCategories.has(category)) {
+                    gameState.selectedCategories.delete(category);
+                    categoryEl.classList.remove('selected');
+                } else {
+                    gameState.selectedCategories.add(category);
+                    categoryEl.classList.add('selected');
+                }
+                
+                const allCategories = Object.keys(QUIZ_CONFIG.categories);
+                if (gameState.selectedCategories.size === allCategories.length) {
+                    document.querySelector('[data-category="all"]').classList.add('selected');
+                    gameState.selectedCategories = new Set(['all']);
+                }
+            }
+        }
+
+        // ====== GAME FUNCTIONS ======
+        function startGame() {
+            if (gameState.selectedCategories.size === 0) {
+                alert('Please select at least one category!');
+                return;
+            }
+
+            gameState.currentQuestions = [];
+            
+            if (gameState.selectedCategories.has('all')) {
+                Object.values(QUIZ_DATA).forEach(category => {
+                    gameState.currentQuestions.push(...category);
+                });
+            } else {
+                gameState.selectedCategories.forEach(cat => {
+                    if (QUIZ_DATA[cat]) {
+                        gameState.currentQuestions.push(...QUIZ_DATA[cat]);
+                    }
+                });
+            }
+
+            if (gameState.currentQuestions.length === 0) {
+                alert('No questions available for selected categories!');
+                return;
+            }
+
+            gameState.currentQuestions = shuffleArray(gameState.currentQuestions);
+            gameState.currentQuestions = gameState.currentQuestions.slice(0, QUIZ_CONFIG.questionsPerGame);
+            gameState.totalQuestions = gameState.currentQuestions.length;
+
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0;
+            gameState.streak = 0;
+            gameState.userAnswers = [];
+            gameState.timeLeft = QUIZ_CONFIG.timePerQuestion;
+
+            startScreen.classList.remove('active');
+            startScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            resultsScreen.style.display = 'none';
+
+            loadQuestion();
+            startTimer();
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function loadQuestion() {
+            if (gameState.currentQuestionIndex >= gameState.currentQuestions.length) {
+                endGame();
+                return;
+            }
+
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            
+            document.getElementById('qNumber').textContent = gameState.currentQuestionIndex + 1;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('currentScore').textContent = gameState.score;
+            document.getElementById('questionCounter').textContent = 
+                `${gameState.currentQuestionIndex + 1}/${gameState.totalQuestions}`;
+            document.getElementById('streak').textContent = gameState.streak;
+            
+            const progress = ((gameState.currentQuestionIndex) / gameState.totalQuestions) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+            
+            const letters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `
+                    <span class="option-letter">${letters[index]}</span>
+                    ${option}
+                `;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsGrid.appendChild(optionDiv);
+            });
+
+            document.getElementById('nextBtn').disabled = true;
+            window.currentHint = question.hint;
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+
+            options[selectedIndex].classList.add('selected');
+
+            const isCorrect = selectedIndex === question.answer;
+            
+            if (isCorrect) {
+                options[selectedIndex].classList.add('correct');
+                gameState.score += QUIZ_CONFIG.points.correct;
+                gameState.streak++;
+                
+                if (gameState.timeLeft > 20) {
+                    gameState.score += QUIZ_CONFIG.points.fastBonus[0];
+                } else if (gameState.timeLeft > 10) {
+                    gameState.score += QUIZ_CONFIG.points.fastBonus[1];
+                }
+                
+                if (gameState.streak >= 3) {
+                    gameState.score += gameState.streak * QUIZ_CONFIG.points.streakBonus;
+                }
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                options[question.answer].classList.add('correct');
+                gameState.streak = 0;
+            }
+
+            gameState.userAnswers.push({
+                question: question.question,
+                selected: selectedIndex,
+                correct: question.answer,
+                isCorrect: isCorrect
+            });
+
+            document.getElementById('currentScore').textContent = gameState.score;
+            document.getElementById('streak').textContent = gameState.streak;
+
+            nextBtn.disabled = false;
+            clearInterval(gameState.timerInterval);
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestionIndex++;
+            gameState.timeLeft = QUIZ_CONFIG.timePerQuestion;
+            document.getElementById('timer').textContent = gameState.timeLeft;
+            
+            if (gameState.currentQuestionIndex < gameState.currentQuestions.length) {
+                loadQuestion();
+                startTimer();
+            } else {
+                endGame();
+            }
+        }
+
+        // ====== TIMER ======
+        function startTimer() {
+            clearInterval(gameState.timerInterval);
+            
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timer').textContent = gameState.timeLeft;
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    const options = document.querySelectorAll('.option');
+                    if (options.length > 0) {
+                        selectAnswer(0);
+                    }
+                }
+            }, 1000);
+        }
+
+        // ====== HINT SYSTEM ======
+        function showHint() {
+            document.getElementById('hintContent').textContent = 
+                window.currentHint || "No hint available for this question.";
+            hintModal.style.display = 'block';
+            overlay.style.display = 'block';
+            
+            gameState.score = Math.max(0, gameState.score - QUIZ_CONFIG.points.hintPenalty);
+            document.getElementById('currentScore').textContent = gameState.score;
+        }
+
+        function closeHint() {
+            hintModal.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // ====== END GAME ======
+        function endGame() {
+            clearInterval(gameState.timerInterval);
+            
+            const correctAnswers = gameState.userAnswers.filter(a => a.isCorrect).length;
+            const accuracy = Math.round((correctAnswers / gameState.totalQuestions) * 100);
+            
+            document.getElementById('finalScore').textContent = `${gameState.score} points`;
+            document.getElementById('correctAnswers').textContent = correctAnswers;
+            document.getElementById('accuracy').textContent = `${accuracy}%`;
+            
+            const totalTime = QUIZ_CONFIG.timePerQuestion * gameState.totalQuestions;
+            const timeSpent = totalTime - (gameState.currentQuestionIndex * QUIZ_CONFIG.timePerQuestion + gameState.timeLeft);
+            document.getElementById('timeSpent').textContent = `${timeSpent}s`;
+            
+            document.getElementById('performanceFill').style.width = `${accuracy}%`;
+            
+            let trophy = '😢';
+            let message = 'Keep studying!';
+            
+            if (accuracy >= 90) {
+                trophy = '🏆';
+                message = 'Outstanding! You\'re an OOP expert!';
+            } else if (accuracy >= 70) {
+                trophy = '🥈';
+                message = 'Great job! You know your OOP concepts!';
+            } else if (accuracy >= 50) {
+                trophy = '🥉';
+                message = 'Good effort! Keep practicing OOP!';
+            }
+            
+            document.getElementById('trophyEmoji').textContent = trophy;
+            document.getElementById('scoreMessage').textContent = message;
+            
+            gameScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+        }
+
+        // ====== GAME CONTROLS ======
+        function quitGame() {
+            if (confirm('Are you sure you want to end the quiz?')) {
+                endGame();
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function goHome() {
+            resultsScreen.style.display = 'none';
+            startScreen.style.display = 'block';
+            startScreen.classList.add('active');
+        }
+
+        // ====== INITIALIZE QUIZ ======
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+    </script>
+</body>
+</html>

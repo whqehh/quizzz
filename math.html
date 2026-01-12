@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discrete Mathematics Quiz</title>
+    <link rel="stylesheet" href="design.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <!-- Start Screen -->
+        <div class="start-screen active" id="startScreen">
+            <div class="emoji" id="quizEmoji">🧮</div>
+            <h1 id="quizTitle">Discrete Mathematics Quiz</h1>
+            <p id="quizDescription" style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 30px;">
+                Test your knowledge of Functions, Logic, Proofs, Graphs, Sets, and Number Theory
+            </p>
+            
+            <div class="info-panel">
+                <div class="info-item">
+                    <span class="number" id="totalQuestions">60</span>
+                    <span class="label">Questions</span>
+                </div>
+                <div class="info-item">
+                    <span class="number" id="totalCategories">6</span>
+                    <span class="label">Categories</span>
+                </div>
+                <div class="info-item">
+                    <span class="number" id="timePerQuestion">30</span>
+                    <span class="label">Seconds per Q</span>
+                </div>
+            </div>
+            
+            <h3 style="margin: 30px 0 20px; color: #fbbf24;">Select Categories:</h3>
+            <div class="category-selector" id="categorySelector">
+                <!-- Categories will be added here by JavaScript -->
+            </div>
+            
+            <button class="quiz-btn" onclick="startGame()" id="startBtn">
+                🚀 Start Quiz
+            </button>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <div class="game-header">
+                <div class="game-stats">
+                    <div class="stat">
+                        <span class="value" id="currentScore">0</span>
+                        <span class="label">Score</span>
+                    </div>
+                    <div class="stat">
+                        <span class="value" id="questionCounter">1/0</span>
+                        <span class="label">Question</span>
+                    </div>
+                    <div class="stat">
+                        <span class="value" id="streak">0</span>
+                        <span class="label">Streak</span>
+                    </div>
+                </div>
+                <div class="timer-container">
+                    ⏱️ Time: <span class="timer" id="timer">30</span>s
+                </div>
+            </div>
+            
+            <div class="question-area">
+                <div class="question-progress">
+                    <div class="question-number" id="qNumber">1</div>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress"></div>
+                    </div>
+                </div>
+                
+                <div class="question-text" id="questionText">
+                    Loading question...
+                </div>
+                
+                <div class="options-grid" id="optionsGrid">
+                    <!-- Options will be inserted here by JavaScript -->
+                </div>
+                
+                <div class="game-controls">
+                    <button class="control-btn hint-btn" onclick="showHint()">
+                        💡 Get Hint
+                    </button>
+                    <button class="control-btn next-btn" id="nextBtn" onclick="nextQuestion()" disabled>
+                        Next Question →
+                    </button>
+                    <button class="control-btn quit-btn" onclick="quitGame()">
+                        🏁 End Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div class="results-screen" id="resultsScreen">
+            <div class="trophy" id="trophyEmoji">🏆</div>
+            <h2 id="resultsTitle">Quiz Complete!</h2>
+            
+            <div class="score-display" id="finalScore">0</div>
+            <div class="score-text" id="scoreMessage">Calculating your score...</div>
+            
+            <div class="performance-meter">
+                <div class="performance-fill" id="performanceFill"></div>
+            </div>
+            <div class="performance-labels">
+                <span>Needs Work</span>
+                <span>Good</span>
+                <span>Excellent!</span>
+            </div>
+            
+            <div class="results-details">
+                <div class="result-item">
+                    <span class="value" id="correctAnswers">0</span>
+                    <span class="label">Correct</span>
+                </div>
+                <div class="result-item">
+                    <span class="value" id="accuracy">0%</span>
+                    <span class="label">Accuracy</span>
+                </div>
+                <div class="result-item">
+                    <span class="value" id="timeSpent">0s</span>
+                    <span class="label">Time</span>
+                </div>
+            </div>
+            
+            <div class="results-controls">
+                <button class="control-btn restart-btn" onclick="restartGame()">
+                    🔄 Play Again
+                </button>
+                <button class="control-btn home-btn" onclick="goHome()">
+                    🏠 Back to Home
+                </button>
+            </div>
+        </div>
+
+        <!-- Hint Modal -->
+        <div class="modal" id="hintModal">
+            <h3>💡 Hint</h3>
+            <div class="hint-content" id="hintContent">
+                Loading hint...
+            </div>
+            <button class="quiz-btn" onclick="closeHint()" style="padding: 12px 25px; font-size: 1rem;">
+                Got it!
+            </button>
+        </div>
+        <div class="overlay" id="overlay" onclick="closeHint()"></div>
+    </div>
+
+    <script>
+        // ====== CONFIGURATION ======
+        const QUIZ_CONFIG = {
+            title: "Discrete Mathematics Quiz",
+            description: "Test your knowledge of IT Fundamentals Mathematics",
+            emoji: "🧮",
+            questionsPerGame: 20, // Show 20 questions per game (random selection from selected categories)
+            timePerQuestion: 30,
+            points: {
+                correct: 100,
+                fastBonus: [50, 25],
+                streakBonus: 10,
+                hintPenalty: 25
+            },
+            categories: {
+                functions: { name: "Functions", emoji: "📈" },
+                logic: { name: "Logic", emoji: "🔢" },
+                proofs: { name: "Proofs", emoji: "📐" },
+                graphs: { name: "Graphs & Trees", emoji: "🌳" },
+                sets: { name: "Set Theory", emoji: "📊" },
+                numbers: { name: "Number Theory", emoji: "🔢" }
+            }
+        };
+
+        // ====== QUIZ DATA ======
+        const QUIZ_DATA = {
+            functions: [
+                {
+                    question: "A function f: A → B is injective if:",
+                    options: [
+                        "Every element in B has a pre-image in A",
+                        "Every element in A maps to a unique element in B",
+                        "The range equals the codomain",
+                        "It is both one-to-one and onto"
+                    ],
+                    answer: 1,
+                    explanation: "Injective means one-to-one: each element in A maps to a unique element in B",
+                    hint: "Think about the definition of 'one-to-one' mapping"
+                },
+                {
+                    question: "If f(x) = 3x - 2 and g(x) = x + 5, what is (f - g)(x)?",
+                    options: ["4x + 3", "2x - 7", "2x - 5", "2x + 3"],
+                    answer: 1,
+                    explanation: "(f - g)(x) = f(x) - g(x) = (3x - 2) - (x + 5) = 2x - 7",
+                    hint: "Subtract g(x) from f(x) and combine like terms"
+                },
+                {
+                    question: "The composition (f ∘ g)(x) means:",
+                    options: ["f(x) + g(x)", "f(g(x))", "g(f(x))", "f(x) ⋅ g(x)"],
+                    answer: 1,
+                    explanation: "Composition means applying g first, then f: f(g(x))",
+                    hint: "Read from right to left: f ∘ g means f after g"
+                },
+                {
+                    question: "True or False: A function can be one-to-many.",
+                    options: ["True", "False"],
+                    answer: 1,
+                    explanation: "A function must be either one-to-one or many-to-one, never one-to-many",
+                    hint: "By definition, each input must have exactly one output"
+                },
+                {
+                    question: "If f(x) = x², then f⁻¹(9) = ?",
+                    options: ["3", "-3", "±3", "81"],
+                    answer: 2,
+                    explanation: "f⁻¹(9) means find x such that x² = 9, so x = 3 or x = -3",
+                    hint: "Remember that f⁻¹(x) for f(x)=x² gives ±√x"
+                },
+                {
+                    question: "A bijective function is both:",
+                    options: [
+                        "Injective and surjective",
+                        "One-to-many and onto",
+                        "Many-to-one and into",
+                        "Linear and quadratic"
+                    ],
+                    answer: 0,
+                    explanation: "Bijective = injective (one-to-one) + surjective (onto)",
+                    hint: "Think of 'bi-' meaning two properties combined"
+                },
+                {
+                    question: "Which is NOT a function type?",
+                    options: ["One-to-One", "Many-to-One", "One-to-Many", "Onto"],
+                    answer: 2,
+                    explanation: "One-to-many violates the definition of a function",
+                    hint: "A function requires exactly one output per input"
+                },
+                {
+                    question: "The inverse function f⁻¹ exists only if f is:",
+                    options: ["Onto", "One-to-One", "Many-to-One", "Linear"],
+                    answer: 1,
+                    explanation: "A function must be injective (one-to-one) to have an inverse",
+                    hint: "For an inverse, each output must come from exactly one input"
+                },
+                {
+                    question: "If f(x) = 2x + 3, what is f⁻¹(x)?",
+                    options: ["(x-3)/2", "(x+3)/2", "2x-3", "3x-2"],
+                    answer: 0,
+                    explanation: "Solve y=2x+3 for x: x = (y-3)/2, so f⁻¹(x) = (x-3)/2",
+                    hint: "Swap x and y, then solve for y"
+                },
+                {
+                    question: "The range of f(x) = |x| is:",
+                    options: ["All real numbers", "Positive numbers only", "Non-negative numbers", "Integers only"],
+                    answer: 2,
+                    explanation: "|x| ≥ 0 for all x, so range is [0, ∞)",
+                    hint: "Absolute value is never negative"
+                }
+            ],
+
+            logic: [
+                {
+                    question: "Which of the following is a proposition?",
+                    options: ["What time is it?", "x + 5 = 10", "The sky is blue.", "Go to sleep!"],
+                    answer: 2,
+                    explanation: "A proposition is a declarative statement with a truth value",
+                    hint: "It must be a statement that can be true or false"
+                },
+                {
+                    question: "The negation of 'It is raining' is:",
+                    options: ["It is not raining", "It is sunny", "It might rain", "It is raining heavily"],
+                    answer: 0,
+                    explanation: "Negation simply adds 'not' to the statement",
+                    hint: "Direct opposite without additional assumptions"
+                },
+                {
+                    question: "p ∧ q is true when:",
+                    options: ["Both p and q are true", "At least one is true", "p is false", "q is false"],
+                    answer: 0,
+                    explanation: "AND (∧) requires both propositions to be true",
+                    hint: "Think of AND as 'both must be true'"
+                },
+                {
+                    question: "The implication p → q is false only when:",
+                    options: ["p is true, q is false", "p is false, q is true", "Both are false", "Both are true"],
+                    answer: 0,
+                    explanation: "If p is true and q is false, the implication is false",
+                    hint: "Remember: 'true implies false' is the only false case"
+                },
+                {
+                    question: "Simplify using De Morgan's Law: ¬(p ∧ q)",
+                    options: ["¬p ∧ ¬q", "¬p ∨ ¬q", "p ∨ q", "p ∧ q"],
+                    answer: 1,
+                    explanation: "De Morgan's Law: ¬(p ∧ q) ≡ ¬p ∨ ¬q",
+                    hint: "Distribute the negation and change AND to OR"
+                },
+                {
+                    question: "The biconditional p ↔ q is true when:",
+                    options: ["p and q are different", "p is true", "p and q are the same", "q is false"],
+                    answer: 2,
+                    explanation: "p ↔ q is true when both have the same truth value",
+                    hint: "Think 'if and only if' - both must match"
+                },
+                {
+                    question: "Which is a tautology?",
+                    options: ["p ∧ ¬p", "p ∨ ¬p", "p → ¬p", "p ∧ p"],
+                    answer: 1,
+                    explanation: "p ∨ ¬p is always true (law of excluded middle)",
+                    hint: "A tautology is always true regardless of p's value"
+                },
+                {
+                    question: "Modus Ponens is: p → q, p ⊢ ?",
+                    options: ["¬q", "q", "p ∧ q", "p ∨ q"],
+                    answer: 1,
+                    explanation: "If p implies q, and p is true, then q must be true",
+                    hint: "It's a valid inference rule"
+                },
+                {
+                    question: "The contrapositive of p → q is:",
+                    options: ["q → p", "¬p → ¬q", "¬q → ¬p", "p ↔ q"],
+                    answer: 2,
+                    explanation: "Contrapositive: ¬q → ¬p, which is logically equivalent",
+                    hint: "Negate both and reverse the direction"
+                },
+                {
+                    question: "Which is NOT a logical operator?",
+                    options: ["∧", "∨", "→", "="],
+                    answer: 3,
+                    explanation: "= is equality, not a logical connective",
+                    hint: "Logical operators connect propositions"
+                }
+            ],
+
+            proofs: [
+                {
+                    question: "In a direct proof, you:",
+                    options: [
+                        "Assume the opposite and find a contradiction",
+                        "Show the statement holds for n=k and n=k+1",
+                        "Start from known facts and use logical steps",
+                        "Use a counterexample"
+                    ],
+                    answer: 2,
+                    explanation: "Direct proof uses logical deduction from premises to conclusion",
+                    hint: "It follows a straight logical path"
+                },
+                {
+                    question: "To prove 'If n² is even, then n is even,' the best method is:",
+                    options: ["Direct proof", "Proof by contradiction", "Proof by induction", "Proof by contrapositive"],
+                    answer: 1,
+                    explanation: "Assume n is odd and show n² would be odd, contradiction",
+                    hint: "Contradiction often works well for 'if-then' statements"
+                },
+                {
+                    question: "In proof by induction, the base case verifies:",
+                    options: ["The statement for n=k", "The statement for n=1", "The inductive hypothesis", "The contradiction"],
+                    answer: 1,
+                    explanation: "Base case proves the statement for the smallest value (usually n=1)",
+                    hint: "It's the foundation of the induction"
+                },
+                {
+                    question: "True or False: Proof by contradiction assumes the negation of the statement to be proved.",
+                    options: ["True", "False"],
+                    answer: 0,
+                    explanation: "You assume the opposite of what you want to prove",
+                    hint: "That's why it's called 'contradiction'"
+                },
+                {
+                    question: "Prove by induction that 1 + 2 + ... + n = n(n+1)/2 for n=1: LHS = 1, RHS = ?",
+                    options: ["0", "1", "2", "3"],
+                    answer: 1,
+                    explanation: "For n=1: RHS = 1(1+1)/2 = 1",
+                    hint: "Plug n=1 into the formula"
+                },
+                {
+                    question: "To prove √2 is irrational, which method is used?",
+                    options: ["Direct proof", "Contradiction", "Induction", "Counterexample"],
+                    answer: 1,
+                    explanation: "Assume √2 is rational, then show this leads to contradiction",
+                    hint: "Classic proof by contradiction example"
+                },
+                {
+                    question: "The inductive hypothesis assumes:",
+                    options: [
+                        "Statement is true for n=1",
+                        "Statement is true for some n=k",
+                        "Statement is false",
+                        "Contradiction exists"
+                    ],
+                    answer: 1,
+                    explanation: "Assume P(k) is true, then prove P(k+1)",
+                    hint: "It's the 'assume true for k' step"
+                },
+                {
+                    question: "Which proof method is best for 'there are infinitely many primes'?",
+                    options: ["Direct", "Contradiction", "Induction", "Construction"],
+                    answer: 1,
+                    explanation: "Euclid's proof assumes finitely many primes, finds contradiction",
+                    hint: "Classic contradiction proof"
+                },
+                {
+                    question: "A proof that shows a statement is false by example is:",
+                    options: ["Direct proof", "Proof by contradiction", "Proof by counterexample", "Proof by induction"],
+                    answer: 2,
+                    explanation: "Counterexample disproves universal statements",
+                    hint: "One counterexample is enough to disprove"
+                },
+                {
+                    question: "The statement 'P(n) is true for all n ≥ 1' suggests using:",
+                    options: ["Direct proof", "Contradiction", "Induction", "Counterexample"],
+                    answer: 2,
+                    explanation: "Induction is designed for statements about all natural numbers",
+                    hint: "Think of statements with 'for all n'"
+                }
+            ],
+
+            graphs: [
+                {
+                    question: "A simple graph does not allow:",
+                    options: ["Multiple edges", "Loops", "Both a and b", "Directed edges"],
+                    answer: 2,
+                    explanation: "Simple graphs: no multiple edges, no loops",
+                    hint: "Simple means most basic form"
+                },
+                {
+                    question: "In an undirected graph, the sum of all degrees equals:",
+                    options: ["|V|", "|E|", "2|E|", "|V| - 1"],
+                    answer: 2,
+                    explanation: "Handshaking Theorem: Σdeg(v) = 2|E|",
+                    hint: "Each edge contributes to 2 degrees"
+                },
+                {
+                    question: "A tree with n vertices has how many edges?",
+                    options: ["n", "n - 1", "n + 1", "n/2"],
+                    answer: 1,
+                    explanation: "Tree property: |E| = |V| - 1",
+                    hint: "One less edge than vertices"
+                },
+                {
+                    question: "A binary tree is one where:",
+                    options: [
+                        "Each node has exactly two children",
+                        "Each node has at most two children",
+                        "The tree is full",
+                        "The tree is complete"
+                    ],
+                    answer: 1,
+                    explanation: "Binary tree: each node has 0, 1, or 2 children",
+                    hint: "'At most' means maximum of two"
+                },
+                {
+                    question: "True or False: A cycle is a path that starts and ends at the same vertex without repeating vertices.",
+                    options: ["True", "False"],
+                    answer: 0,
+                    explanation: "Cycle: closed path with no repeated vertices except start/end",
+                    hint: "Think of a polygon shape"
+                },
+                {
+                    question: "The Handshaking Theorem states: Σdeg(v) = ?",
+                    options: ["|V|", "|E|", "2|E|", "|V|²"],
+                    answer: 2,
+                    explanation: "Each edge contributes 2 to the total degree count",
+                    hint: "Remember 'handshakes': each handshake involves 2 people"
+                },
+                {
+                    question: "A graph with n vertices where every pair is connected is:",
+                    options: ["Tree", "Cycle", "Complete graph", "Bipartite"],
+                    answer: 2,
+                    explanation: "Complete graph K_n has all possible edges",
+                    hint: "Think 'complete' = all connections exist"
+                },
+                {
+                    question: "Which is NOT a tree property?",
+                    options: [
+                        "Connected",
+                        "No cycles",
+                        "n vertices, n-1 edges",
+                        "Contains a Hamiltonian path"
+                    ],
+                    answer: 3,
+                    explanation: "Not all trees have Hamiltonian paths",
+                    hint: "Some trees are just straight lines"
+                },
+                {
+                    question: "A spanning tree of a graph must:",
+                    options: [
+                        "Include all vertices",
+                        "Include all edges",
+                        "Be a complete graph",
+                        "Have maximum edges"
+                    ],
+                    answer: 0,
+                    explanation: "Spanning tree: includes all vertices, minimal edges to stay connected",
+                    hint: "'Spanning' means covering all vertices"
+                },
+                {
+                    question: "In a directed graph, edges have:",
+                    options: ["Weights", "Directions", "Colors", "Multiple connections"],
+                    answer: 1,
+                    explanation: "Directed edges have arrow directions",
+                    hint: "Think one-way streets"
+                }
+            ],
+
+            sets: [
+                {
+                    question: "If A = {1, 2, 3} and B = {3, 4, 5}, then A ∪ B = ?",
+                    options: ["{1,2,3}", "{3}", "{1,2,3,4,5}", "{1,2,4,5}"],
+                    answer: 2,
+                    explanation: "Union combines all elements from both sets",
+                    hint: "Include everything, no duplicates"
+                },
+                {
+                    question: "The power set of {a, b} has how many elements?",
+                    options: ["2", "3", "4", "6"],
+                    answer: 2,
+                    explanation: "P({a,b}) = {∅, {a}, {b}, {a,b}} has 4 elements",
+                    hint: "Power set size = 2^n where n = original set size"
+                },
+                {
+                    question: "The Cartesian product A × B has size:",
+                    options: ["|A| + |B|", "|A| ⋅ |B|", "|A| - |B|", "|A|²"],
+                    answer: 1,
+                    explanation: "|A × B| = |A| × |B| (all ordered pairs)",
+                    hint: "Think multiplication: rows × columns"
+                },
+                {
+                    question: "The complement of set A in universal set U is:",
+                    options: ["U - A", "A - U", "A ∪ U", "A ∩ U"],
+                    answer: 0,
+                    explanation: "Complement = everything in U not in A",
+                    hint: "What's left when you remove A from U"
+                },
+                {
+                    question: "True or False: ∅ ⊆ A for any set A.",
+                    options: ["True", "False"],
+                    answer: 0,
+                    explanation: "Empty set is subset of every set",
+                    hint: "Vacuously true: no elements to check"
+                },
+                {
+                    question: "A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C) is:",
+                    options: ["Commutative Law", "Associative Law", "Distributive Law", "De Morgan's Law"],
+                    answer: 2,
+                    explanation: "Distributive Law for sets",
+                    hint: "Similar to distributive law in algebra"
+                },
+                {
+                    question: "De Morgan's Law for sets: (A ∪ B)' = ?",
+                    options: ["A' ∪ B'", "A' ∩ B'", "A ∩ B", "A ∪ B"],
+                    answer: 1,
+                    explanation: "De Morgan: complement of union = intersection of complements",
+                    hint: "Complement distributes, flips union to intersection"
+                },
+                {
+                    question: "Two sets with no common elements are:",
+                    options: ["Equal", "Subsets", "Disjoint", "Universal"],
+                    answer: 2,
+                    explanation: "Disjoint sets: A ∩ B = ∅",
+                    hint: "No overlap at all"
+                },
+                {
+                    question: "The principle of inclusion-exclusion for two sets: |A ∪ B| = ?",
+                    options: [
+                        "|A| + |B|",
+                        "|A| + |B| - |A ∩ B|",
+                        "|A| × |B|",
+                        "|A| - |B|"
+                    ],
+                    answer: 1,
+                    explanation: "Include all, exclude double-counted intersection",
+                    hint: "Add both sizes, subtract what was counted twice"
+                },
+                {
+                    question: "A set with no elements is called:",
+                    options: ["Universal set", "Singleton", "Null set", "Infinite set"],
+                    answer: 2,
+                    explanation: "Null set or empty set: ∅ = {}",
+                    hint: "Has cardinality 0"
+                }
+            ],
+
+            numbers: [
+                {
+                    question: "A prime number has exactly ______ divisors.",
+                    options: ["1", "2", "3", "4"],
+                    answer: 1,
+                    explanation: "Prime numbers have exactly 2 divisors: 1 and itself",
+                    hint: "The definition of prime"
+                },
+                {
+                    question: "The GCD of 24 and 36 is:",
+                    options: ["6", "12", "18", "24"],
+                    answer: 1,
+                    explanation: "24 = 2³×3, 36 = 2²×3², GCD = 2²×3 = 12",
+                    hint: "Greatest common divisor = largest number dividing both"
+                },
+                {
+                    question: "The LCM of 15 and 20 is:",
+                    options: ["30", "60", "75", "100"],
+                    answer: 1,
+                    explanation: "15 = 3×5, 20 = 2²×5, LCM = 2²×3×5 = 60",
+                    hint: "Least common multiple = smallest number both divide"
+                },
+                {
+                    question: "The Euclidean Algorithm is used to find:",
+                    options: ["Prime factors", "GCD", "LCM", "Binary representation"],
+                    answer: 1,
+                    explanation: "Euclidean Algorithm efficiently finds GCD",
+                    hint: "It's an ancient algorithm for greatest common divisor"
+                },
+                {
+                    question: "1011₂ in decimal is:",
+                    options: ["11", "13", "15", "17"],
+                    answer: 0,
+                    explanation: "1×8 + 0×4 + 1×2 + 1×1 = 11",
+                    hint: "Binary to decimal: multiply by powers of 2"
+                },
+                {
+                    question: "Which is NOT a prime number?",
+                    options: ["2", "3", "9", "17"],
+                    answer: 2,
+                    explanation: "9 = 3×3, so it's composite",
+                    hint: "Check divisibility"
+                },
+                {
+                    question: "A number divisible by 2 and 3 is divisible by:",
+                    options: ["5", "6", "7", "8"],
+                    answer: 1,
+                    explanation: "If divisible by 2 and 3, then divisible by 6 (LCM)",
+                    hint: "Think of the least common multiple"
+                },
+                {
+                    question: "The Fundamental Theorem of Arithmetic states:",
+                    options: [
+                        "Every integer >1 is prime or product of primes uniquely",
+                        "There are infinitely many primes",
+                        "GCD × LCM = product of numbers",
+                        "Division algorithm exists"
+                    ],
+                    answer: 0,
+                    explanation: "Unique prime factorization theorem",
+                    hint: "It's about factoring numbers uniquely"
+                },
+                {
+                    question: "247₈ in decimal is:",
+                    options: ["151", "167", "183", "199"],
+                    answer: 1,
+                    explanation: "2×64 + 4×8 + 7×1 = 167",
+                    hint: "Octal to decimal: multiply by powers of 8"
+                },
+                {
+                    question: "If a|b and a|c, then a|(b + c) is:",
+                    options: [
+                        "Additive property",
+                        "Multiplicative property",
+                        "Transitive property",
+                        "Division algorithm"
+                    ],
+                    answer: 0,
+                    explanation: "Additive property of divisibility",
+                    hint: "If a divides both, it divides their sum"
+                }
+            ]
+        };
+
+        // ====== GAME STATE ======
+        let gameState = {
+            selectedCategories: new Set(['all']),
+            currentQuestions: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            streak: 0,
+            totalQuestions: 0,
+            timeLeft: QUIZ_CONFIG.timePerQuestion,
+            timerInterval: null,
+            userAnswers: []
+        };
+
+        // ====== DOM ELEMENTS ======
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const hintModal = document.getElementById('hintModal');
+        const overlay = document.getElementById('overlay');
+        const categorySelector = document.getElementById('categorySelector');
+
+        // ====== INITIALIZATION ======
+        function initializeQuiz() {
+            document.getElementById('quizTitle').textContent = QUIZ_CONFIG.title;
+            document.getElementById('quizDescription').textContent = QUIZ_CONFIG.description;
+            document.getElementById('quizEmoji').textContent = QUIZ_CONFIG.emoji;
+            document.getElementById('timePerQuestion').textContent = QUIZ_CONFIG.timePerQuestion;
+            
+            let totalQuestions = 0;
+            Object.values(QUIZ_DATA).forEach(category => {
+                totalQuestions += category.length;
+            });
+            
+            document.getElementById('totalQuestions').textContent = totalQuestions;
+            document.getElementById('totalCategories').textContent = Object.keys(QUIZ_CONFIG.categories).length;
+            
+            setupCategories();
+            document.querySelector('[data-category="all"]')?.classList.add('selected');
+        }
+
+        function setupCategories() {
+            categorySelector.innerHTML = '';
+            
+            // Add 'All Topics' option
+            const allCategory = document.createElement('div');
+            allCategory.className = 'category';
+            allCategory.dataset.category = 'all';
+            allCategory.innerHTML = `
+                <span class="icon">🎯</span>
+                <strong>All Topics</strong>
+                <div style="font-size: 0.9rem; opacity: 0.8;">
+                    ${Object.values(QUIZ_DATA).reduce((sum, cat) => sum + cat.length, 0)} Questions
+                </div>
+            `;
+            allCategory.onclick = () => toggleCategory('all');
+            categorySelector.appendChild(allCategory);
+            
+            // Add individual categories
+            Object.entries(QUIZ_CONFIG.categories).forEach(([key, category]) => {
+                const categoryEl = document.createElement('div');
+                categoryEl.className = 'category';
+                categoryEl.dataset.category = key;
+                categoryEl.innerHTML = `
+                    <span class="icon">${category.emoji}</span>
+                    <strong>${category.name}</strong>
+                    <div style="font-size: 0.9rem; opacity: 0.8;">
+                        ${QUIZ_DATA[key] ? QUIZ_DATA[key].length : 0} Questions
+                    </div>
+                `;
+                categoryEl.onclick = () => toggleCategory(key);
+                categorySelector.appendChild(categoryEl);
+            });
+        }
+
+        // ====== CATEGORY SELECTION ======
+        function toggleCategory(category) {
+            const categoryEl = document.querySelector(`[data-category="${category}"]`);
+            
+            if (category === 'all') {
+                document.querySelectorAll('.category').forEach(cat => {
+                    cat.classList.remove('selected');
+                });
+                categoryEl.classList.add('selected');
+                gameState.selectedCategories = new Set(['all']);
+            } else {
+                document.querySelector('[data-category="all"]').classList.remove('selected');
+                
+                if (gameState.selectedCategories.has(category)) {
+                    gameState.selectedCategories.delete(category);
+                    categoryEl.classList.remove('selected');
+                } else {
+                    gameState.selectedCategories.add(category);
+                    categoryEl.classList.add('selected');
+                }
+                
+                const allCategories = Object.keys(QUIZ_CONFIG.categories);
+                if (gameState.selectedCategories.size === allCategories.length) {
+                    document.querySelector('[data-category="all"]').classList.add('selected');
+                    gameState.selectedCategories = new Set(['all']);
+                }
+            }
+        }
+
+        // ====== GAME FUNCTIONS ======
+        function startGame() {
+            if (gameState.selectedCategories.size === 0) {
+                alert('Please select at least one category!');
+                return;
+            }
+
+            gameState.currentQuestions = [];
+            
+            if (gameState.selectedCategories.has('all')) {
+                Object.values(QUIZ_DATA).forEach(category => {
+                    gameState.currentQuestions.push(...category);
+                });
+            } else {
+                gameState.selectedCategories.forEach(cat => {
+                    if (QUIZ_DATA[cat]) {
+                        gameState.currentQuestions.push(...QUIZ_DATA[cat]);
+                    }
+                });
+            }
+
+            if (gameState.currentQuestions.length === 0) {
+                alert('No questions available for selected categories!');
+                return;
+            }
+
+            gameState.currentQuestions = shuffleArray(gameState.currentQuestions);
+            gameState.currentQuestions = gameState.currentQuestions.slice(0, QUIZ_CONFIG.questionsPerGame);
+            gameState.totalQuestions = gameState.currentQuestions.length;
+
+            gameState.currentQuestionIndex = 0;
+            gameState.score = 0;
+            gameState.streak = 0;
+            gameState.userAnswers = [];
+            gameState.timeLeft = QUIZ_CONFIG.timePerQuestion;
+
+            startScreen.classList.remove('active');
+            startScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            resultsScreen.style.display = 'none';
+
+            loadQuestion();
+            startTimer();
+        }
+
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function loadQuestion() {
+            if (gameState.currentQuestionIndex >= gameState.currentQuestions.length) {
+                endGame();
+                return;
+            }
+
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            
+            document.getElementById('qNumber').textContent = gameState.currentQuestionIndex + 1;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('currentScore').textContent = gameState.score;
+            document.getElementById('questionCounter').textContent = 
+                `${gameState.currentQuestionIndex + 1}/${gameState.totalQuestions}`;
+            document.getElementById('streak').textContent = gameState.streak;
+            
+            const progress = ((gameState.currentQuestionIndex) / gameState.totalQuestions) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+
+            const optionsGrid = document.getElementById('optionsGrid');
+            optionsGrid.innerHTML = '';
+            
+            const letters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.innerHTML = `
+                    <span class="option-letter">${letters[index]}</span>
+                    ${option}
+                `;
+                optionDiv.onclick = () => selectAnswer(index);
+                optionsGrid.appendChild(optionDiv);
+            });
+
+            document.getElementById('nextBtn').disabled = true;
+            window.currentHint = question.hint;
+        }
+
+        function selectAnswer(selectedIndex) {
+            const question = gameState.currentQuestions[gameState.currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            options.forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+
+            options[selectedIndex].classList.add('selected');
+
+            const isCorrect = selectedIndex === question.answer;
+            
+            if (isCorrect) {
+                options[selectedIndex].classList.add('correct');
+                gameState.score += QUIZ_CONFIG.points.correct;
+                gameState.streak++;
+                
+                if (gameState.timeLeft > 20) {
+                    gameState.score += QUIZ_CONFIG.points.fastBonus[0];
+                } else if (gameState.timeLeft > 10) {
+                    gameState.score += QUIZ_CONFIG.points.fastBonus[1];
+                }
+                
+                if (gameState.streak >= 3) {
+                    gameState.score += gameState.streak * QUIZ_CONFIG.points.streakBonus;
+                }
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                options[question.answer].classList.add('correct');
+                gameState.streak = 0;
+            }
+
+            gameState.userAnswers.push({
+                question: question.question,
+                selected: selectedIndex,
+                correct: question.answer,
+                isCorrect: isCorrect
+            });
+
+            document.getElementById('currentScore').textContent = gameState.score;
+            document.getElementById('streak').textContent = gameState.streak;
+
+            nextBtn.disabled = false;
+            clearInterval(gameState.timerInterval);
+        }
+
+        function nextQuestion() {
+            gameState.currentQuestionIndex++;
+            gameState.timeLeft = QUIZ_CONFIG.timePerQuestion;
+            document.getElementById('timer').textContent = gameState.timeLeft;
+            
+            if (gameState.currentQuestionIndex < gameState.currentQuestions.length) {
+                loadQuestion();
+                startTimer();
+            } else {
+                endGame();
+            }
+        }
+
+        // ====== TIMER ======
+        function startTimer() {
+            clearInterval(gameState.timerInterval);
+            
+            gameState.timerInterval = setInterval(() => {
+                gameState.timeLeft--;
+                document.getElementById('timer').textContent = gameState.timeLeft;
+                
+                if (gameState.timeLeft <= 0) {
+                    clearInterval(gameState.timerInterval);
+                    const options = document.querySelectorAll('.option');
+                    if (options.length > 0) {
+                        selectAnswer(0);
+                    }
+                }
+            }, 1000);
+        }
+
+        // ====== HINT SYSTEM ======
+        function showHint() {
+            document.getElementById('hintContent').textContent = 
+                window.currentHint || "No hint available for this question.";
+            hintModal.style.display = 'block';
+            overlay.style.display = 'block';
+            
+            gameState.score = Math.max(0, gameState.score - QUIZ_CONFIG.points.hintPenalty);
+            document.getElementById('currentScore').textContent = gameState.score;
+        }
+
+        function closeHint() {
+            hintModal.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // ====== END GAME ======
+        function endGame() {
+            clearInterval(gameState.timerInterval);
+            
+            const correctAnswers = gameState.userAnswers.filter(a => a.isCorrect).length;
+            const accuracy = Math.round((correctAnswers / gameState.totalQuestions) * 100);
+            
+            document.getElementById('finalScore').textContent = `${gameState.score} points`;
+            document.getElementById('correctAnswers').textContent = correctAnswers;
+            document.getElementById('accuracy').textContent = `${accuracy}%`;
+            
+            const totalTime = QUIZ_CONFIG.timePerQuestion * gameState.totalQuestions;
+            const timeSpent = totalTime - (gameState.currentQuestionIndex * QUIZ_CONFIG.timePerQuestion + gameState.timeLeft);
+            document.getElementById('timeSpent').textContent = `${timeSpent}s`;
+            
+            document.getElementById('performanceFill').style.width = `${accuracy}%`;
+            
+            let trophy = '😢';
+            let message = 'Keep studying!';
+            
+            if (accuracy >= 90) {
+                trophy = '🏆';
+                message = 'Outstanding! You\'re a Discrete Math expert!';
+            } else if (accuracy >= 70) {
+                trophy = '🥈';
+                message = 'Great job! You know your discrete mathematics!';
+            } else if (accuracy >= 50) {
+                trophy = '🥉';
+                message = 'Good effort! Keep practicing!';
+            }
+            
+            document.getElementById('trophyEmoji').textContent = trophy;
+            document.getElementById('scoreMessage').textContent = message;
+            
+            gameScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+        }
+
+        // ====== GAME CONTROLS ======
+        function quitGame() {
+            if (confirm('Are you sure you want to end the quiz?')) {
+                endGame();
+            }
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        function goHome() {
+            resultsScreen.style.display = 'none';
+            startScreen.style.display = 'block';
+            startScreen.classList.add('active');
+        }
+
+        // ====== INITIALIZE QUIZ ======
+        document.addEventListener('DOMContentLoaded', initializeQuiz);
+    </script>
+</body>
+</html>
