@@ -3,1176 +3,1451 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discrete Mathematics Comprehensive Quiz</title>
-    <link rel="stylesheet" href="design.css">
+    <title>Discrete Mathematics Quiz - Exam Preparation</title>
+    <link rel="stylesheet" href="test.css">
+
 </head>
 <body>
-    <div class="quiz-container">
-        <div class="header">
-            <h1>Discrete Mathematics Comprehensive Quiz</h1>
-            <p>All questions from Chapters 1-6: Logic, Sets, Functions, Proof Techniques, Number Theory, Graphs & Trees</p>
+    <div class="container">
+        <header>
+            <h1>📚 Discrete Mathematics Quiz</h1>
+            <p>Test your knowledge on Functions, Logic, Proof Techniques, Graphs, Trees, Set Theory, and Number Theory</p>
+        </header>
+
+        <div class="score-board">
+            <div class="score-item">Questions: <span id="totalQuestions">100</span></div>
+            <div class="score-item">Answered: <span id="answeredCount">0</span></div>
+            <div class="score-item">Score: <span id="score">0</span>/<span id="totalScore">100</span></div>
         </div>
-        
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-value" id="current-question">1</div>
-                <div class="stat-label">Question</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value" id="score">0</div>
-                <div class="stat-label">Score</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-value" id="total-questions">150</div>
-                <div class="stat-label">Total</div>
-            </div>
-        </div>
-        
+
         <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill"></div>
+            <div class="progress" id="progressBar"></div>
         </div>
-        
-        <div id="quiz-content">
-            <div class="question-container">
-                <div class="question-number">Question <span id="q-number">1</span> of <span id="q-total">150</span></div>
-                <div class="question-text" id="question-text"></div>
-                
-                <div class="options-container" id="options-container"></div>
-                
-                <div class="feedback" id="feedback">
-                    <h3 id="feedback-title"></h3>
-                    <p id="feedback-text"></p>
-                    <div class="hint" id="hint-text"></div>
-                </div>
-            </div>
-            
-            <div class="button-container">
-                <button id="restart-btn">Restart Quiz</button>
-                <button id="next-btn" disabled>Next Question →</button>
-            </div>
+
+        <div class="quiz-container" id="quizContainer">
+            <!-- Questions will be inserted here by JavaScript -->
         </div>
-        
-        <div class="results-container" id="results-container">
-            <h2>Quiz Completed!</h2>
-            <div class="score-display" id="final-score">0/150</div>
-            <div class="results-message" id="results-message"></div>
-            <button id="restart-results-btn">Take Quiz Again</button>
+
+        <div class="controls">
+            <button id="checkAnswers">✅ Check Answers</button>
+            <button id="showAnswers">📄 Show Answer Key</button>
+            <button id="resetQuiz">🔄 Reset Quiz</button>
+        </div>
+    </div>
+
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <h2>Quiz Results</h2>
+            <div class="result-score" id="finalScore">0/100</div>
+            <div class="result-details">
+                <p><strong>Correct Answers:</strong> <span id="correctCount">0</span></p>
+                <p><strong>Incorrect Answers:</strong> <span id="incorrectCount">0</span></p>
+                <p><strong>Percentage:</strong> <span id="percentage">0%</span></p>
+                <p><strong>Status:</strong> <span id="statusMessage">Keep studying!</span></p>
+            </div>
+            <button class="close-modal" id="closeModal">Close</button>
         </div>
     </div>
 
     <script>
-        // All 150 questions from Discrete Mathematics chapters
-        const quizData = [
-            // Chapter 1: Logic (30 questions)
-            {
-                question: "Which of the following is a proposition?",
-                options: ["What time is it?", "The sky is blue.", "Please close the door.", "Wow!"],
-                correct: 1,
-                hint: "A proposition is a declarative statement that is either true or false."
-            },
-            {
-                question: "What is the truth value of '2 + 2 = 5'?",
-                options: ["True", "False", "Neither", "Both"],
-                correct: 1,
-                hint: "2 + 2 equals 4, not 5."
-            },
-            {
-                question: "Which logical operator represents 'and'?",
-                options: ["¬", "∧", "∨", "→"],
-                correct: 1,
-                hint: "∧ is the conjunction operator (AND)."
-            },
-            {
-                question: "What is the negation of 'It is raining'?",
-                options: ["It is not raining", "It is sunny", "Maybe it is raining", "It might rain"],
-                correct: 0,
-                hint: "Negation simply adds 'not' to the original statement."
-            },
-            {
-                question: "Which truth table row makes 'P → Q' false?",
-                options: ["P=T, Q=T", "P=T, Q=F", "P=F, Q=T", "P=F, Q=F"],
-                correct: 1,
-                hint: "An implication is false only when the premise is true and conclusion is false."
-            },
-            {
-                question: "What does 'P ↔ Q' mean?",
-                options: ["P or Q", "P implies Q", "P if and only if Q", "Not P and Q"],
-                correct: 2,
-                hint: "↔ is the biconditional operator (if and only if)."
-            },
-            {
-                question: "Which is the exclusive OR (XOR) truth table?",
-                options: ["T when both are T", "T when exactly one is T", "T when at least one is T", "T when both are F"],
-                correct: 1,
-                hint: "XOR is true when exactly one operand is true."
-            },
-            {
-                question: "What is a tautology?",
-                options: ["Always false", "Always true", "Sometimes true", "Neither true nor false"],
-                correct: 1,
-                hint: "A tautology is a statement that is true for all possible truth values."
-            },
-            {
-                question: "Which law states that P ∧ T ≡ P?",
-                options: ["Identity Law", "Domination Law", "Idempotent Law", "Double Negation"],
-                correct: 0,
-                hint: "Identity Law: P ∧ T ≡ P and P ∨ F ≡ P."
-            },
-            {
-                question: "What is De Morgan's Law for ¬(P ∧ Q)?",
-                options: ["¬P ∧ ¬Q", "¬P ∨ ¬Q", "P ∨ Q", "P ∧ Q"],
-                correct: 1,
-                hint: "De Morgan: ¬(P ∧ Q) ≡ ¬P ∨ ¬Q and ¬(P ∨ Q) ≡ ¬P ∧ ¬Q."
-            },
-            {
-                question: "Which inference rule is: 'If P then Q, P, therefore Q'?",
-                options: ["Modus Tollens", "Modus Ponens", "Hypothetical Syllogism", "Disjunctive Syllogism"],
-                correct: 1,
-                hint: "Modus Ponens: (P → Q) ∧ P ⇒ Q."
-            },
-            {
-                question: "What type of statement is 'x > 5' where x is a variable?",
-                options: ["Proposition", "Predicate", "Tautology", "Contradiction"],
-                correct: 1,
-                hint: "A predicate becomes a proposition when variables are assigned values."
-            },
-            {
-                question: "Which is logically equivalent to P → Q?",
-                options: ["¬P ∧ Q", "¬P ∨ Q", "P ∧ ¬Q", "P ∨ ¬Q"],
-                correct: 1,
-                hint: "Implication equivalence: P → Q ≡ ¬P ∨ Q."
-            },
-            {
-                question: "What is the contrapositive of 'If it rains, then the ground is wet'?",
-                options: ["If ground wet, then rain", "If no rain, then ground not wet", "If ground not wet, then no rain", "If rain, then ground not wet"],
-                correct: 2,
-                hint: "Contrapositive of P → Q is ¬Q → ¬P."
-            },
-            {
-                question: "Which is NOT a proposition?",
-                options: ["5 + 3 = 8", "x + y = 10", "The sun is a star", "All primes are odd"],
-                correct: 1,
-                hint: "x + y = 10 has variables, so its truth value depends on x and y."
-            },
-            {
-                question: "What is P ∨ ¬P logically equivalent to?",
-                options: ["T (True)", "F (False)", "P", "¬P"],
-                correct: 0,
-                hint: "Law of Excluded Middle: P ∨ ¬P is always true."
-            },
-            {
-                question: "Which is the absorption law?",
-                options: ["P ∨ (P ∧ Q) ≡ P", "P ∧ (P ∨ Q) ≡ P", "Both A and B", "Neither"],
-                correct: 2,
-                hint: "Absorption laws: P ∨ (P ∧ Q) ≡ P and P ∧ (P ∨ Q) ≡ P."
-            },
-            {
-                question: "What is the dual of P ∧ Q?",
-                options: ["P ∨ Q", "¬P ∧ ¬Q", "P ∧ Q", "¬P ∨ ¬Q"],
-                correct: 0,
-                hint: "Dual replaces ∧ with ∨, ∨ with ∧, T with F, F with T."
-            },
-            {
-                question: "Which rule is: 'P ∨ Q, ¬P, therefore Q'?",
-                options: ["Modus Ponens", "Modus Tollens", "Disjunctive Syllogism", "Addition"],
-                correct: 2,
-                hint: "Disjunctive Syllogism: (P ∨ Q) ∧ ¬P ⇒ Q."
-            },
-            {
-                question: "What is a contradiction?",
-                options: ["Always true", "Always false", "Sometimes true", "Neither"],
-                correct: 1,
-                hint: "A contradiction is false for all possible truth values."
-            },
-            {
-                question: "Simplify: ¬(¬P ∧ Q) ∨ P",
-                options: ["P ∨ Q", "P ∧ Q", "T", "P"],
-                correct: 0,
-                hint: "Use De Morgan and distributive laws."
-            },
-            {
-                question: "Which represents 'neither P nor Q'?",
-                options: ["¬P ∧ ¬Q", "¬P ∨ ¬Q", "P ∧ Q", "P ∨ Q"],
-                correct: 0,
-                hint: "Neither P nor Q means both are false."
-            },
-            {
-                question: "What is the inverse of 'If study, then pass'?",
-                options: ["If pass, then study", "If not study, then not pass", "If not pass, then not study", "If study, then not pass"],
-                correct: 1,
-                hint: "Inverse of P → Q is ¬P → ¬Q."
-            },
-            {
-                question: "Which is the commutative law?",
-                options: ["P ∧ Q ≡ Q ∧ P", "P ∨ Q ≡ Q ∨ P", "Both", "Neither"],
-                correct: 2,
-                hint: "Commutative laws apply to both ∧ and ∨."
-            },
-            {
-                question: "What does 'P ⊕ Q' mean?",
-                options: ["P and Q", "P or Q", "P xor Q", "P implies Q"],
-                correct: 2,
-                hint: "⊕ is exclusive OR (XOR)."
-            },
-            {
-                question: "Which is distributive law?",
-                options: ["P ∧ (Q ∨ R) ≡ (P ∧ Q) ∨ (P ∧ R)", "P ∨ (Q ∧ R) ≡ (P ∨ Q) ∧ (P ∨ R)", "Both", "Neither"],
-                correct: 2,
-                hint: "Both are distributive laws."
-            },
-            {
-                question: "What is the negation of 'All dogs bark'?",
-                options: ["No dogs bark", "Some dogs bark", "Some dogs don't bark", "All dogs don't bark"],
-                correct: 2,
-                hint: "Negation of 'all are' is 'some are not'."
-            },
-            {
-                question: "Which is associative law?",
-                options: ["(P ∧ Q) ∧ R ≡ P ∧ (Q ∧ R)", "(P ∨ Q) ∨ R ≡ P ∨ (Q ∨ R)", "Both", "Neither"],
-                correct: 2,
-                hint: "Associative laws apply to both ∧ and ∨."
-            },
-            {
-                question: "What is P → Q equivalent to?",
-                options: ["¬Q → ¬P", "Q → P", "¬P → ¬Q", "P ∧ ¬Q"],
-                correct: 0,
-                hint: "P → Q is equivalent to its contrapositive ¬Q → ¬P."
-            },
-            {
-                question: "Which is a universal quantifier?",
-                options: ["∃", "∀", "∈", "∋"],
-                correct: 1,
-                hint: "∀ means 'for all', ∃ means 'there exists'."
-            },
+        // Quiz Data - 100 questions from all chapters
+        const quizData = {
+            sections: [
+                {
+                    title: "🔢 Chapter 4: Functions",
+                    questions: [
+                        {
+                            id: 1,
+                            text: "In a function f: A → B, what does A represent?",
+                            options: [
+                                "Range",
+                                "Codomain",
+                                "Domain",
+                                "Image"
+                            ],
+                            answer: 2,
+                            explanation: "A is the domain - the set of all possible inputs to the function."
+                        },
+                        {
+                            id: 2,
+                            text: "What is the range of a function?",
+                            options: [
+                                "All possible inputs",
+                                "All possible outputs from the domain",
+                                "All elements in the codomain",
+                                "The set of ordered pairs"
+                            ],
+                            answer: 1,
+                            explanation: "Range is the set of all actual outputs produced by the function from its domain."
+                        },
+                        {
+                            id: 3,
+                            text: "Which type of function has exactly one output for each input?",
+                            options: [
+                                "One-to-many",
+                                "Many-to-one",
+                                "Many-to-many",
+                                "All of the above"
+                            ],
+                            answer: 1,
+                            explanation: "Many-to-one functions are valid functions where multiple inputs can map to the same output."
+                        },
+                        {
+                            id: 4,
+                            text: "If f(x) = 3x - 2, what is f⁻¹(x)?",
+                            options: [
+                                "(x + 2)/3",
+                                "(x - 2)/3",
+                                "3x + 2",
+                                "2 - 3x"
+                            ],
+                            answer: 0,
+                            explanation: "To find inverse: y = 3x - 2, swap x and y: x = 3y - 2, solve: y = (x + 2)/3."
+                        },
+                        {
+                            id: 5,
+                            text: "What is (f ∘ g)(x) if f(x) = 7x - 4 and g(x) = 3x?",
+                            options: [
+                                "21x - 4",
+                                "21x - 12",
+                                "10x - 4",
+                                "7x - 12"
+                            ],
+                            answer: 0,
+                            explanation: "(f ∘ g)(x) = f(g(x)) = f(3x) = 7(3x) - 4 = 21x - 4."
+                        },
+                        {
+                            id: 6,
+                            text: "A function that is both injective and surjective is called:",
+                            options: [
+                                "Onto",
+                                "Into",
+                                "Bijective",
+                                "Inverse"
+                            ],
+                            answer: 2,
+                            explanation: "A bijective function is one-to-one (injective) and onto (surjective)."
+                        },
+                        {
+                            id: 7,
+                            text: "Which function property ensures every element in the codomain is mapped to?",
+                            options: [
+                                "Injective",
+                                "Surjective",
+                                "Bijective",
+                                "Inverse"
+                            ],
+                            answer: 1,
+                            explanation: "Surjective (onto) means every element in the codomain has at least one pre-image."
+                        },
+                        {
+                            id: 8,
+                            text: "What is the identity function?",
+                            options: [
+                                "f(x) = 0",
+                                "f(x) = 1",
+                                "f(x) = x",
+                                "f(x) = -x"
+                            ],
+                            answer: 2,
+                            explanation: "The identity function maps each element to itself: f(x) = x."
+                        },
+                        {
+                            id: 9,
+                            text: "If f(x) = x², what type of function is it?",
+                            options: [
+                                "One-to-one",
+                                "Many-to-one",
+                                "One-to-many",
+                                "Bijective"
+                            ],
+                            answer: 1,
+                            explanation: "f(x) = x² is many-to-one because both x and -x map to the same value x²."
+                        },
+                        {
+                            id: 10,
+                            text: "What is the domain of f(x) = 1/(x-2)?",
+                            options: [
+                                "All real numbers",
+                                "All real numbers except 0",
+                                "All real numbers except 2",
+                                "x > 2 only"
+                            ],
+                            answer: 2,
+                            explanation: "The function is undefined when denominator is zero: x - 2 = 0 → x = 2."
+                        }
+                    ]
+                },
+                {
+                    title: "🧠 Chapter 1: Logic",
+                    questions: [
+                        {
+                            id: 11,
+                            text: "Which of the following is a proposition?",
+                            options: [
+                                "What time is it?",
+                                "Please close the door",
+                                "2 + 2 = 4",
+                                "x > 5"
+                            ],
+                            answer: 2,
+                            explanation: "A proposition is a declarative statement that is either true or false. '2 + 2 = 4' is true."
+                        },
+                        {
+                            id: 12,
+                            text: "What is the negation of 'It is raining'?",
+                            options: [
+                                "It is not raining",
+                                "It is sunny",
+                                "Maybe it is raining",
+                                "It is raining heavily"
+                            ],
+                            answer: 0,
+                            explanation: "Negation simply adds 'not' or negates the truth value of the original statement."
+                        },
+                        {
+                            id: 13,
+                            text: "In the truth table for p → q, when is the implication false?",
+                            options: [
+                                "When p is true and q is true",
+                                "When p is false and q is true",
+                                "When p is true and q is false",
+                                "When p is false and q is false"
+                            ],
+                            answer: 2,
+                            explanation: "p → q is false only when p is true and q is false (a true premise with a false conclusion)."
+                        },
+                        {
+                            id: 14,
+                            text: "Which logical operator represents exclusive OR?",
+                            options: [
+                                "∧",
+                                "∨",
+                                "⊕",
+                                "→"
+                            ],
+                            answer: 2,
+                            explanation: "⊕ represents XOR (exclusive OR): true when exactly one operand is true."
+                        },
+                        {
+                            id: 15,
+                            text: "What is the contrapositive of 'If it rains, then the ground is wet'?",
+                            options: [
+                                "If it doesn't rain, then the ground is not wet",
+                                "If the ground is wet, then it rains",
+                                "If the ground is not wet, then it doesn't rain",
+                                "It rains if and only if the ground is wet"
+                            ],
+                            answer: 2,
+                            explanation: "Contrapositive of p → q is ¬q → ¬p."
+                        },
+                        {
+                            id: 16,
+                            text: "Which law states that p ∨ ¬p ≡ T?",
+                            options: [
+                                "Identity Law",
+                                "Domination Law",
+                                "Negation Law",
+                                "Complement Law"
+                            ],
+                            answer: 2,
+                            explanation: "Negation Law: A statement OR its negation is always true (Law of Excluded Middle)."
+                        },
+                        {
+                            id: 17,
+                            text: "According to De Morgan's Law, ¬(p ∧ q) is equivalent to:",
+                            options: [
+                                "¬p ∧ ¬q",
+                                "¬p ∨ ¬q",
+                                "p ∨ q",
+                                "p ∧ q"
+                            ],
+                            answer: 1,
+                            explanation: "De Morgan's Law: ¬(p ∧ q) ≡ ¬p ∨ ¬q (negation of AND becomes OR of negations)."
+                        },
+                        {
+                            id: 18,
+                            text: "What inference rule is: p → q, p, therefore q?",
+                            options: [
+                                "Modus Tollens",
+                                "Modus Ponens",
+                                "Hypothetical Syllogism",
+                                "Disjunctive Syllogism"
+                            ],
+                            answer: 1,
+                            explanation: "Modus Ponens: If p implies q, and p is true, then q must be true."
+                        },
+                        {
+                            id: 19,
+                            text: "A statement that is always true regardless of truth values is called:",
+                            options: [
+                                "Contradiction",
+                                "Contingency",
+                                "Tautology",
+                                "Implication"
+                            ],
+                            answer: 2,
+                            explanation: "A tautology is a compound proposition that is always true (e.g., p ∨ ¬p)."
+                        },
+                        {
+                            id: 20,
+                            text: "Which is logically equivalent to p → q?",
+                            options: [
+                                "¬p ∧ q",
+                                "¬p ∨ q",
+                                "p ∧ ¬q",
+                                "p ∨ q"
+                            ],
+                            answer: 1,
+                            explanation: "Implication equivalence: p → q ≡ ¬p ∨ q."
+                        }
+                    ]
+                },
+                {
+                    title: "📝 Chapter 2: Proof Techniques",
+                    questions: [
+                        {
+                            id: 21,
+                            text: "Which proof technique starts by assuming the opposite of what you want to prove?",
+                            options: [
+                                "Direct Proof",
+                                "Proof by Contradiction",
+                                "Proof by Induction",
+                                "Proof by Cases"
+                            ],
+                            answer: 1,
+                            explanation: "Proof by contradiction assumes the negation of the statement and shows it leads to a contradiction."
+                        },
+                        {
+                            id: 22,
+                            text: "In mathematical induction, what is the first step?",
+                            options: [
+                                "Inductive hypothesis",
+                                "Inductive step",
+                                "Base case",
+                                "Conclusion"
+                            ],
+                            answer: 2,
+                            explanation: "Base case: Prove the statement is true for the initial value (usually n = 1)."
+                        },
+                        {
+                            id: 23,
+                            text: "To prove 'n² is even ⇒ n is even', which proof method is most appropriate?",
+                            options: [
+                                "Direct proof",
+                                "Proof by contradiction",
+                                "Proof by induction",
+                                "Proof by contrapositive"
+                            ],
+                            answer: 1,
+                            explanation: "This is typically proven by contradiction: assume n is odd, then n² is odd, contradiction."
+                        },
+                        {
+                            id: 24,
+                            text: "What is proved in the inductive step of induction?",
+                            options: [
+                                "P(1) is true",
+                                "If P(k) is true, then P(k+1) is true",
+                                "P(n) is true for all n",
+                                "The statement is false for some k"
+                            ],
+                            answer: 1,
+                            explanation: "Inductive step: Assume P(k) true (inductive hypothesis), prove P(k+1) true."
+                        },
+                        {
+                            id: 25,
+                            text: "Which number theory concept states that every integer > 1 is prime or product of primes?",
+                            options: [
+                                "Division Algorithm",
+                                "Fundamental Theorem of Arithmetic",
+                                "Euclidean Algorithm",
+                                "Prime Number Theorem"
+                            ],
+                            answer: 1,
+                            explanation: "Fundamental Theorem of Arithmetic: Every integer > 1 has a unique prime factorization."
+                        },
+                        {
+                            id: 26,
+                            text: "What does the Division Algorithm state about integers n and d?",
+                            options: [
+                                "n = dq + r where 0 ≤ r < d",
+                                "n = dq only",
+                                "r must be zero",
+                                "q must be positive"
+                            ],
+                            answer: 0,
+                            explanation: "For integers n and d>0, ∃ unique integers q (quotient) and r (remainder) with 0 ≤ r < d."
+                        },
+                        {
+                            id: 27,
+                            text: "Which is the correct definition of an even integer?",
+                            options: [
+                                "n = 2k + 1 for some integer k",
+                                "n = 2k for some integer k",
+                                "n is divisible by 3",
+                                "n > 0"
+                            ],
+                            answer: 1,
+                            explanation: "Even integer: n = 2k for some integer k. Odd: n = 2k + 1."
+                        },
+                        {
+                            id: 28,
+                            text: "How would you prove √2 is irrational?",
+                            options: [
+                                "Direct proof",
+                                "Proof by induction",
+                                "Proof by contradiction",
+                                "Proof by example"
+                            ],
+                            answer: 2,
+                            explanation: "Classic proof by contradiction: assume √2 rational = a/b in lowest terms, leads to contradiction."
+                        },
+                        {
+                            id: 29,
+                            text: "What does d|n mean?",
+                            options: [
+                                "d divided by n",
+                                "n divides d",
+                                "d divides n",
+                                "d and n are equal"
+                            ],
+                            answer: 2,
+                            explanation: "d|n means 'd divides n' or n is a multiple of d: n = dk for some integer k."
+                        },
+                        {
+                            id: 30,
+                            text: "A proof that demonstrates a statement by logical deduction from axioms is:",
+                            options: [
+                                "Proof by contradiction",
+                                "Direct proof",
+                                "Proof by induction",
+                                "Proof by exhaustion"
+                            ],
+                            answer: 1,
+                            explanation: "Direct proof: Start with known facts, apply logical steps to reach conclusion."
+                        }
+                    ]
+                },
+                {
+                    title: "🌳 Chapter 6: Graphs and Trees",
+                    questions: [
+                        {
+                            id: 31,
+                            text: "What does G = (V, E) represent?",
+                            options: [
+                                "A function",
+                                "A graph with vertices V and edges E",
+                                "A set",
+                                "A logical statement"
+                            ],
+                            answer: 1,
+                            explanation: "G = (V, E) is the standard notation for a graph with vertex set V and edge set E."
+                        },
+                        {
+                            id: 32,
+                            text: "In an undirected graph, edges are represented as:",
+                            options: [
+                                "Ordered pairs (u, v)",
+                                "Unordered pairs {u, v}",
+                                "Single vertices",
+                                "Triples (u, v, w)"
+                            ],
+                            answer: 1,
+                            explanation: "Undirected edges are unordered pairs {u, v}; directed edges are ordered pairs (u, v)."
+                        },
+                        {
+                            id: 33,
+                            text: "What is the degree of a vertex?",
+                            options: [
+                                "Number of vertices in the graph",
+                                "Number of edges connected to the vertex",
+                                "Length of the longest path",
+                                "Number of cycles through the vertex"
+                            ],
+                            answer: 1,
+                            explanation: "Degree = number of edges incident to the vertex (in-degree + out-degree for directed)."
+                        },
+                        {
+                            id: 34,
+                            text: "According to the Handshaking Theorem, sum of all degrees equals:",
+                            options: [
+                                "Number of vertices",
+                                "Twice the number of edges",
+                                "Number of edges",
+                                "Number of vertices minus 1"
+                            ],
+                            answer: 1,
+                            explanation: "Handshaking Theorem: Σ deg(v) = 2|E| (each edge contributes 2 to total degree)."
+                        },
+                        {
+                            id: 35,
+                            text: "Which graph has no cycles?",
+                            options: [
+                                "Complete graph",
+                                "Tree",
+                                "Cycle graph",
+                                "Complete bipartite graph"
+                            ],
+                            answer: 1,
+                            explanation: "A tree is an acyclic connected graph with exactly n-1 edges for n vertices."
+                        },
+                        {
+                            id: 36,
+                            text: "A vertex with degree 1 in a tree is called:",
+                            options: [
+                                "Root",
+                                "Internal node",
+                                "Leaf",
+                                "Branch"
+                            ],
+                            answer: 2,
+                            explanation: "Leaf (or pendant vertex) has degree 1 in a tree."
+                        },
+                        {
+                            id: 37,
+                            text: "What is a simple graph?",
+                            options: [
+                                "Graph with no loops or multiple edges",
+                                "Graph with weighted edges",
+                                "Graph with directed edges",
+                                "Tree structure"
+                            ],
+                            answer: 0,
+                            explanation: "Simple graph: no loops, no multiple edges between same pair of vertices."
+                        },
+                        {
+                            id: 38,
+                            text: "Which representation uses a square matrix to show edges?",
+                            options: [
+                                "Adjacency list",
+                                "Incidence matrix",
+                                "Adjacency matrix",
+                                "Edge list"
+                            ],
+                            answer: 2,
+                            explanation: "Adjacency matrix: n×n matrix where entry (i,j) = 1 if edge from i to j exists."
+                        },
+                        {
+                            id: 39,
+                            text: "A path with no repeated vertices is called:",
+                            options: [
+                                "Walk",
+                                "Trail",
+                                "Simple path",
+                                "Circuit"
+                            ],
+                            answer: 2,
+                            explanation: "Simple path: no repeated vertices. Trail: no repeated edges. Walk: any sequence."
+                        },
+                        {
+                            id: 40,
+                            text: "What is a spanning tree?",
+                            options: [
+                                "A tree with maximum height",
+                                "A subgraph that includes all vertices and is a tree",
+                                "A binary tree",
+                                "A tree with exactly 2 children per node"
+                            ],
+                            answer: 1,
+                            explanation: "Spanning tree: subgraph that includes all vertices, is connected, and has no cycles."
+                        }
+                    ]
+                },
+                {
+                    title: "📊 Chapter 3: Set Theory",
+                    questions: [
+                        {
+                            id: 41,
+                            text: "What does A ⊆ B mean?",
+                            options: [
+                                "A is a proper subset of B",
+                                "A is equal to B",
+                                "All elements of A are in B",
+                                "A and B have no common elements"
+                            ],
+                            answer: 2,
+                            explanation: "A ⊆ B means A is a subset of B: every element of A is also an element of B."
+                        },
+                        {
+                            id: 42,
+                            text: "What is |A| in set theory?",
+                            options: [
+                                "Complement of A",
+                                "Power set of A",
+                                "Cardinality of A",
+                                "Union of A with itself"
+                            ],
+                            answer: 2,
+                            explanation: "|A| = cardinality = number of elements in set A."
+                        },
+                        {
+                            id: 43,
+                            text: "What is A ∪ B?",
+                            options: [
+                                "Elements in both A and B",
+                                "Elements in A or B or both",
+                                "Elements in A but not B",
+                                "Elements not in A"
+                            ],
+                            answer: 1,
+                            explanation: "Union A ∪ B = {x | x ∈ A or x ∈ B} (elements in at least one set)."
+                        },
+                        {
+                            id: 44,
+                            text: "What is A ∩ B?",
+                            options: [
+                                "Elements in both A and B",
+                                "Elements in A or B",
+                                "Elements in A but not B",
+                                "Elements not in A or B"
+                            ],
+                            answer: 0,
+                            explanation: "Intersection A ∩ B = {x | x ∈ A and x ∈ B} (elements common to both sets)."
+                        },
+                        {
+                            id: 45,
+                            text: "What is A - B?",
+                            options: [
+                                "Elements in both A and B",
+                                "Elements in A or B",
+                                "Elements in A but not in B",
+                                "Elements not in A"
+                            ],
+                            answer: 2,
+                            explanation: "Difference A - B = {x | x ∈ A and x ∉ B} (elements in A excluding those in B)."
+                        },
+                        {
+                            id: 46,
+                            text: "What is P(A)?",
+                            options: [
+                                "Complement of A",
+                                "Power set of A",
+                                "Cardinality of A",
+                                "Product of A with itself"
+                            ],
+                            answer: 1,
+                            explanation: "P(A) = power set = set of all subsets of A. If |A| = n, then |P(A)| = 2ⁿ."
+                        },
+                        {
+                            id: 47,
+                            text: "What is A × B?",
+                            options: [
+                                "Union of A and B",
+                                "Intersection of A and B",
+                                "Cartesian product",
+                                "Difference of A and B"
+                            ],
+                            answer: 2,
+                            explanation: "Cartesian product A × B = {(a,b) | a ∈ A, b ∈ B} (ordered pairs)."
+                        },
+                        {
+                            id: 48,
+                            text: "According to De Morgan's Law for sets, (A ∪ B)' equals:",
+                            options: [
+                                "A' ∪ B'",
+                                "A' ∩ B'",
+                                "A ∩ B",
+                                "A ∪ B"
+                            ],
+                            answer: 1,
+                            explanation: "De Morgan's Law: (A ∪ B)' = A' ∩ B' and (A ∩ B)' = A' ∪ B'."
+                        },
+                        {
+                            id: 49,
+                            text: "What does the Principle of Inclusion-Exclusion state for two sets?",
+                            options: [
+                                "|A ∪ B| = |A| + |B|",
+                                "|A ∪ B| = |A| + |B| - |A ∩ B|",
+                                "|A ∩ B| = |A| + |B| - |A ∪ B|",
+                                "|A| = |A ∪ B| + |A ∩ B|"
+                            ],
+                            answer: 1,
+                            explanation: "Inclusion-Exclusion: |A ∪ B| = |A| + |B| - |A ∩ B| (avoid double-counting intersection)."
+                        },
+                        {
+                            id: 50,
+                            text: "Which law states A ∪ ∅ = A?",
+                            options: [
+                                "Identity Law",
+                                "Domination Law",
+                                "Idempotent Law",
+                                "Complement Law"
+                            ],
+                            answer: 0,
+                            explanation: "Identity Law: A ∪ ∅ = A and A ∩ U = A (U = universal set)."
+                        }
+                    ]
+                },
+                {
+                    title: "🔢 Chapter 5: Number Theory",
+                    questions: [
+                        {
+                            id: 51,
+                            text: "What does a|b mean?",
+                            options: [
+                                "a divided by b",
+                                "a is less than b",
+                                "a divides b",
+                                "a is prime"
+                            ],
+                            answer: 2,
+                            explanation: "a|b means 'a divides b': there exists integer k such that b = ak."
+                        },
+                        {
+                            id: 52,
+                            text: "Which is the smallest prime number?",
+                            options: [
+                                "0",
+                                "1",
+                                "2",
+                                "3"
+                            ],
+                            answer: 2,
+                            explanation: "2 is the smallest prime number (and the only even prime)."
+                        },
+                        {
+                            id: 53,
+                            text: "What is gcd(24, 36)?",
+                            options: [
+                                "6",
+                                "12",
+                                "24",
+                                "72"
+                            ],
+                            answer: 1,
+                            explanation: "gcd(24,36) = 12. 24=2³×3, 36=2²×3², take lowest powers: 2²×3 = 12."
+                        },
+                        {
+                            id: 54,
+                            text: "What is lcm(15, 20)?",
+                            options: [
+                                "5",
+                                "30",
+                                "60",
+                                "300"
+                            ],
+                            answer: 2,
+                            explanation: "lcm(15,20) = 60. 15=3×5, 20=2²×5, take highest powers: 2²×3×5 = 60."
+                        },
+                        {
+                            id: 55,
+                            text: "What is the Euclidean Algorithm used for?",
+                            options: [
+                                "Finding prime numbers",
+                                "Finding gcd of two numbers",
+                                "Converting number bases",
+                                "Proving irrationality"
+                            ],
+                            answer: 1,
+                            explanation: "Euclidean Algorithm efficiently finds gcd by repeated division: gcd(a,b) = gcd(b, a mod b)."
+                        },
+                        {
+                            id: 56,
+                            text: "Which statement is true about prime numbers?",
+                            options: [
+                                "There are finitely many",
+                                "All odd numbers are prime",
+                                "2 is the only even prime",
+                                "1 is a prime number"
+                            ],
+                            answer: 2,
+                            explanation: "2 is the only even prime. 1 is not prime by definition (needs exactly 2 divisors)."
+                        },
+                        {
+                            id: 57,
+                            text: "What is 1011₂ in decimal?",
+                            options: [
+                                "11",
+                                "13",
+                                "15",
+                                "17"
+                            ],
+                            answer: 0,
+                            explanation: "1011₂ = 1×2³ + 0×2² + 1×2¹ + 1×2⁰ = 8 + 0 + 2 + 1 = 11."
+                        },
+                        {
+                            id: 58,
+                            text: "What is 247₈ in decimal?",
+                            options: [
+                                "167",
+                                "159",
+                                "151",
+                                "143"
+                            ],
+                            answer: 0,
+                            explanation: "247₈ = 2×8² + 4×8¹ + 7×8⁰ = 128 + 32 + 7 = 167."
+                        },
+                        {
+                            id: 59,
+                            text: "What is the Division Algorithm formula?",
+                            options: [
+                                "n = dq",
+                                "n = dq + r where 0 ≤ r < d",
+                                "n = q/d + r",
+                                "d = nq + r"
+                            ],
+                            answer: 1,
+                            explanation: "For integers n and d>0: n = dq + r with 0 ≤ r < d (q=quotient, r=remainder)."
+                        },
+                        {
+                            id: 60,
+                            text: "Which method finds all primes up to n?",
+                            options: [
+                                "Euclidean Algorithm",
+                                "Sieve of Eratosthenes",
+                                "Trial Division",
+                                "Fermat's Test"
+                            ],
+                            answer: 1,
+                            explanation: "Sieve of Eratosthenes efficiently finds all primes up to n by eliminating multiples."
+                        }
+                    ]
+                },
+                {
+                    title: "🧮 Mixed Applications",
+                    questions: [
+                        {
+                            id: 61,
+                            text: "Which is NOT a function from A={1,2,3} to B={a,b,c}?",
+                            options: [
+                                "{(1,a), (2,b), (3,c)}",
+                                "{(1,a), (2,a), (3,a)}",
+                                "{(1,a), (1,b), (2,c)}",
+                                "{(1,a), (2,b), (3,a)}"
+                            ],
+                            answer: 2,
+                            explanation: "Option C has 1 mapping to both a and b, violating function definition (each input has exactly one output)."
+                        },
+                        {
+                            id: 62,
+                            text: "Simplify ¬(p ∧ ¬q) using De Morgan's Law:",
+                            options: [
+                                "¬p ∧ q",
+                                "¬p ∨ q",
+                                "p ∨ ¬q",
+                                "p ∧ q"
+                            ],
+                            answer: 1,
+                            explanation: "¬(p ∧ ¬q) ≡ ¬p ∨ ¬¬q ≡ ¬p ∨ q (double negation cancels)."
+                        },
+                        {
+                            id: 63,
+                            text: "What proof method shows P(n) for all n by proving P(1) and P(k)⇒P(k+1)?",
+                            options: [
+                                "Contradiction",
+                                "Contrapositive",
+                                "Mathematical Induction",
+                                "Direct Proof"
+                            ],
+                            answer: 2,
+                            explanation: "Mathematical Induction: Base case P(1), Inductive step P(k)⇒P(k+1), conclude ∀n P(n)."
+                        },
+                        {
+                            id: 64,
+                            text: "In a graph with 5 vertices each of degree 3, how many edges?",
+                            options: [
+                                "5",
+                                "7.5",
+                                "10",
+                                "15"
+                            ],
+                            answer: 1,
+                            explanation: "Sum of degrees = 5×3 = 15. By Handshaking Theorem: 15 = 2|E| ⇒ |E| = 7.5. Impossible, so no such simple graph exists."
+                        },
+                        {
+                            id: 65,
+                            text: "If |A|=3 and |B|=4, what is |A × B|?",
+                            options: [
+                                "7",
+                                "12",
+                                "81",
+                                "64"
+                            ],
+                            answer: 1,
+                            explanation: "|A × B| = |A| × |B| = 3 × 4 = 12 (number of ordered pairs)."
+                        },
+                        {
+                            id: 66,
+                            text: "What is the contrapositive of 'If n² is even, then n is even'?",
+                            options: [
+                                "If n is even, then n² is even",
+                                "If n² is odd, then n is odd",
+                                "If n is odd, then n² is odd",
+                                "n² is even if and only if n is even"
+                            ],
+                            answer: 2,
+                            explanation: "Contrapositive of p→q is ¬q→¬p. Here p='n² even', q='n even', so ¬q→¬p = 'If n is odd, then n² is odd'."
+                        },
+                        {
+                            id: 67,
+                            text: "Which binary tree has all levels filled except last, filled left to right?",
+                            options: [
+                                "Full binary tree",
+                                "Complete binary tree",
+                                "Perfect binary tree",
+                                "Balanced binary tree"
+                            ],
+                            answer: 1,
+                            explanation: "Complete binary tree: all levels full except possibly last, last level filled left to right."
+                        },
+                        {
+                            id: 68,
+                            text: "What is (A - B) ∪ (B - A) called?",
+                            options: [
+                                "Union",
+                                "Intersection",
+                                "Symmetric Difference",
+                                "Complement"
+                            ],
+                            answer: 2,
+                            explanation: "Symmetric difference A Δ B = (A - B) ∪ (B - A) = elements in exactly one of A or B."
+                        },
+                        {
+                            id: 69,
+                            text: "Which is a tautology?",
+                            options: [
+                                "p ∧ ¬p",
+                                "p ∨ ¬p",
+                                "p → q",
+                                "p ∧ q"
+                            ],
+                            answer: 1,
+                            explanation: "p ∨ ¬p is always true (Law of Excluded Middle), making it a tautology."
+                        },
+                        {
+                            id: 70,
+                            text: "What does the Fundamental Theorem of Arithmetic state?",
+                            options: [
+                                "Every number is prime",
+                                "Prime factorization is unique",
+                                "There are infinite primes",
+                                "All numbers are rational"
+                            ],
+                            answer: 1,
+                            explanation: "Every integer >1 can be uniquely expressed as a product of primes (up to order)."
+                        }
+                    ]
+                }
+            ],
+            trueFalse: [
+                {
+                    id: 71,
+                    text: "Every function is a relation, but not every relation is a function.",
+                    answer: true,
+                    explanation: "Functions are relations where each input has exactly one output. Relations can have multiple outputs for one input."
+                },
+                {
+                    id: 72,
+                    text: "The range of a function is always equal to its codomain.",
+                    answer: false,
+                    explanation: "Range ⊆ Codomain. They're equal only for surjective (onto) functions."
+                },
+                {
+                    id: 73,
+                    text: "A proposition must be either true or false, but not both.",
+                    answer: true,
+                    explanation: "By definition, a proposition has a definite truth value (T or F)."
+                },
+                {
+                    id: 74,
+                    text: "x > 5 is a proposition.",
+                    answer: false,
+                    explanation: "x > 5 is not a proposition because its truth value depends on x. It becomes a proposition when x is given a value."
+                },
+                {
+                    id: 75,
+                    text: "Proof by induction can only be used for proving statements about integers.",
+                    answer: true,
+                    explanation: "Mathematical induction proves statements for all natural numbers (or integers from some base)."
+                },
+                {
+                    id: 76,
+                    text: "√2 is a rational number.",
+                    answer: false,
+                    explanation: "√2 is irrational (classic proof by contradiction)."
+                },
+                {
+                    id: 77,
+                    text: "A tree with n vertices has n-1 edges.",
+                    answer: true,
+                    explanation: "Theorem: Any tree with n vertices has exactly n-1 edges."
+                },
+                {
+                    id: 78,
+                    text: "In an undirected graph, the number of vertices with odd degree is odd.",
+                    answer: false,
+                    explanation: "Handshaking Theorem: Number of odd-degree vertices is ALWAYS even."
+                },
+                {
+                    id: 79,
+                    text: "The empty set ∅ is a subset of every set.",
+                    answer: true,
+                    explanation: "∅ ⊆ A for any set A (vacuously true since ∅ has no elements not in A)."
+                },
+                {
+                    id: 80,
+                    text: "If A and B are sets, then |A ∪ B| = |A| + |B|.",
+                    answer: false,
+                    explanation: "Only true if A and B are disjoint. Otherwise |A ∪ B| = |A| + |B| - |A ∩ B|."
+                },
+                {
+                    id: 81,
+                    text: "1 is a prime number.",
+                    answer: false,
+                    explanation: "1 is not prime by definition (primes have exactly 2 distinct positive divisors)."
+                },
+                {
+                    id: 82,
+                    text: "Every even integer greater than 2 can be expressed as the sum of two primes (Goldbach's Conjecture).",
+                    answer: true,
+                    explanation: "Goldbach's Conjecture is unproven but verified for very large numbers. Most mathematicians believe it's true."
+                },
+                {
+                    id: 83,
+                    text: "A bijective function has an inverse function.",
+                    answer: true,
+                    explanation: "A function is invertible if and only if it is bijective (one-to-one and onto)."
+                },
+                {
+                    id: 84,
+                    text: "De Morgan's Laws apply only to Boolean algebra, not set theory.",
+                    answer: false,
+                    explanation: "De Morgan's Laws apply to both propositional logic and set theory (with corresponding operations)."
+                },
+                {
+                    id: 85,
+                    text: "The Euclidean algorithm finds the LCM of two numbers.",
+                    answer: false,
+                    explanation: "Euclidean algorithm finds GCD. LCM can be found using: lcm(a,b) = |a·b| / gcd(a,b)."
+                }
+            ],
+            shortAnswer: [
+                {
+                    id: 86,
+                    text: "A function f: A → B is __________ if f(x₁) = f(x₂) implies x₁ = x₂.",
+                    answer: "injective",
+                    explanation: "Injective (one-to-one): different inputs give different outputs."
+                },
+                {
+                    id: 87,
+                    text: "The statement 'p if and only if q' is called a __________.",
+                    answer: "biconditional",
+                    explanation: "Biconditional: p ↔ q, true when p and q have same truth value."
+                },
+                {
+                    id: 88,
+                    text: "In proof by __________, we assume ¬P and derive a contradiction.",
+                    answer: "contradiction",
+                    explanation: "Proof by contradiction: assume opposite, show impossible, conclude original must be true."
+                },
+                {
+                    id: 89,
+                    text: "A __________ is a walk with no repeated edges.",
+                    answer: "trail",
+                    explanation: "Trail: walk with no repeated edges (vertices may repeat)."
+                },
+                {
+                    id: 90,
+                    text: "The __________ of set A, denoted P(A), contains all subsets of A.",
+                    answer: "power set",
+                    explanation: "Power set P(A) = {S | S ⊆ A}. If |A|=n, then |P(A)|=2ⁿ."
+                },
+                {
+                    id: 91,
+                    text: "Two integers a and b are __________ modulo n if n divides (a - b).",
+                    answer: "congruent",
+                    explanation: "a ≡ b (mod n) means n|(a-b) (a and b have same remainder when divided by n)."
+                },
+                {
+                    id: 92,
+                    text: "The __________ of a vertex in a tree is the number of edges from the vertex to the root.",
+                    answer: "level",
+                    explanation: "Level = distance from root. Height of tree = maximum level."
+                },
+                {
+                    id: 93,
+                    text: "A __________ number cannot be expressed as a ratio of two integers.",
+                    answer: "irrational",
+                    explanation: "Irrational numbers: real numbers not expressible as a/b where a,b integers, b≠0."
+                },
+                {
+                    id: 94,
+                    text: "The __________ of a graph is a subgraph that includes all vertices and is a tree.",
+                    answer: "spanning tree",
+                    explanation: "Spanning tree: includes all vertices, connected, acyclic, has n-1 edges for n vertices."
+                },
+                {
+                    id: 95,
+                    text: "In set theory, A Δ B represents the __________ of A and B.",
+                    answer: "symmetric difference",
+                    explanation: "Symmetric difference: elements in exactly one of A or B: (A-B) ∪ (B-A)."
+                },
+                {
+                    id: 96,
+                    text: "The __________ algorithm converts decimal to binary by repeated division by 2.",
+                    answer: "division",
+                    explanation: "Decimal to binary: repeatedly divide by 2, remainders (in reverse order) give binary digits."
+                },
+                {
+                    id: 97,
+                    text: "A __________ is a connected graph with no cycles.",
+                    answer: "tree",
+                    explanation: "Tree: connected, acyclic graph. Equivalent definitions exist."
+                },
+                {
+                    id: 98,
+                    text: "The __________ of a function f: A → B is the set {f(x) | x ∈ A}.",
+                    answer: "range",
+                    explanation: "Range (or image): set of all actual outputs from domain A."
+                },
+                {
+                    id: 99,
+                    text: "__________ Law states p ∧ (q ∨ r) ≡ (p ∧ q) ∨ (p ∧ r).",
+                    answer: "distributive",
+                    explanation: "Distributive Law: AND distributes over OR (and vice versa)."
+                },
+                {
+                    id: 100,
+                    text: "A number that has exactly two distinct positive divisors is called a __________.",
+                    answer: "prime",
+                    explanation: "Prime number: integer > 1 with divisors 1 and itself only."
+                }
+            ]
+        };
 
-            // Chapter 3: Set Theory (30 questions)
-            {
-                question: "What is {2, 4, 6, 8} in set builder notation?",
-                options: ["{x | x is even, x < 10}", "{x | x is integer}", "{x | x > 0}", "{x | x is prime}"],
-                correct: 0,
-                hint: "Set contains even numbers less than 10."
-            },
-            {
-                question: "Which symbol means 'element of'?",
-                options: ["⊆", "∈", "⊂", "∩"],
-                correct: 1,
-                hint: "∈ means 'is an element of'."
-            },
-            {
-                question: "What is |{a, b, c}|?",
-                options: ["3", "a, b, c", "{a, b, c}", "0"],
-                correct: 0,
-                hint: "|A| means cardinality (number of elements)."
-            },
-            {
-                question: "What is A ∪ B?",
-                options: ["Intersection", "Union", "Difference", "Complement"],
-                correct: 1,
-                hint: "∪ represents union (all elements in A or B)."
-            },
-            {
-                question: "What is A ∩ B?",
-                options: ["Union", "Intersection", "Complement", "Cartesian product"],
-                correct: 1,
-                hint: "∩ represents intersection (common elements)."
-            },
-            {
-                question: "If A = {1,2,3}, B = {3,4,5}, what is A ∪ B?",
-                options: ["{1,2,3,4,5}", "{3}", "{1,2,3}", "{3,4,5}"],
-                correct: 0,
-                hint: "Union combines all unique elements."
-            },
-            {
-                question: "What is A - B?",
-                options: ["Elements in A not in B", "Elements in B not in A", "Common elements", "All elements"],
-                correct: 0,
-                hint: "Set difference: elements in A but not in B."
-            },
-            {
-                question: "What is the complement of A?",
-                options: ["A' = U - A", "A' = A - U", "A' = A ∩ U", "A' = A ∪ U"],
-                correct: 0,
-                hint: "Complement contains elements in universal set but not in A."
-            },
-            {
-                question: "What is |P(A)| if A = {a, b}?",
-                options: ["2", "4", "3", "1"],
-                correct: 1,
-                hint: "Power set has 2^n elements. Here 2^2 = 4."
-            },
-            {
-                question: "What is A × B?",
-                options: ["Union", "Intersection", "Cartesian product", "Power set"],
-                correct: 2,
-                hint: "Cartesian product creates ordered pairs."
-            },
-            {
-                question: "Which law is A ∪ B = B ∪ A?",
-                options: ["Commutative", "Associative", "Distributive", "De Morgan"],
-                correct: 0,
-                hint: "Commutative law: order doesn't matter for union/intersection."
-            },
-            {
-                question: "What is (A ∪ B)' equal to?",
-                options: ["A' ∩ B'", "A' ∪ B'", "A ∩ B", "A ∪ B"],
-                correct: 0,
-                hint: "De Morgan's Law for sets."
-            },
-            {
-                question: "Which is the empty set?",
-                options: ["∅", "{∅}", "0", "{} and ∅"],
-                correct: 3,
-                hint: "Empty set can be written as ∅ or {}."
-            },
-            {
-                question: "If A ⊆ B and B ⊆ A, then:",
-                options: ["A = B", "A ⊂ B", "B ⊂ A", "A ≠ B"],
-                correct: 0,
-                hint: "If each is subset of the other, they are equal."
-            },
-            {
-                question: "What is |A ∩ B| if A and B are disjoint?",
-                options: ["0", "|A|+|B|", "|A|", "|B|"],
-                correct: 0,
-                hint: "Disjoint sets have no common elements."
-            },
-            {
-                question: "Principle of Inclusion-Exclusion: |A ∪ B| = ?",
-                options: ["|A|+|B|", "|A|+|B|-|A∩B|", "|A|-|B|", "|A∩B|"],
-                correct: 1,
-                hint: "Formula accounts for double-counted elements."
-            },
-            {
-                question: "What is a singleton set?",
-                options: ["Empty set", "Set with one element", "Set with two elements", "Infinite set"],
-                correct: 1,
-                hint: "Singleton has exactly one element."
-            },
-            {
-                question: "If U = {1,2,3,4,5}, A = {1,2}, what is A'?",
-                options: ["{3,4,5}", "{1,2}", "{1,2,3,4,5}", "∅"],
-                correct: 0,
-                hint: "Complement relative to universal set."
-            },
-            {
-                question: "What is {a} × {1,2}?",
-                options: ["{(a,1),(a,2)}", "{a,1,a,2}", "{(1,a),(2,a)}", "{a,1,2}"],
-                correct: 0,
-                hint: "Cartesian product creates ordered pairs."
-            },
-            {
-                question: "Which is A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C)?",
-                options: ["Distributive Law", "Associative Law", "Commutative Law", "Identity Law"],
-                correct: 0,
-                hint: "Distributive law of intersection over union."
-            },
-            {
-                question: "What is A ∪ ∅?",
-                options: ["A", "∅", "U", "A'"],
-                correct: 0,
-                hint: "Identity law: A ∪ ∅ = A."
-            },
-            {
-                question: "What is A ∩ U?",
-                options: ["A", "U", "∅", "A'"],
-                correct: 0,
-                hint: "Identity law: A ∩ U = A."
-            },
-            {
-                question: "What is A ∪ A?",
-                options: ["A", "∅", "U", "A'"],
-                correct: 0,
-                hint: "Idempotent law: A ∪ A = A."
-            },
-            {
-                question: "What is A ∩ A?",
-                options: ["A", "∅", "U", "A'"],
-                correct: 0,
-                hint: "Idempotent law: A ∩ A = A."
-            },
-            {
-                question: "What type of set is {1,2,3,...}?",
-                options: ["Finite", "Infinite", "Empty", "Singleton"],
-                correct: 1,
-                hint: "Ellipsis (...) indicates infinite continuation."
-            },
-            {
-                question: "If A = {x | x is prime less than 10}, how many elements?",
-                options: ["4", "5", "3", "6"],
-                correct: 0,
-                hint: "Primes < 10: {2,3,5,7} = 4 elements."
-            },
-            {
-                question: "What is proper subset symbol?",
-                options: ["⊆", "⊂", "∈", "∩"],
-                correct: 1,
-                hint: "⊂ means proper subset (subset but not equal)."
-            },
-            {
-                question: "What is absorption law for sets?",
-                options: ["A ∪ (A ∩ B) = A", "A ∩ (A ∪ B) = A", "Both", "Neither"],
-                correct: 2,
-                hint: "Both are absorption laws."
-            },
-            {
-                question: "What is symmetric difference?",
-                options: ["(A-B)∪(B-A)", "A∪B", "A∩B", "A-B"],
-                correct: 0,
-                hint: "Symmetric difference: elements in A or B but not both."
-            },
-            {
-                question: "If A has 3 elements, B has 4, max |A∩B|?",
-                options: ["3", "4", "7", "1"],
-                correct: 0,
-                hint: "Maximum intersection size is size of smaller set (3)."
-            },
-
-            // Chapter 4: Functions (30 questions)
-            {
-                question: "What is f: A → B?",
-                options: ["Function from A to B", "A equals B", "A subset of B", "A intersection B"],
-                correct: 0,
-                hint: "f: A → B means function with domain A, codomain B."
-            },
-            {
-                question: "What is domain?",
-                options: ["Input set", "Output set", "Range", "Codomain"],
-                correct: 0,
-                hint: "Domain is set of all possible inputs."
-            },
-            {
-                question: "What is range?",
-                options: ["Actual outputs", "Possible outputs", "Inputs", "Both A and B"],
-                correct: 3,
-                hint: "Range is set of actual output values (subset of codomain)."
-            },
-            {
-                question: "Which is one-to-one (injective)?",
-                options: ["f(x)=x²", "f(x)=2x", "f(x)=constant", "f(x)=|x|"],
-                correct: 1,
-                hint: "f(x)=2x is injective: different inputs give different outputs."
-            },
-            {
-                question: "Which is onto (surjective) f: ℝ→ℝ?",
-                options: ["f(x)=x³", "f(x)=x²", "f(x)=sin x", "f(x)=e^x"],
-                correct: 0,
-                hint: "f(x)=x³ covers all real numbers as outputs."
-            },
-            {
-                question: "What is bijective?",
-                options: ["One-to-one", "Onto", "Both", "Neither"],
-                correct: 2,
-                hint: "Bijective = both injective and surjective."
-            },
-            {
-                question: "If f(x)=3x+2, g(x)=x-1, what is (f∘g)(x)?",
-                options: ["3x-1", "3x+1", "3x-3", "3x+5"],
-                correct: 0,
-                hint: "f(g(x)) = f(x-1) = 3(x-1)+2 = 3x-3+2 = 3x-1."
-            },
-            {
-                question: "What is inverse function f⁻¹?",
-                options: ["Reflection over y=x", "Reciprocal", "Negative", "Square root"],
-                correct: 0,
-                hint: "Graph of inverse is reflection of original over line y=x."
-            },
-            {
-                question: "Which function has inverse?",
-                options: ["One-to-one", "Onto", "Both", "All functions"],
-                correct: 0,
-                hint: "Only one-to-one functions have inverses."
-            },
-            {
-                question: "What is identity function?",
-                options: ["f(x)=x", "f(x)=0", "f(x)=1", "f(x)=x²"],
-                correct: 0,
-                hint: "Identity function returns input unchanged."
-            },
-            {
-                question: "If f(x)=2x, g(x)=x+3, what is (f+g)(x)?",
-                options: ["3x+3", "2x+3", "x+3", "2x²+6x"],
-                correct: 0,
-                hint: "(f+g)(x) = f(x)+g(x) = 2x + (x+3) = 3x+3."
-            },
-            {
-                question: "What is composition order?",
-                options: ["(f∘g)(x)=f(g(x))", "(f∘g)(x)=g(f(x))", "Either", "Neither"],
-                correct: 0,
-                hint: "f∘g means apply g first, then f."
-            },
-            {
-                question: "Which is many-to-one?",
-                options: ["f(x)=x²", "f(x)=2x", "f(x)=x³", "f(x)=x"],
-                correct: 0,
-                hint: "f(x)=x²: both 2 and -2 map to 4."
-            },
-            {
-                question: "What is pre-image?",
-                options: ["Input", "Output", "Domain", "Codomain"],
-                correct: 0,
-                hint: "Pre-image is input value that produces given output."
-            },
-            {
-                question: "If f(x)=5x-3, what is f⁻¹(x)?",
-                options: ["(x+3)/5", "(x-3)/5", "5x+3", "3-5x"],
-                correct: 0,
-                hint: "Solve y=5x-3 for x: x=(y+3)/5."
-            },
-            {
-                question: "What is floor function ⌊2.7⌋?",
-                options: ["2", "3", "2.7", "2.5"],
-                correct: 0,
-                hint: "Floor gives greatest integer ≤ input."
-            },
-            {
-                question: "What is ceiling function ⌈2.1⌉?",
-                options: ["2", "3", "2.1", "2.5"],
-                correct: 1,
-                hint: "Ceiling gives smallest integer ≥ input."
-            },
-            {
-                question: "Which is exponential function?",
-                options: ["f(x)=2^x", "f(x)=x²", "f(x)=log x", "f(x)=sin x"],
-                correct: 0,
-                hint: "Exponential has variable in exponent."
-            },
-            {
-                question: "What is logarithmic function inverse of?",
-                options: ["Exponential", "Polynomial", "Trigonometric", "Constant"],
-                correct: 0,
-                hint: "Logarithmic and exponential functions are inverses."
-            },
-            {
-                question: "What is (f⋅g)(x)?",
-                options: ["f(x)×g(x)", "f(g(x))", "f(x)+g(x)", "f(x)/g(x)"],
-                correct: 0,
-                hint: "Product of functions: multiply outputs."
-            },
-            {
-                question: "What is (f/g)(x)?",
-                options: ["f(x)/g(x)", "f(g(x))", "g(f(x))", "f(x)×g(x)"],
-                correct: 0,
-                hint: "Division of functions: divide outputs."
-            },
-            {
-                question: "If f is odd function, f(-x)=?",
-                options: ["-f(x)", "f(x)", "0", "1/f(x)"],
-                correct: 0,
-                hint: "Odd function: f(-x) = -f(x)."
-            },
-            {
-                question: "If f is even function, f(-x)=?",
-                options: ["f(x)", "-f(x)", "0", "1/f(x)"],
-                correct: 0,
-                hint: "Even function: f(-x) = f(x)."
-            },
-            {
-                question: "What is piecewise function?",
-                options: ["Different rules for different domains", "Constant function", "Linear function", "Exponential function"],
-                correct: 0,
-                hint: "Piecewise functions use different formulas on different intervals."
-            },
-            {
-                question: "Which is constant function?",
-                options: ["f(x)=5", "f(x)=x", "f(x)=x²", "f(x)=1/x"],
-                correct: 0,
-                hint: "Constant function outputs same value for all inputs."
-            },
-            {
-                question: "What is step function?",
-                options: ["Constant on intervals", "Linear", "Quadratic", "Exponential"],
-                correct: 0,
-                hint: "Step function has constant values on intervals."
-            },
-            {
-                question: "If f(x)=x², g(x)=√x, domain of (f∘g)?",
-                options: ["x≥0", "All real", "x>0", "x≤0"],
-                correct: 0,
-                hint: "g(x)=√x requires x≥0, then f can take any input."
-            },
-            {
-                question: "What is absolute value function?",
-                options: ["f(x)=|x|", "f(x)=x", "f(x)=x²", "f(x)=1/x"],
-                correct: 0,
-                hint: "Absolute value gives non-negative magnitude."
-            },
-            {
-                question: "Which is rational function?",
-                options: ["f(x)=(x+1)/(x-1)", "f(x)=x²", "f(x)=e^x", "f(x)=sin x"],
-                correct: 0,
-                hint: "Rational function is ratio of polynomials."
-            },
-            {
-                question: "What is vertical line test for?",
-                options: ["Function check", "One-to-one check", "Onto check", "Inverse check"],
-                correct: 0,
-                hint: "Vertical line test determines if relation is a function."
-            },
-
-            // Chapter 5: Number Theory (30 questions)
-            {
-                question: "What is 7 | 28?",
-                options: ["True", "False", "Neither", "7 divides 28"],
-                correct: 3,
-                hint: "7 | 28 means 7 divides 28 (28 ÷ 7 = 4)."
-            },
-            {
-                question: "Which is prime?",
-                options: ["51", "57", "59", "63"],
-                correct: 2,
-                hint: "59 is prime (only divisible by 1 and 59)."
-            },
-            {
-                question: "Which is composite?",
-                options: ["41", "43", "47", "49"],
-                correct: 3,
-                hint: "49 = 7×7, so composite."
-            },
-            {
-                question: "What is gcd(24,36)?",
-                options: ["6", "12", "24", "36"],
-                correct: 1,
-                hint: "Greatest common divisor of 24 and 36 is 12."
-            },
-            {
-                question: "What is lcm(6,8)?",
-                options: ["24", "48", "12", "16"],
-                correct: 0,
-                hint: "Least common multiple of 6 and 8 is 24."
-            },
-            {
-                question: "What is division algorithm: 37 ÷ 5?",
-                options: ["37=5×7+2", "37=5×6+7", "37=5×8-3", "37=5×7"],
-                correct: 0,
-                hint: "37 = 5×7 + 2 (quotient 7, remainder 2)."
-            },
-            {
-                question: "What is Euclidean algorithm first step for gcd(48,18)?",
-                options: ["48=18×2+12", "18=12×1+6", "12=6×2+0", "48=18×3-6"],
-                correct: 0,
-                hint: "48 = 18×2 + 12, then continue with 18 and 12."
-            },
-            {
-                question: "What is fundamental theorem of arithmetic?",
-                options: ["Unique prime factorization", "Every number is prime", "Infinite primes", "Division algorithm"],
-                correct: 0,
-                hint: "Every integer >1 can be uniquely expressed as product of primes."
-            },
-            {
-                question: "Prime factorization of 84?",
-                options: ["2²×3×7", "2×3×7", "2²×21", "4×3×7"],
-                correct: 0,
-                hint: "84 = 2×42 = 2×2×21 = 2×2×3×7 = 2²×3×7."
-            },
-            {
-                question: "What is Sieve of Eratosthenes for?",
-                options: ["Finding primes", "Finding gcd", "Finding lcm", "Division"],
-                correct: 0,
-                hint: "Sieve method finds all primes up to a limit."
-            },
-            {
-                question: "What is 1011₂ in decimal?",
-                options: ["11", "13", "15", "17"],
-                correct: 0,
-                hint: "1011₂ = 1×8 + 0×4 + 1×2 + 1×1 = 11."
-            },
-            {
-                question: "What is 25 in binary?",
-                options: ["11001", "10101", "11101", "10011"],
-                correct: 0,
-                hint: "25 = 16+8+1 = 11001₂."
-            },
-            {
-                question: "What is 47₈ in decimal?",
-                options: ["39", "47", "55", "31"],
-                correct: 0,
-                hint: "47₈ = 4×8 + 7×1 = 32+7 = 39."
-            },
-            {
-                question: "What is 100 in octal?",
-                options: ["144", "164", "124", "104"],
-                correct: 0,
-                hint: "100 = 64+32+4 = 144₈."
-            },
-            {
-                question: "Binary to octal: 110101₂ = ?₈",
-                options: ["65", "55", "45", "35"],
-                correct: 0,
-                hint: "110101₂ = 110 101 = 6 5 = 65₈."
-            },
-            {
-                question: "What is modular arithmetic: 17 mod 5?",
-                options: ["2", "3", "4", "1"],
-                correct: 1,
-                hint: "17 ÷ 5 = 3 remainder 2, so 17 mod 5 = 2."
-            },
-            {
-                question: "What is 2³² mod 7?",
-                options: ["4", "2", "1", "0"],
-                correct: 0,
-                hint: "Use modular exponentiation or patterns."
-            },
-            {
-                question: "What is congruence: 17 ≡ ? (mod 5)",
-                options: ["2", "3", "7", "12"],
-                correct: 0,
-                hint: "17 ≡ 2 (mod 5) because both have same remainder mod 5."
-            },
-            {
-                question: "What is perfect number?",
-                options: ["Sum of proper divisors equals number", "Prime number", "Square number", "Even number"],
-                correct: 0,
-                hint: "Example: 6 = 1+2+3."
-            },
-            {
-                question: "What is Mersenne prime?",
-                options: ["2^p-1 where p prime", "2^p+1", "Any prime", "p²-1"],
-                correct: 0,
-                hint: "Mersenne primes have form 2^p-1."
-            },
-            {
-                question: "What is Fermat's little theorem?",
-                options: ["a^p ≡ a (mod p)", "a^(p-1) ≡ 1 (mod p)", "Both", "Neither"],
-                correct: 2,
-                hint: "For prime p and a not divisible by p: a^(p-1) ≡ 1 (mod p)."
-            },
-            {
-                question: "What is Wilson's theorem?",
-                options: ["(p-1)! ≡ -1 (mod p)", "p! ≡ 0 (mod p)", "(p+1)! ≡ 1 (mod p)", "p! ≡ p (mod p)"],
-                correct: 0,
-                hint: "Wilson: p is prime iff (p-1)! ≡ -1 (mod p)."
-            },
-            {
-                question: "What is Goldbach conjecture?",
-                options: ["Every even >2 is sum of two primes", "Infinite primes", "Prime factorization", "Twin primes"],
-                correct: 0,
-                hint: "Goldbach: Every even integer >2 can be expressed as sum of two primes."
-            },
-            {
-                question: "What is twin primes?",
-                options: ["Primes differing by 2", "Primes differing by 1", "Consecutive primes", "Primes sum to even"],
-                correct: 0,
-                hint: "Example: (3,5), (5,7), (11,13)."
-            },
-            {
-                question: "What is palindrome number?",
-                options: ["Reads same forward/backward", "Prime", "Even", "Perfect square"],
-                correct: 0,
-                hint: "Examples: 121, 1331, 12321."
-            },
-            {
-                question: "What is 1's complement of 1010₂?",
-                options: ["0101", "1010", "1111", "0000"],
-                correct: 0,
-                hint: "1's complement flips all bits: 0→1, 1→0."
-            },
-            {
-                question: "What is 2's complement of 1010₂?",
-                options: ["0110", "0101", "1010", "1110"],
-                correct: 0,
-                hint: "2's complement = 1's complement + 1."
-            },
-            {
-                question: "What is Hamming distance between 1010 and 1100?",
-                options: ["2", "1", "3", "4"],
-                correct: 0,
-                hint: "Hamming distance counts differing bits: positions 2 and 3 differ."
-            },
-            {
-                question: "What is checksum?",
-                options: ["Error detection code", "Encryption", "Compression", "Prime test"],
-                correct: 0,
-                hint: "Checksum verifies data integrity."
-            },
-            {
-                question: "What is RSA based on?",
-                options: ["Prime factorization", "Discrete log", "Elliptic curves", "Matrix multiplication"],
-                correct: 0,
-                hint: "RSA security relies on difficulty of factoring large numbers."
-            },
-
-            // Chapter 6: Graphs & Trees (30 questions)
-            {
-                question: "What is G = (V,E)?",
-                options: ["Graph definition", "Function", "Set", "Tree"],
-                correct: 0,
-                hint: "Graph G with vertex set V and edge set E."
-            },
-            {
-                question: "What is vertex?",
-                options: ["Node", "Edge", "Path", "Cycle"],
-                correct: 0,
-                hint: "Vertex (node) is fundamental unit of graph."
-            },
-            {
-                question: "What is edge?",
-                options: ["Connection between vertices", "Vertex", "Path", "Tree"],
-                correct: 0,
-                hint: "Edge connects two vertices."
-            },
-            {
-                question: "What is undirected graph?",
-                options: ["Edges have no direction", "Edges have direction", "No edges", "All vertices connected"],
-                correct: 0,
-                hint: "Undirected edges don't have arrows."
-            },
-            {
-                question: "What is directed graph?",
-                options: ["Edges have direction", "No edges", "Complete graph", "Tree"],
-                correct: 0,
-                hint: "Directed edges (arcs) have arrows showing direction."
-            },
-            {
-                question: "What is degree of vertex?",
-                options: ["Number of edges incident", "Number of vertices", "Path length", "Distance"],
-                correct: 0,
-                hint: "Degree = number of edges touching vertex."
-            },
-            {
-                question: "Handshaking theorem: Σdeg(v) = ?",
-                options: ["2|E|", "|V|", "|E|", "|V|+|E|"],
-                correct: 0,
-                hint: "Sum of degrees = 2 × number of edges."
-            },
-            {
-                question: "What is complete graph Kₙ?",
-                options: ["Every pair connected", "No edges", "Tree", "Cycle"],
-                correct: 0,
-                hint: "Complete graph has all possible edges."
-            },
-            {
-                question: "What is bipartite graph?",
-                options: ["Vertices in two sets, edges between sets", "Complete graph", "Tree", "Cycle"],
-                correct: 0,
-                hint: "Bipartite: vertices divided into two sets, edges only between sets."
-            },
-            {
-                question: "What is path?",
-                options: ["Sequence of vertices, no repeats", "Cycle", "Tree", "Complete graph"],
-                correct: 0,
-                hint: "Path visits vertices without repetition."
-            },
-            {
-                question: "What is cycle?",
-                options: ["Path that starts/ends at same vertex", "Tree", "Complete graph", "Bipartite"],
-                correct: 0,
-                hint: "Cycle is closed path (first=last vertex)."
-            },
-            {
-                question: "What is connected graph?",
-                options: ["Path between any two vertices", "Disconnected", "Tree", "Complete"],
-                correct: 0,
-                hint: "Connected: can reach any vertex from any other."
-            },
-            {
-                question: "What is tree?",
-                options: ["Connected, acyclic graph", "Cycle", "Complete graph", "Disconnected"],
-                correct: 0,
-                hint: "Tree: connected with no cycles."
-            },
-            {
-                question: "Tree with n vertices has how many edges?",
-                options: ["n-1", "n", "n+1", "2n"],
-                correct: 0,
-                hint: "Tree property: |E| = |V| - 1."
-            },
-            {
-                question: "What is leaf in tree?",
-                options: ["Vertex degree 1", "Root", "Internal node", "Edge"],
-                correct: 0,
-                hint: "Leaf (pendant vertex) has degree 1."
-            },
-            {
-                question: "What is rooted tree?",
-                options: ["Tree with designated root", "Binary tree", "Complete graph", "Cycle"],
-                correct: 0,
-                hint: "Rooted tree has one vertex designated as root."
-            },
-            {
-                question: "What is binary tree?",
-                options: ["Each node has ≤2 children", "Complete graph", "Cycle", "Path"],
-                correct: 0,
-                hint: "Binary tree nodes have 0, 1, or 2 children."
-            },
-            {
-                question: "What is spanning tree?",
-                options: ["Subgraph that is tree covering all vertices", "Cycle", "Path", "Complete graph"],
-                correct: 0,
-                hint: "Spanning tree connects all vertices without cycles."
-            },
-            {
-                question: "What is adjacency matrix?",
-                options: ["Matrix representing edges", "List of edges", "Tree representation", "Path matrix"],
-                correct: 0,
-                hint: "Adjacency matrix: a[i][j]=1 if edge between i and j."
-            },
-            {
-                question: "What is adjacency list?",
-                options: ["List of neighbors for each vertex", "Matrix", "Tree", "Cycle"],
-                correct: 0,
-                hint: "Adjacency list stores neighbors of each vertex."
-            },
-            {
-                question: "What is weighted graph?",
-                options: ["Edges have weights", "Unweighted", "Complete", "Tree"],
-                correct: 0,
-                hint: "Weighted graph edges have numerical values."
-            },
-            {
-                question: "What is Dijkstra's algorithm for?",
-                options: ["Shortest path", "Minimum spanning tree", "Cycle detection", "Graph coloring"],
-                correct: 0,
-                hint: "Dijkstra finds shortest paths from source."
-            },
-            {
-                question: "What is Eulerian path?",
-                options: ["Uses every edge once", "Uses every vertex once", "Shortest path", "Spanning tree"],
-                correct: 0,
-                hint: "Eulerian path uses every edge exactly once."
-            },
-            {
-                question: "What is Hamiltonian path?",
-                options: ["Visits every vertex once", "Uses every edge once", "Shortest path", "Spanning tree"],
-                correct: 0,
-                hint: "Hamiltonian path visits every vertex exactly once."
-            },
-            {
-                question: "What is planar graph?",
-                options: ["Can be drawn without crossing edges", "Complete graph", "Tree", "Cycle"],
-                correct: 0,
-                hint: "Planar graph can be drawn on plane without edge crossings."
-            },
-            {
-                question: "Four color theorem applies to:",
-                options: ["Planar graphs", "Complete graphs", "Trees", "Bipartite graphs"],
-                correct: 0,
-                hint: "Four colors suffice for any planar graph."
-            },
-            {
-                question: "What is graph coloring?",
-                options: ["Assign colors to vertices, adjacent different", "Color edges", "Weight assignment", "Path finding"],
-                correct: 0,
-                hint: "Graph coloring ensures adjacent vertices have different colors."
-            },
-            {
-                question: "What is chromatic number?",
-                options: ["Minimum colors needed", "Number of vertices", "Number of edges", "Diameter"],
-                correct: 0,
-                hint: "Chromatic number = minimum colors for proper coloring."
-            },
-            {
-                question: "What is forest?",
-                options: ["Collection of trees", "Single tree", "Complete graph", "Cycle"],
-                correct: 0,
-                hint: "Forest is disjoint union of trees (acyclic graph)."
-            },
-            {
-                question: "What is complete binary tree?",
-                options: ["All levels filled except last, filled left to right", "Any binary tree", "Full binary tree", "Balanced tree"],
-                correct: 0,
-                hint: "Complete binary tree: all levels filled except possibly last, last level filled left to right."
-            }
-        ];
-
-        // Quiz State Variables
-        let currentQuestionIndex = 0;
+        // Quiz state
+        let userAnswers = {};
         let score = 0;
-        let userAnswers = new Array(quizData.length).fill(null);
+        let answeredCount = 0;
+        const totalQuestions = 100;
 
-        // DOM Elements
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const feedback = document.getElementById('feedback');
-        const feedbackTitle = document.getElementById('feedback-title');
-        const feedbackText = document.getElementById('feedback-text');
-        const hintText = document.getElementById('hint-text');
-        const nextBtn = document.getElementById('next-btn');
-        const restartBtn = document.getElementById('restart-btn');
-        const restartResultsBtn = document.getElementById('restart-results-btn');
-        const currentQuestionEl = document.getElementById('current-question');
-        const scoreEl = document.getElementById('score');
-        const totalQuestionsEl = document.getElementById('total-questions');
-        const qNumberEl = document.getElementById('q-number');
-        const qTotalEl = document.getElementById('q-total');
-        const progressFill = document.getElementById('progress-fill');
-        const quizContent = document.getElementById('quiz-content');
-        const resultsContainer = document.getElementById('results-container');
-        const finalScoreEl = document.getElementById('final-score');
-        const resultsMessageEl = document.getElementById('results-message');
-
-        // Initialize Quiz
+        // Initialize quiz
         function initQuiz() {
-            currentQuestionIndex = 0;
-            score = 0;
-            userAnswers.fill(null);
-            updateStats();
-            showQuestion();
-            quizContent.style.display = 'block';
-            resultsContainer.style.display = 'none';
-        }
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
 
-        // Show Current Question
-        function showQuestion() {
-            const question = quizData[currentQuestionIndex];
-            
-            // Update question text
-            questionText.textContent = question.question;
-            qNumberEl.textContent = currentQuestionIndex + 1;
-            qTotalEl.textContent = quizData.length;
-            
-            // Clear previous options
-            optionsContainer.innerHTML = '';
-            
-            // Create options
-            const letters = ['A', 'B', 'C', 'D'];
-            question.options.forEach((option, index) => {
-                const optionElement = document.createElement('div');
-                optionElement.className = 'option';
-                optionElement.innerHTML = `
-                    <span class="option-letter">${letters[index]}</span>
-                    <span class="option-text">${option}</span>
+            // Add MC questions from sections
+            quizData.sections.forEach((section, sectionIndex) => {
+                const sectionEl = document.createElement('div');
+                sectionEl.className = 'section';
+                
+                sectionEl.innerHTML = `
+                    <h3>${section.title}</h3>
+                    ${section.questions.map((q, qIndex) => `
+                        <div class="question" id="q${q.id}">
+                            <div>
+                                <span class="question-number">${q.id}</span>
+                                <span class="question-text">${q.text}</span>
+                            </div>
+                            <div class="options">
+                                ${q.options.map((opt, optIndex) => `
+                                    <div class="option" 
+                                         data-question="${q.id}" 
+                                         data-option="${optIndex}"
+                                         onclick="selectOption(${q.id}, ${optIndex})">
+                                        ${opt}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="explanation" id="exp${q.id}">${q.explanation}</div>
+                        </div>
+                    `).join('')}
                 `;
                 
-                // Mark if previously answered
-                if (userAnswers[currentQuestionIndex] === index) {
-                    optionElement.classList.add('selected');
-                }
-                
-                optionElement.addEventListener('click', () => selectOption(index, optionElement));
-                optionsContainer.appendChild(optionElement);
+                container.appendChild(sectionEl);
             });
-            
-            // Clear feedback
-            feedback.style.display = 'none';
-            feedback.className = 'feedback';
-            nextBtn.disabled = true;
-            
-            // Update progress
+
+            // Add True/False section
+            const tfSection = document.createElement('div');
+            tfSection.className = 'section';
+            tfSection.innerHTML = `
+                <h3>✅ True/False Questions</h3>
+                ${quizData.trueFalse.map((q, index) => `
+                    <div class="question" id="q${q.id}">
+                        <div>
+                            <span class="question-number">${q.id}</span>
+                            <span class="question-text">${q.text}</span>
+                        </div>
+                        <div class="options">
+                            <div class="option" data-question="${q.id}" data-option="true" onclick="selectTF(${q.id}, true)">
+                                True
+                            </div>
+                            <div class="option" data-question="${q.id}" data-option="false" onclick="selectTF(${q.id}, false)">
+                                False
+                            </div>
+                        </div>
+                        <div class="explanation" id="exp${q.id}">${q.explanation}</div>
+                    </div>
+                `).join('')}
+            `;
+            container.appendChild(tfSection);
+
+            // Add Short Answer section
+            const saSection = document.createElement('div');
+            saSection.className = 'section';
+            saSection.innerHTML = `
+                <h3>✍️ Short Answer (Fill-in-the-Blank)</h3>
+                ${quizData.shortAnswer.map((q, index) => `
+                    <div class="question" id="q${q.id}">
+                        <div>
+                            <span class="question-number">${q.id}</span>
+                            <span class="question-text">${q.text}</span>
+                        </div>
+                        <div class="options" style="grid-template-columns: 1fr">
+                            <input type="text" 
+                                   class="option" 
+                                   style="text-align: center; padding: 15px;"
+                                   placeholder="Type your answer here..."
+                                   onchange="selectShortAnswer(${q.id}, this.value)"
+                                   onkeyup="selectShortAnswer(${q.id}, this.value)">
+                        </div>
+                        <div class="answer-key" id="ans${q.id}">Correct answer: <strong>${q.answer}</strong><br>${q.explanation}</div>
+                    </div>
+                `).join('')}
+            `;
+            container.appendChild(saSection);
+
             updateProgress();
         }
 
-        // Select an option
-        function selectOption(optionIndex, optionElement) {
-            // Don't allow selection if already answered
-            if (userAnswers[currentQuestionIndex] !== null) return;
+        // Selection functions
+        function selectOption(questionId, optionIndex) {
+            const questionEl = document.getElementById(`q${questionId}`);
+            const options = questionEl.querySelectorAll('.option');
             
-            // Remove selected class from all options
-            document.querySelectorAll('.option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
+            // Remove previous selection
+            options.forEach(opt => opt.classList.remove('selected'));
             
-            // Add selected class to clicked option
-            optionElement.classList.add('selected');
+            // Mark selected
+            options[optionIndex].classList.add('selected');
             
-            // Store user's answer
-            userAnswers[currentQuestionIndex] = optionIndex;
+            // Store answer
+            userAnswers[questionId] = optionIndex;
+            answeredCount = Object.keys(userAnswers).length;
             
-            // Check answer
-            const question = quizData[currentQuestionIndex];
-            const isCorrect = optionIndex === question.correct;
-            
-            // Update score if correct
-            if (isCorrect) {
-                score++;
-                scoreEl.textContent = score;
-            }
-            
-            // Show feedback
-            showFeedback(isCorrect, question);
-            
-            // Enable next button
-            nextBtn.disabled = false;
+            updateProgress();
         }
 
-        // Show feedback for answer
-        function showFeedback(isCorrect, question) {
-            // Mark correct/incorrect options
-            document.querySelectorAll('.option').forEach((opt, index) => {
-                if (index === question.correct) {
-                    opt.classList.add('correct');
-                } else if (index === userAnswers[currentQuestionIndex] && !isCorrect) {
-                    opt.classList.add('incorrect');
+        function selectTF(questionId, answer) {
+            const questionEl = document.getElementById(`q${questionId}`);
+            const options = questionEl.querySelectorAll('.option');
+            
+            // Remove previous selection
+            options.forEach(opt => opt.classList.remove('selected'));
+            
+            // Mark selected
+            const correctIndex = answer ? 0 : 1;
+            options[correctIndex].classList.add('selected');
+            
+            // Store answer
+            userAnswers[questionId] = answer;
+            answeredCount = Object.keys(userAnswers).length;
+            
+            updateProgress();
+        }
+
+        function selectShortAnswer(questionId, answer) {
+            userAnswers[questionId] = answer.trim().toLowerCase();
+            answeredCount = Object.keys(userAnswers).length;
+            updateProgress();
+        }
+
+        // Update progress bar and counters
+        function updateProgress() {
+            const progress = (answeredCount / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('score').textContent = score;
+        }
+
+        // Check answers
+        function checkAnswers() {
+            score = 0;
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            // Check MC questions
+            quizData.sections.forEach(section => {
+                section.questions.forEach(q => {
+                    const userAnswer = userAnswers[q.id];
+                    const questionEl = document.getElementById(`q${q.id}`);
+                    const options = questionEl.querySelectorAll('.option');
+                    const explanation = document.getElementById(`exp${q.id}`);
+                    
+                    if (userAnswer !== undefined) {
+                        if (userAnswer === q.answer) {
+                            score++;
+                            correctCount++;
+                            options[userAnswer].classList.add('correct');
+                        } else {
+                            incorrectCount++;
+                            options[userAnswer].classList.add('incorrect');
+                            options[q.answer].classList.add('correct');
+                        }
+                        explanation.classList.add('show');
+                    }
+                });
+            });
+
+            // Check True/False
+            quizData.trueFalse.forEach(q => {
+                const userAnswer = userAnswers[q.id];
+                const questionEl = document.getElementById(`q${q.id}`);
+                const options = questionEl.querySelectorAll('.option');
+                const explanation = document.getElementById(`exp${q.id}`);
+                
+                if (userAnswer !== undefined) {
+                    if (userAnswer === q.answer) {
+                        score++;
+                        correctCount++;
+                        options[userAnswer ? 0 : 1].classList.add('correct');
+                    } else {
+                        incorrectCount++;
+                        options[userAnswer ? 0 : 1].classList.add('incorrect');
+                        options[q.answer ? 0 : 1].classList.add('correct');
+                    }
+                    explanation.classList.add('show');
                 }
             });
+
+            // Check Short Answer (case-insensitive partial match)
+            quizData.shortAnswer.forEach(q => {
+                const userAnswer = userAnswers[q.id];
+                const answerKey = document.getElementById(`ans${q.id}`);
+                
+                if (userAnswer) {
+                    const correctAnswer = q.answer.toLowerCase();
+                    // More flexible matching for short answers
+                    if (userAnswer.includes(correctAnswer) || correctAnswer.includes(userAnswer) || 
+                        Math.abs(userAnswer.length - correctAnswer.length) <= 2) {
+                        score++;
+                        correctCount++;
+                        answerKey.style.borderColor = "#2d6a4f";
+                        answerKey.style.background = "#c6e6d2";
+                    } else {
+                        incorrectCount++;
+                        answerKey.style.borderColor = "#dc3545";
+                        answerKey.style.background = "#f8d7da";
+                    }
+                    answerKey.classList.add('show');
+                }
+            });
+
+            // Update score display
+            document.getElementById('score').textContent = score;
             
-            // Set feedback content
-            if (isCorrect) {
-                feedbackTitle.textContent = "Correct!";
-                feedbackText.textContent = "Well done!";
-                feedback.className = 'feedback correct';
-            } else {
-                feedbackTitle.textContent = "Incorrect";
-                feedbackText.textContent = `The correct answer is: ${question.options[question.correct]}`;
-                feedback.className = 'feedback incorrect';
-            }
-            
-            // Show hint for incorrect answers
-            if (!isCorrect) {
-                hintText.textContent = `Hint: ${question.hint}`;
-            } else {
-                hintText.textContent = '';
-            }
-            
-            feedback.style.display = 'block';
+            // Show results modal
+            showResults(correctCount, incorrectCount);
         }
 
-        // Move to next question
-        function nextQuestion() {
-            currentQuestionIndex++;
+        // Show answer key
+        function showAnswerKey() {
+            // Show all explanations
+            document.querySelectorAll('.explanation').forEach(el => {
+                el.classList.add('show');
+            });
             
-            if (currentQuestionIndex < quizData.length) {
-                showQuestion();
-                updateStats();
-            } else {
-                showResults();
-            }
+            // Show all answer keys
+            document.querySelectorAll('.answer-key').forEach(el => {
+                el.classList.add('show');
+            });
+            
+            // Highlight correct answers
+            quizData.sections.forEach(section => {
+                section.questions.forEach(q => {
+                    const questionEl = document.getElementById(`q${q.id}`);
+                    const options = questionEl.querySelectorAll('.option');
+                    options[q.answer].classList.add('correct');
+                });
+            });
+            
+            quizData.trueFalse.forEach(q => {
+                const questionEl = document.getElementById(`q${q.id}`);
+                const options = questionEl.querySelectorAll('.option');
+                options[q.answer ? 0 : 1].classList.add('correct');
+            });
         }
 
-        // Update stats display
-        function updateStats() {
-            currentQuestionEl.textContent = currentQuestionIndex + 1;
-            scoreEl.textContent = score;
-            totalQuestionsEl.textContent = quizData.length;
-        }
-
-        // Update progress bar
-        function updateProgress() {
-            const progress = ((currentQuestionIndex) / quizData.length) * 100;
-            progressFill.style.width = `${progress}%`;
-        }
-
-        // Show final results
-        function showResults() {
-            quizContent.style.display = 'none';
-            resultsContainer.style.display = 'block';
+        // Show results modal
+        function showResults(correct, incorrect) {
+            const percentage = Math.round((score / totalQuestions) * 100);
+            let status = "Keep studying!";
+            let statusColor = "#dc3545";
             
-            // Calculate percentage
-            const percentage = Math.round((score / quizData.length) * 100);
-            finalScoreEl.textContent = `${score}/${quizData.length} (${percentage}%)`;
-            
-            // Set message based on score
-            let message = "";
             if (percentage >= 90) {
-                message = "Outstanding! You're a Discrete Mathematics expert!";
+                status = "Excellent! 🎉";
+                statusColor = "#2d6a4f";
             } else if (percentage >= 70) {
-                message = "Great job! You have a solid understanding of Discrete Math concepts.";
+                status = "Good job! 👍";
+                statusColor = "#198754";
             } else if (percentage >= 50) {
-                message = "Good effort! Review the hints to improve your understanding.";
-            } else {
-                message = "Keep practicing! Review the PDF materials and try again.";
+                status = "Not bad, keep practicing!";
+                statusColor = "#ffc107";
             }
             
-            resultsMessageEl.textContent = message;
+            document.getElementById('finalScore').textContent = `${score}/${totalQuestions}`;
+            document.getElementById('correctCount').textContent = correct;
+            document.getElementById('incorrectCount').textContent = incorrect;
+            document.getElementById('percentage').textContent = `${percentage}%`;
+            document.getElementById('statusMessage').textContent = status;
+            document.getElementById('statusMessage').style.color = statusColor;
+            
+            document.getElementById('resultModal').style.display = 'flex';
         }
 
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            initQuiz();
+        // Reset quiz
+        function resetQuiz() {
+            userAnswers = {};
+            score = 0;
+            answeredCount = 0;
             
-            nextBtn.addEventListener('click', nextQuestion);
-            restartBtn.addEventListener('click', initQuiz);
-            restartResultsBtn.addEventListener('click', initQuiz);
+            // Clear all selections
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Hide explanations
+            document.querySelectorAll('.explanation').forEach(el => {
+                el.classList.remove('show');
+            });
+            
+            // Hide answer keys
+            document.querySelectorAll('.answer-key').forEach(el => {
+                el.classList.remove('show');
+                el.style.borderColor = "";
+                el.style.background = "";
+            });
+            
+            // Clear input fields
+            document.querySelectorAll('input[type="text"]').forEach(input => {
+                input.value = "";
+            });
+            
+            updateProgress();
+        }
+
+        // Event listeners
+        document.getElementById('checkAnswers').addEventListener('click', checkAnswers);
+        document.getElementById('showAnswers').addEventListener('click', showAnswerKey);
+        document.getElementById('resetQuiz').addEventListener('click', resetQuiz);
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('resultModal').style.display = 'none';
         });
+
+        // Close modal on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target.id === 'resultModal') {
+                document.getElementById('resultModal').style.display = 'none';
+            }
+        });
+
+        // Make functions global for inline onclick handlers
+        window.selectOption = selectOption;
+        window.selectTF = selectTF;
+        window.selectShortAnswer = selectShortAnswer;
+
+        // Initialize quiz when page loads
+        document.addEventListener('DOMContentLoaded', initQuiz);
     </script>
 </body>
 </html>
